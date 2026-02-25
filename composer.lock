@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e52c7f91c734764b280fc13c8f569c20",
+    "content-hash": "abb39359f908e0b8e91e5221bffc9ee0",
     "packages": [
         {
             "name": "latte/latte",
@@ -376,12 +376,12 @@
             }
         },
         {
-            "name": "marko/database-mysql",
+            "name": "marko/database-pgsql",
             "version": "dev-develop",
             "dist": {
                 "type": "path",
-                "url": "../marko/packages/database-mysql",
-                "reference": "596dee8d7e3871c34b1c38817ad2129f3f2b7c5a"
+                "url": "../marko/packages/database-pgsql",
+                "reference": "4ddd3a77287a6dadab4b7c141adc70a79c6dcf63"
             },
             "require": {
                 "ext-pdo": "*",
@@ -400,18 +400,58 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Marko\\Database\\MySql\\": "src/"
+                    "Marko\\Database\\PgSql\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Marko\\Database\\MySql\\Tests\\": "tests/"
+                    "Marko\\Database\\PgSql\\Tests\\": "tests/"
                 }
             },
             "license": [
                 "MIT"
             ],
-            "description": "MySQL driver for Marko Framework Database Layer",
+            "description": "PostgreSQL driver for Marko Framework Database Layer",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "marko/dev-server",
+            "version": "dev-develop",
+            "dist": {
+                "type": "path",
+                "url": "../marko/packages/dev-server",
+                "reference": "020d3167950db3eb329b56e046e1b1d759048a86"
+            },
+            "require": {
+                "marko/config": "*",
+                "marko/core": "*",
+                "php": "^8.5"
+            },
+            "require-dev": {
+                "pestphp/pest": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "marko": {
+                    "module": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Marko\\DevServer\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Marko\\DevServer\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Marko Framework Dev Server",
             "transport-options": {
                 "relative": true
             }
@@ -1061,19 +1101,20 @@
             }
         },
         {
-            "name": "marko/session-file",
+            "name": "marko/session-database",
             "version": "dev-develop",
             "dist": {
                 "type": "path",
-                "url": "../marko/packages/session-file",
-                "reference": "498f9e72f8a3f0ecebcebee193c3dd826070cd9c"
+                "url": "../marko/packages/session-database",
+                "reference": "8a8c10874f670ccf8e8c4bf7268320177d5ed6b3"
             },
             "require": {
+                "marko/database": "@dev",
                 "marko/session": "@dev",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev"
+                "pestphp/pest": "^4.0"
             },
             "type": "marko-module",
             "extra": {
@@ -1083,18 +1124,18 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Marko\\Session\\File\\": "src/"
+                    "Marko\\Session\\Database\\": "src/"
                 }
             },
             "autoload-dev": {
                 "psr-4": {
-                    "Marko\\Session\\File\\Tests\\": "tests/"
+                    "Marko\\Session\\Database\\Tests\\": "tests/"
                 }
             },
             "license": [
                 "MIT"
             ],
-            "description": "File-based session driver for Marko Framework",
+            "description": "Database session driver for Marko Framework",
             "transport-options": {
                 "relative": true
             }
@@ -5237,7 +5278,13 @@
             "alias_normalized": "0.1.0.0"
         },
         {
-            "package": "marko/database-mysql",
+            "package": "marko/database-pgsql",
+            "version": "dev-develop",
+            "alias": "0.1.0",
+            "alias_normalized": "0.1.0.0"
+        },
+        {
+            "package": "marko/dev-server",
             "version": "dev-develop",
             "alias": "0.1.0",
             "alias_normalized": "0.1.0.0"
@@ -5321,7 +5368,7 @@
             "alias_normalized": "0.1.0.0"
         },
         {
-            "package": "marko/session-file",
+            "package": "marko/session-database",
             "version": "dev-develop",
             "alias": "0.1.0",
             "alias_normalized": "0.1.0.0"
@@ -5365,7 +5412,8 @@
         "marko/config": 20,
         "marko/core": 20,
         "marko/database": 20,
-        "marko/database-mysql": 20,
+        "marko/database-pgsql": 20,
+        "marko/dev-server": 20,
         "marko/env": 20,
         "marko/errors": 20,
         "marko/errors-simple": 20,
@@ -5379,7 +5427,7 @@
         "marko/routing": 20,
         "marko/security": 20,
         "marko/session": 20,
-        "marko/session-file": 20,
+        "marko/session-database": 20,
         "marko/sse": 20,
         "marko/testing": 20,
         "marko/validation": 20,

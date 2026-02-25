@@ -12,7 +12,8 @@
         "marko/config": "dev-develop as 0.1.0",
         "marko/core": "dev-develop as 0.1.0",
         "marko/database": "dev-develop as 0.1.0",
-        "marko/database-mysql": "dev-develop as 0.1.0",
+        "marko/database-pgsql": "dev-develop as 0.1.0",
+        "marko/dev-server": "dev-develop as 0.1.0",
         "marko/env": "dev-develop as 0.1.0",
         "marko/errors": "dev-develop as 0.1.0",
         "marko/errors-simple": "dev-develop as 0.1.0",
@@ -26,12 +27,12 @@
         "marko/routing": "dev-develop as 0.1.0",
         "marko/security": "dev-develop as 0.1.0",
         "marko/session": "dev-develop as 0.1.0",
-        "marko/session-file": "dev-develop as 0.1.0",
         "marko/sse": "dev-develop as 0.1.0",
         "marko/testing": "dev-develop as 0.1.0",
         "marko/validation": "dev-develop as 0.1.0",
         "marko/view": "dev-develop as 0.1.0",
-        "marko/view-latte": "dev-develop as 0.1.0"
+        "marko/view-latte": "dev-develop as 0.1.0",
+        "marko/session-database": "dev-develop as 0.1.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.3"
@@ -57,6 +58,7 @@
         { "type": "path", "url": "../marko/packages/database" },
         { "type": "path", "url": "../marko/packages/database-mysql" },
         { "type": "path", "url": "../marko/packages/database-pgsql" },
+        { "type": "path", "url": "../marko/packages/dev-server" },
         { "type": "path", "url": "../marko/packages/encryption" },
         { "type": "path", "url": "../marko/packages/encryption-openssl" },
         { "type": "path", "url": "../marko/packages/env" },
