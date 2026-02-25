@@ -9,6 +9,7 @@ markotalk/
 │   │   ├── module.php          # Module boot config (bindings, etc.)
 │   │   ├── src/
 │   │   │   ├── Controller/     # AuthController, ProfileController
+│   │   │   ├── css/            # auth.css, user.css
 │   │   │   ├── Entity/         # User entity
 │   │   │   ├── Observer/       # WelcomeMessageObserver
 │   │   │   ├── Repository/     # UserRepository
@@ -21,6 +22,7 @@ markotalk/
 │   ├── space/                  # Spaces (rooms/channels)
 │   │   ├── src/
 │   │   │   ├── Controller/     # SpaceController
+│   │   │   ├── css/            # space.css
 │   │   │   ├── Entity/         # Space, SpaceMembership
 │   │   │   ├── Repository/     # SpaceRepository
 │   │   │   └── Policy/         # SpacePolicy
@@ -29,6 +31,7 @@ markotalk/
 │   ├── message/                # Messages and real-time streaming
 │   │   ├── src/
 │   │   │   ├── Controller/     # MessageController, StreamController
+│   │   │   ├── css/            # message.css
 │   │   │   ├── Entity/         # Message, Reaction
 │   │   │   ├── Repository/     # MessageRepository
 │   │   │   ├── Plugin/         # MarkdownPlugin, MentionExtractorPlugin
@@ -39,6 +42,7 @@ markotalk/
 │   ├── notification/           # In-app notification UI and tracking
 │   │   ├── src/
 │   │   │   ├── Controller/     # NotificationController
+│   │   │   ├── css/            # notification.css
 │   │   │   ├── Notification/   # MentionNotification, WelcomeNotification
 │   │   │   └── Observer/       # NotificationStreamObserver
 │   │   └── tests/
@@ -46,6 +50,7 @@ markotalk/
 │   └── admin/                  # Admin panel for space/user management
 │       ├── src/
 │       │   ├── Controller/     # AdminSpaceController, AdminUserController
+│       │   ├── css/            # admin.css
 │       │   └── Middleware/     # AdminMiddleware
 │       └── tests/
 │
@@ -69,11 +74,16 @@ markotalk/
 ├── resources/
 │   └── views/                  # Latte templates
 │       ├── layout.latte        # Base layout (sidebar + main area)
-│       ├── auth/               # login.latte, register.latte
-│       ├── space/              # index.latte, show.latte
-│       ├── message/            # _message.latte (partial)
-│       ├── notification/       # index.latte
-│       └── profile/            # edit.latte
+│       └── landing.latte       # Public landing page
+│
+├── src/
+│   ├── Controller/             # App-level controllers (LandingController)
+│   └── css/                    # CSS entry point and app-level styles
+│       ├── app.css             # Entry point — imports all layers
+│       ├── base.css            # Resets, typography, root variables
+│       ├── components.css      # Reusable UI: buttons, inputs, badges, avatars
+│       ├── landing.css         # Landing page styles
+│       └── layout.css          # App shell: sidebar, main area, header, footer
 │
 ├── composer.json               # Root project config with path repos to ../marko/packages/*
 ├── .env                        # Environment variables
@@ -88,6 +98,26 @@ Each app module follows the Marko module structure:
 - `src/` contains the module code organized by concern (Controller, Entity, Repository, etc.)
 - `tests/` mirrors the src structure with Unit/ and Feature/ subdirectories
 - Namespace: `App\{ModuleName}\` (e.g., `App\User\`, `App\Message\`)
+
+## Routes
+
+| Method | Path | Controller | Description |
+|--------|------|------------|-------------|
+| GET | `/` | `App\Controller\LandingController` | Public landing page; redirects to `/home` if authenticated |
+| GET | `/home` | `App\Space\Controller\SpaceController` | Authenticated home — redirects to most recent space |
+| GET | `/login` | `App\User\Controller\AuthController` | Login form |
+| POST | `/login` | `App\User\Controller\AuthController` | Process login |
+| POST | `/logout` | `App\User\Controller\AuthController` | Log out |
+| GET | `/register` | `App\User\Controller\AuthController` | Registration form |
+| POST | `/register` | `App\User\Controller\AuthController` | Process registration |
+| GET | `/spaces/{slug}` | `App\Space\Controller\SpaceController` | View a space (chat room) |
+| POST | `/spaces` | `App\Space\Controller\SpaceController` | Create a space |
+| GET | `/spaces/{slug}/stream` | `App\Message\Controller\StreamController` | SSE stream for a space |
+| POST | `/spaces/{slug}/messages` | `App\Message\Controller\MessageController` | Send a message |
+| GET | `/notifications` | `App\Notification\Controller\NotificationController` | Notification list |
+| GET | `/profile` | `App\User\Controller\ProfileController` | Edit profile |
+| POST | `/profile` | `App\User\Controller\ProfileController` | Update profile |
+| GET | `/admin` | `App\Admin\Controller\AdminSpaceController` | Admin panel |
 
 ## Patterns Used
 - **Repository pattern**: Data access for each entity (UserRepository, MessageRepository, etc.)

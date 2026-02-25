@@ -47,7 +47,7 @@ it('renders the message input form with textarea and send button', function (): 
 });
 
 it('has space.css with all space-* classes defined via @apply', function (): void {
-    $css = file_get_contents('/Users/markshust/Sites/markotalk/src/css/modules/space.css');
+    $css = file_get_contents('/Users/markshust/Sites/markotalk/app/space/src/css/space.css');
 
     $classes = [
         '.space-list',

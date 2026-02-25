@@ -1,0 +1,12 @@
+.landing-body { @apply min-h-screen bg-white; }
+.landing-container { @apply max-w-4xl mx-auto px-6 py-16; }
+.landing-hero { @apply text-center mb-16; }
+.landing-title { @apply text-5xl font-bold mb-4; color: #4f46e5; }
+.landing-tagline { @apply text-xl text-gray-600 mb-8; }
+.landing-cta { @apply flex gap-4 justify-center; }
+.landing-btn-primary { @apply inline-block px-8 py-3 rounded-lg font-medium text-white transition-opacity hover:opacity-90; background-color: #4f46e5; }
+.landing-btn-secondary { @apply inline-block px-8 py-3 rounded-lg font-medium text-white transition-opacity hover:opacity-90; background-color: #6b7280; }
+.landing-features { @apply grid grid-cols-1 gap-8; }
+.landing-feature { @apply p-6 rounded-lg border border-gray-200; }
+.landing-feature-title { @apply text-lg font-semibold text-gray-900 mb-2; }
+.landing-feature-description { @apply text-gray-600; }

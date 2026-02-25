@@ -47,7 +47,7 @@ it('includes CSRF token in both forms', function (): void {
 });
 
 it('has auth.css with semantic @apply styles for all auth classes', function (): void {
-    $authCss = file_get_contents(filename: '/Users/markshust/Sites/markotalk/src/css/modules/auth.css');
+    $authCss = file_get_contents(filename: '/Users/markshust/Sites/markotalk/app/user/src/css/auth.css');
 
     expect($authCss)->toContain('.auth-container')
         ->and($authCss)->toContain('.auth-card')

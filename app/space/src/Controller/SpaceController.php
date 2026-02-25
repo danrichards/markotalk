@@ -28,7 +28,7 @@ readonly class SpaceController
         private AuthManager $auth,
     ) {}
 
-    #[Get('/', middleware: [AuthMiddleware::class])]
+    #[Get('/home', middleware: [AuthMiddleware::class])]
     public function index(
         Request $request,
     ): Response {
@@ -117,7 +117,7 @@ readonly class SpaceController
             $this->memberships->delete(entity: $membership);
         }
 
-        return Response::redirect(url: '/');
+        return Response::redirect(url: '/home');
     }
 
     private function createMembership(

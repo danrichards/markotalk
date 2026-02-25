@@ -60,7 +60,7 @@ readonly class AuthController
         ];
 
         if ($this->guard->attempt(credentials: $credentials)) {
-            return Response::redirect(url: '/');
+            return Response::redirect(url: '/home');
         }
 
         return $this->view->render(template: 'user::auth/login', data: [
@@ -115,7 +115,7 @@ readonly class AuthController
         $this->eventDispatcher->dispatch(event: new UserRegisteredEvent(user: $user));
         $this->guard->login(user: $user);
 
-        return Response::redirect(url: '/');
+        return Response::redirect(url: '/home');
     }
 
     #[Post(path: '/logout')]

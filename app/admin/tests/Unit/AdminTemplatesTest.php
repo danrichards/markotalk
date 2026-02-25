@@ -50,7 +50,7 @@ it('shows ban/unban and role change actions per user', function (): void {
 });
 
 it('has admin.css with all admin-* classes defined via @apply', function (): void {
-    $file = '/Users/markshust/Sites/markotalk/src/css/modules/admin.css';
+    $file = '/Users/markshust/Sites/markotalk/app/admin/src/css/admin.css';
 
     expect(file_exists(filename: $file))->toBeTrue()
         ->and(file_get_contents(filename: $file))->toContain('.admin-panel')

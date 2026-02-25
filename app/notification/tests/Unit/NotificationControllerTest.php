@@ -253,7 +253,7 @@ it('shows unread count in the header bell icon', function (): void {
 });
 
 it('has notification.css with semantic @apply styles', function (): void {
-    $cssPath = __DIR__ . '/../../../../src/css/modules/notification.css';
+    $cssPath = __DIR__ . '/../../src/css/notification.css';
 
     expect(file_exists(filename: $cssPath))->toBeTrue();
 

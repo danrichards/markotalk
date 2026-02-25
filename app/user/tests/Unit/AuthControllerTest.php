@@ -9,6 +9,7 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Repository\UserRepositoryInterface;
 use Marko\Authentication\Contracts\GuardInterface;
 use Marko\Core\Event\EventDispatcherInterface;
+use Marko\Database\Entity\Entity;
 use Marko\Hashing\Contracts\HasherInterface;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
@@ -16,6 +17,7 @@ use Marko\Testing\Fake\FakeAuthenticatable;
 use Marko\Testing\Fake\FakeEventDispatcher;
 use Marko\Testing\Fake\FakeGuard;
 use Marko\Validation\Contracts\ValidatorInterface;
+use Marko\Validation\Exceptions\ValidationException;
 use Marko\Validation\Validation\ValidationErrors;
 use Marko\View\ViewInterface;
 
@@ -72,14 +74,14 @@ class AuthStubUserRepository implements UserRepositoryInterface
 
     public function updateRememberToken(User $user, ?string $token): void {}
 
-    public function find(int $id): ?Marko\Database\Entity\Entity
+    public function find(int $id): ?Entity
     {
         return null;
     }
 
-    public function findOrFail(int $id): Marko\Database\Entity\Entity
+    public function findOrFail(int $id): Entity
     {
-        throw new \RuntimeException(message: 'Not implemented');
+        throw new RuntimeException(message: 'Not implemented');
     }
 
     public function findAll(): array
@@ -92,17 +94,17 @@ class AuthStubUserRepository implements UserRepositoryInterface
         return [];
     }
 
-    public function findOneBy(array $criteria): ?Marko\Database\Entity\Entity
+    public function findOneBy(array $criteria): ?Entity
     {
         return null;
     }
 
-    public function save(Marko\Database\Entity\Entity $entity): void
+    public function save(Entity $entity): void
     {
         $this->savedUser = $entity instanceof User ? $entity : null;
     }
 
-    public function delete(Marko\Database\Entity\Entity $entity): void {}
+    public function delete(Entity $entity): void {}
 }
 
 // Stub HasherInterface for tests
@@ -144,7 +146,7 @@ class AuthStubValidator implements ValidatorInterface
     public function validateOrFail(array $data, array $rules): void
     {
         if ($this->errors->isNotEmpty()) {
-            throw \Marko\Validation\Exceptions\ValidationException::withErrors(errors: $this->errors);
+            throw ValidationException::withErrors(errors: $this->errors);
         }
     }
 
@@ -219,7 +221,7 @@ it('creates a new user on POST /register with valid data', function (): void {
 
     expect($response->statusCode())->toBe(302)
         ->and($response->headers())->toHaveKey('Location')
-        ->and($response->headers()['Location'])->toBe('/')
+        ->and($response->headers()['Location'])->toBe('/home')
         ->and($userRepository->savedUser)->not->toBeNull()
         ->and($userRepository->savedUser->email)->toBe('john@example.com')
         ->and($userRepository->savedUser->password)->toBe('hashed_secret123');
@@ -344,10 +346,40 @@ it('authenticates a user with valid credentials on POST /login', function (): vo
 
     expect($response->statusCode())->toBe(302)
         ->and($response->headers())->toHaveKey('Location')
-        ->and($response->headers()['Location'])->toBe('/')
+        ->and($response->headers()['Location'])->toBe('/home')
         ->and($guard->attempts)->not->toBeEmpty()
         ->and($guard->attempts[0])->toBe([
             'email' => 'john@example.com',
             'password' => 'secret123',
         ]);
+});
+
+it('redirects to /home after successful registration', function (): void {
+    $controller = makeAuthController();
+
+    $request = new Request(post: [
+        'username' => 'johndoe',
+        'email' => 'john@example.com',
+        'password' => 'secret123',
+        'display_name' => 'John Doe',
+    ]);
+    $response = $controller->register(request: $request);
+
+    expect($response->statusCode())->toBe(302)
+        ->and($response->headers()['Location'])->toBe('/home');
+});
+
+it('redirects to /home after successful login', function (): void {
+    $guard = new FakeGuard();
+    $guard->setAttemptResult(result: true);
+    $controller = makeAuthController(guard: $guard);
+
+    $request = new Request(post: [
+        'email' => 'john@example.com',
+        'password' => 'secret123',
+    ]);
+    $response = $controller->login(request: $request);
+
+    expect($response->statusCode())->toBe(302)
+        ->and($response->headers()['Location'])->toBe('/home');
 });

@@ -2,10 +2,12 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import './base.css';
+@import './landing.css';
 @import './layout.css';
 @import './components.css';
-@import './modules/notification.css';
-@import './modules/auth.css';
-@import './modules/space.css';
-@import './modules/message.css';
-@import './modules/admin.css';
+@import '../../app/notification/src/css/notification.css';
+@import '../../app/user/src/css/auth.css';
+@import '../../app/user/src/css/user.css';
+@import '../../app/space/src/css/space.css';
+@import '../../app/message/src/css/message.css';
+@import '../../app/admin/src/css/admin.css';

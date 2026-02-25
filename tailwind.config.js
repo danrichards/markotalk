@@ -1,6 +1,7 @@
 module.exports = {
   content: [
     './app/*/resources/views/**/*.latte',
+    './app/*/src/css/**/*.css',
     './resources/views/**/*.latte',
     './src/css/**/*.css',
   ],

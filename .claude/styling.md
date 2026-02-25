@@ -49,39 +49,50 @@ Use the Tailwind standalone CLI binary — no Node.js dependency required.
 
 ```
 markotalk/
+├── app/
+│   ├── user/src/css/
+│   │   ├── auth.css             # .auth-form, .auth-field, etc.
+│   │   └── user.css             # .profile-*, etc.
+│   ├── space/src/css/
+│   │   └── space.css            # .space-list, .space-item, .space-item-active, etc.
+│   ├── message/src/css/
+│   │   └── message.css          # .message, .message-author, .message-body, etc.
+│   ├── notification/src/css/
+│   │   └── notification.css     # .notification, .notification-badge, etc.
+│   └── admin/src/css/
+│       └── admin.css            # .admin-panel, .admin-table, etc.
 ├── src/
 │   └── css/
 │       ├── app.css              # Entry point — imports all layers
 │       ├── base.css             # Resets, typography, root variables
-│       ├── layout.css           # App shell: sidebar, main area, header, footer
 │       ├── components.css       # Reusable UI: buttons, inputs, badges, avatars
-│       └── modules/
-│           ├── message.css      # .message, .message-author, .message-body, etc.
-│           ├── space.css        # .space-list, .space-item, .space-item-active, etc.
-│           ├── notification.css # .notification, .notification-badge, etc.
-│           ├── auth.css         # .auth-form, .auth-field, etc.
-│           └── admin.css        # .admin-panel, .admin-table, etc.
+│       ├── landing.css          # Landing page styles
+│       └── layout.css           # App shell: sidebar, main area, header, footer
 ├── public/
 │   └── css/
 │       └── app.css              # Compiled output (gitignored)
 └── tailwind.config.js           # Tailwind configuration
 ```
 
+Module CSS files live alongside module source code in `app/{module}/src/css/`. The `src/css/` directory at the root contains the entry point and app-level styles only.
+
 ### Entry Point (`src/css/app.css`)
 
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 @import "./base.css";
+@import "./landing.css";
 @import "./layout.css";
 @import "./components.css";
-@import "./modules/message.css";
-@import "./modules/space.css";
-@import "./modules/notification.css";
-@import "./modules/auth.css";
-@import "./modules/admin.css";
+@import "../../app/notification/src/css/notification.css";
+@import "../../app/user/src/css/auth.css";
+@import "../../app/user/src/css/user.css";
+@import "../../app/space/src/css/space.css";
+@import "../../app/message/src/css/message.css";
+@import "../../app/admin/src/css/admin.css";
 ```
 
 ## Naming Convention
@@ -243,25 +254,18 @@ Configure Tailwind's theme to define project-specific tokens. Use these instead 
 // tailwind.config.js
 module.exports = {
   content: [
+    './app/*/resources/views/**/*.latte',
+    './app/*/src/css/**/*.css',
     './resources/views/**/*.latte',
     './src/css/**/*.css',
   ],
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: '#eef2ff',
-          600: '#4f46e5',
-          700: '#4338ca',
-        },
+        brand: { DEFAULT: '#4f46e5', light: '#818cf8', dark: '#3730a3' },
       },
-      fontSize: {
-        'message': '0.9375rem',
-      },
-      spacing: {
-        'sidebar': '16rem',
-        'header': '3.5rem',
-      },
+      width: { sidebar: '260px' },
+      height: { header: '56px' },
     },
   },
 };

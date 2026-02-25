@@ -10,8 +10,10 @@ use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\AuthenticatableInterface;
+use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Database\Entity\Entity;
 use Marko\Pagination\CursorPaginator;
+use Marko\Routing\Attributes\Get;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\View\ViewInterface;
@@ -156,12 +158,12 @@ function makeAuthUser(int $id = 1): AuthenticatableInterface
 
 function makeSpaceControllerAuthManager(?AuthenticatableInterface $user = null): AuthManager
 {
+    /** @noinspection PhpMissingParentConstructorInspection - Test stub intentionally skips parent */
     return new class ($user) extends AuthManager {
+        /** @noinspection PhpMissingParentConstructorInspection */
         public function __construct(
             private readonly ?AuthenticatableInterface $mockUser,
-        ) {
-            // Skip parent constructor
-        }
+        ) {}
 
         public function user(): ?AuthenticatableInterface
         {
@@ -336,8 +338,66 @@ it('leaves a space on POST /spaces/{slug}/leave', function (): void {
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
-        ->and($response->headers()['Location'])->toBe('/')
+        ->and($response->headers()['Location'])->toBe('/home')
         ->and($memberships->deleteCalled)->toBeTrue();
+});
+
+it('no longer routes GET / to SpaceController::index', function (): void {
+    $reflection = new ReflectionClass(objectOrClass: SpaceController::class);
+    $method = $reflection->getMethod(name: 'index');
+    $attributes = $method->getAttributes();
+    $routePath = null;
+
+    foreach ($attributes as $attribute) {
+        $instance = $attribute->newInstance();
+        if ($instance instanceof Get) {
+            $routePath = $instance->path;
+        }
+    }
+
+    expect($routePath)->not->toBe('/');
+});
+
+it('redirects to /home after leaving a space', function (): void {
+    $user = makeAuthUser();
+    $space = makeSpace();
+    $membership = makeMembership();
+
+    $spaces = makeSpaceRepositoryStub(bySlug: $space);
+    $memberships = makeSpaceMembershipRepositoryStub(byUserAndSpace: $membership);
+    $view = makeSpaceControllerView();
+    $auth = makeSpaceControllerAuthManager(user: $user);
+
+    $controller = makeSpaceController(spaces: $spaces, memberships: $memberships, view: $view, auth: $auth);
+    $response = $controller->leave(slug: 'general', request: makeSpacePostRequest(uri: '/spaces/general/leave'));
+
+    expect($response)->toBeInstanceOf(Response::class)
+        ->and($response->statusCode())->toBe(302)
+        ->and($response->headers()['Location'])->toBe('/home');
+});
+
+it('routes GET /home with AuthMiddleware to SpaceController::index', function (): void {
+    $reflection = new ReflectionClass(objectOrClass: SpaceController::class);
+    $method = $reflection->getMethod(name: 'index');
+    $attributes = $method->getAttributes();
+    $routePath = null;
+    $hasAuthMiddleware = false;
+
+    foreach ($attributes as $attribute) {
+        $instance = $attribute->newInstance();
+        if ($instance instanceof Get) {
+            $routePath = $instance->path;
+        }
+        if (property_exists(object_or_class: $instance, property: 'middleware')) {
+            $middleware = $instance->middleware;
+            if (in_array(needle: AuthMiddleware::class, haystack: $middleware, strict: true)) {
+                $hasAuthMiddleware = true;
+            }
+        }
+    }
+
+    expect($routePath)->toBe('/home')
+        ->and($hasAuthMiddleware)->toBeTrue();
 });
 
 it('requires authentication on all routes', function (): void {
@@ -353,7 +413,7 @@ it('requires authentication on all routes', function (): void {
             $instance = $attribute->newInstance();
             if (property_exists(object_or_class: $instance, property: 'middleware')) {
                 $middleware = $instance->middleware;
-                if (in_array(needle: \Marko\Authentication\Middleware\AuthMiddleware::class, haystack: $middleware, strict: true)) {
+                if (in_array(needle: AuthMiddleware::class, haystack: $middleware, strict: true)) {
                     $hasAuthMiddleware = true;
                     break;
                 }

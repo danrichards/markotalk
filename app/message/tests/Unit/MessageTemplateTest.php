@@ -53,7 +53,7 @@ it('shows edit and delete actions for the message author', function (): void {
 });
 
 it('has message.css with all message-* classes defined via @apply', function (): void {
-    $cssFile = dirname(path: __DIR__, levels: 4) . '/src/css/modules/message.css';
+    $cssFile = dirname(path: __DIR__, levels: 2) . '/src/css/message.css';
 
     expect(file_exists(filename: $cssFile))->toBeTrue();
 
