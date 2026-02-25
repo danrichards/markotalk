@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Landing\Controller;
 
 use Marko\Authentication\AuthManager;
 use Marko\Routing\Attributes\Get;
@@ -25,6 +25,6 @@ readonly class LandingController
             return Response::redirect(url: '/home');
         }
 
-        return $this->view->render(template: 'landing');
+        return $this->view->render(template: 'landing::index');
     }
 }

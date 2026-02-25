@@ -2,9 +2,9 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import './base.css';
-@import './landing.css';
 @import './layout.css';
 @import './components.css';
+@import '../../app/landing/src/css/landing.css';
 @import '../../app/notification/src/css/notification.css';
 @import '../../app/user/src/css/auth.css';
 @import '../../app/user/src/css/user.css';

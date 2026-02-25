@@ -108,7 +108,7 @@
     "autoload": {
         "psr-4": {
             "App\\Admin\\": "app/admin/src/",
-            "App\\Controller\\": "src/Controller/",
+            "App\\Landing\\": "app/landing/src/",
             "App\\Message\\": "app/message/src/",
             "App\\Notification\\": "app/notification/src/",
             "App\\Space\\": "app/space/src/",
@@ -120,6 +120,7 @@
         "psr-4": {
             "Tests\\": "tests/",
             "App\\Admin\\Tests\\": "app/admin/tests/",
+            "App\\Landing\\Tests\\": "app/landing/tests/",
             "App\\Message\\Tests\\": "app/message/tests/",
             "App\\Notification\\Tests\\": "app/notification/tests/",
             "App\\Space\\Tests\\": "app/space/tests/",

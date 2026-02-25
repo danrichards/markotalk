@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Controller\LandingController;
+use App\Landing\Controller\LandingController;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\AuthenticatableInterface;
 use Marko\Routing\Http\Request;
@@ -110,31 +110,31 @@ it('redirects authenticated users from / to /home', function (): void {
         ->and($response->headers()['Location'])->toBe('/home');
 });
 
-it('renders the landing page template with MarkoTalk branding', function (): void {
+it('renders the landing page template with landing::index', function (): void {
     $view = makeLandingView();
     $controller = makeLandingController(view: $view);
 
     $request = new Request();
     $controller->index(request: $request);
 
-    expect($view->lastTemplate)->toBe('landing');
+    expect($view->lastTemplate)->toBe('landing::index');
 });
 
 it('includes a link to /login on the landing page', function (): void {
-    $landingTemplate = file_get_contents(filename: __DIR__ . '/../../../resources/views/landing.latte');
+    $landingTemplate = file_get_contents(filename: __DIR__ . '/../../resources/views/index.latte');
 
     expect($landingTemplate)->toContain('href="/login"');
 });
 
 it('includes a link to /register on the landing page', function (): void {
-    $landingTemplate = file_get_contents(filename: __DIR__ . '/../../../resources/views/landing.latte');
+    $landingTemplate = file_get_contents(filename: __DIR__ . '/../../resources/views/index.latte');
 
     expect($landingTemplate)->toContain('href="/register"');
 });
 
-it('registers the App\Controller namespace in composer.json autoload', function (): void {
-    $composerPath = __DIR__ . '/../../../composer.json';
+it('registers the App\Landing namespace in composer.json autoload', function (): void {
+    $composerPath = dirname(path: __DIR__, levels: 4) . '/composer.json';
     $composer = json_decode(json: file_get_contents(filename: $composerPath), associative: true);
 
-    expect($composer['autoload']['psr-4'])->toHaveKey('App\\Controller\\');
+    expect($composer['autoload']['psr-4'])->toHaveKey('App\\Landing\\');
 });
