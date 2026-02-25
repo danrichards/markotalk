@@ -1,16 +1,16 @@
-{extends "layout"}
+{extends "landing::layout"}
 
 {block title}{$space->name} — MarkoTalk{/block}
 
 {block sidebar}
   {* space list sidebar *}
   <nav class="space-list">
-    {foreach $spaces as $space}
-    <a href="/spaces/{$space->slug}" class="space-item{if $space->slug === $currentSpace->slug} space-item-active{/if}">
+    {foreach $spaces as $navSpace}
+    <a href="/spaces/{$navSpace->slug}" class="space-item{if $navSpace->slug === $space->slug} space-item-active{/if}">
       <span class="space-hash">#</span>
-      <span class="space-name">{$space->name}</span>
-      {if isset($unreadCounts[$space->id]) && $unreadCounts[$space->id] > 0}
-      <span class="space-item-unread">{$unreadCounts[$space->id]}</span>
+      <span class="space-name">{$navSpace->name}</span>
+      {if isset($unreadCounts[$navSpace->id]) && $unreadCounts[$navSpace->id] > 0}
+      <span class="space-item-unread">{$unreadCounts[$navSpace->id]}</span>
       {/if}
     </a>
     {/foreach}
@@ -21,7 +21,7 @@
     <ul class="member-list" id="member-list">
       {foreach $members as $member}
       <li class="member-item" data-user-id="{$member->id}">
-        <span class="member-indicator {if $member->isOnline}is-online{else}is-offline{/if}"></span>
+        <span class="member-indicator is-offline"></span>
         <span class="member-name">{$member->displayName ?? $member->username}</span>
       </li>
       {/foreach}
@@ -36,7 +36,7 @@
   </div>
   <div class="chat-feed" id="chat-feed" data-space-slug="{$space->slug}">
     {foreach $messages as $message}
-      {include "../../../message/resources/views/_message.latte", message: $message, currentUser: $currentUser, csrfToken: $csrfToken}
+      {include "message::_message", message: $message, currentUser: $currentUser, csrfToken: $csrfToken}
     {/foreach}
   </div>
   <div class="chat-input">

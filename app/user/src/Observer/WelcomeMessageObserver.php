@@ -37,7 +37,7 @@ readonly class WelcomeMessageObserver
             return;
         }
 
-        $defaultSpaces = $this->config->getArray(key: 'default_spaces');
+        $defaultSpaces = $this->config->getArray(key: 'markotalk.default_spaces');
 
         $generalSpace = null;
 

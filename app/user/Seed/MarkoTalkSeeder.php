@@ -29,8 +29,8 @@ readonly class MarkoTalkSeeder implements SeederInterface
 
     public function run(): void
     {
-        $spaces = $this->seedSpaces();
         $admin = $this->seedAdminUser();
+        $spaces = $this->seedSpaces(createdBy: (int) $admin->id);
         $this->joinAdminToSpaces(admin: $admin, spaces: $spaces);
     }
 
@@ -39,7 +39,7 @@ readonly class MarkoTalkSeeder implements SeederInterface
         $now = new DateTimeImmutable();
 
         $user = new User(
-            id: 0,
+            id: null,
             username: 'admin',
             email: 'admin@example.com',
             password: password_hash(password: 'admin', algo: PASSWORD_BCRYPT),
@@ -79,9 +79,9 @@ readonly class MarkoTalkSeeder implements SeederInterface
     /**
      * @return array<Space>
      */
-    private function seedSpaces(): array
+    private function seedSpaces(int $createdBy): array
     {
-        $defaultSpaces = $this->config->getArray(key: 'default_spaces');
+        $defaultSpaces = $this->config->getArray(key: 'markotalk.default_spaces');
         $spaces = [];
 
         foreach ($defaultSpaces as $spaceData) {
@@ -91,7 +91,7 @@ readonly class MarkoTalkSeeder implements SeederInterface
                 slug: $spaceData['slug'],
                 description: $spaceData['description'],
                 isArchived: false,
-                createdBy: 0,
+                createdBy: $createdBy,
                 createdAt: new DateTimeImmutable(),
                 updatedAt: new DateTimeImmutable(),
             );

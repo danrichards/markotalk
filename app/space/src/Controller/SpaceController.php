@@ -9,6 +9,7 @@ use App\Space\Entity\Space;
 use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
+use App\User\Repository\UserRepositoryInterface;
 use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\Middleware\AuthMiddleware;
@@ -16,6 +17,7 @@ use Marko\Routing\Attributes\Get;
 use Marko\Routing\Attributes\Post;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
+use Marko\Security\Contracts\CsrfTokenManagerInterface;
 use Marko\View\ViewInterface;
 
 readonly class SpaceController
@@ -24,8 +26,10 @@ readonly class SpaceController
         private SpaceRepositoryInterface $spaces,
         private SpaceMembershipRepositoryInterface $memberships,
         private MessageRepositoryInterface $messages,
+        private UserRepositoryInterface $users,
         private ViewInterface $view,
         private AuthManager $auth,
+        private CsrfTokenManagerInterface $csrf,
     ) {}
 
     #[Get('/home', middleware: [AuthMiddleware::class])]
@@ -66,16 +70,41 @@ readonly class SpaceController
             $membership = $this->createMembership(userId: $userId, space: $space);
         }
 
-        $latestMessages = $this->messages->findBySpace(spaceId: (int) $space->id, limit: 1);
+        $messages = $this->messages->findBySpace(spaceId: (int) $space->id);
 
-        if ($latestMessages !== []) {
+        if ($messages !== []) {
             $this->memberships->updateLastReadMessageId(
                 membership: $membership,
-                messageId: (int) $latestMessages[0]->id,
+                messageId: (int) $messages[array_key_last($messages)]->id,
             );
         }
 
-        return $this->view->render(template: 'space::show', data: ['space' => $space, 'membership' => $membership]);
+        $allSpaces = $this->spaces->findActive();
+        $spaceMemberships = $this->memberships->findAllForSpace(spaceId: (int) $space->id);
+        $members = [];
+        foreach ($spaceMemberships as $m) {
+            $user = $this->users->find(id: $m->userId);
+            if ($user !== null) {
+                $members[] = $user;
+            }
+        }
+
+        $userMemberships = $this->memberships->findAllForUser(userId: $userId);
+        $unreadCounts = [];
+        foreach ($userMemberships as $m) {
+            $unreadCounts[$m->spaceId] = $this->memberships->countUnread(userId: $userId, spaceId: $m->spaceId);
+        }
+
+        return $this->view->render(template: 'space::space/show', data: [
+            'space' => $space,
+            'spaces' => $allSpaces,
+            'membership' => $membership,
+            'members' => $members,
+            'messages' => $messages,
+            'unreadCounts' => $unreadCounts,
+            'currentUser' => $this->auth->user(),
+            'csrfToken' => $this->csrf->get(),
+        ]);
     }
 
     #[Post('/spaces/{slug}/join', middleware: [AuthMiddleware::class])]

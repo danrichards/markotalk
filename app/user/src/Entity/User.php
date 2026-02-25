@@ -20,7 +20,7 @@ class User extends Entity implements AuthorizableInterface, NotifiableInterface
 {
     public function __construct(
         #[Column(primaryKey: true, autoIncrement: true)]
-        public int $id,
+        public ?int $id,
         #[Column(name: 'username', length: 50, unique: true)]
         public string $username,
         #[Column(name: 'email', length: 255, unique: true)]

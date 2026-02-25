@@ -1,4 +1,4 @@
-{extends "layout"}
+{extends "landing::layout"}
 
 {block title}Login — MarkoTalk{/block}
 
@@ -12,7 +12,7 @@
         <label class="auth-label" for="email">Email</label>
         <input class="auth-input{if isset($errors['email'])} auth-input-error{/if}" type="email" id="email" name="email" value="{$old['email'] ?? ''}">
         {if isset($errors['email'])}
-        <span class="auth-error">{$errors['email']}</span>
+        <span class="auth-error">{$errors['email'][0]}</span>
         {/if}
       </div>
       <div class="auth-field">

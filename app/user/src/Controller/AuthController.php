@@ -19,6 +19,7 @@ use Marko\Routing\Attributes\Middleware;
 use Marko\Routing\Attributes\Post;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
+use Marko\Security\Contracts\CsrfTokenManagerInterface;
 use Marko\Validation\Contracts\ValidatorInterface;
 use Marko\Validation\Rules\Email;
 use Marko\Validation\Rules\Min;
@@ -34,20 +35,25 @@ readonly class AuthController
         private HasherInterface $hasher,
         private ValidatorInterface $validator,
         private EventDispatcherInterface $eventDispatcher,
+        private CsrfTokenManagerInterface $csrf,
     ) {}
 
     #[Get(path: '/login')]
     #[Middleware(GuestMiddleware::class)]
     public function showLogin(Request $request): Response
     {
-        return $this->view->render(template: 'user::auth/login');
+        return $this->view->render(template: 'user::auth/login', data: [
+            'csrfToken' => $this->csrf->get(),
+        ]);
     }
 
     #[Get(path: '/register')]
     #[Middleware(GuestMiddleware::class)]
     public function showRegister(Request $request): Response
     {
-        return $this->view->render(template: 'user::auth/register');
+        return $this->view->render(template: 'user::auth/register', data: [
+            'csrfToken' => $this->csrf->get(),
+        ]);
     }
 
     #[Post(path: '/login')]
@@ -64,6 +70,7 @@ readonly class AuthController
         }
 
         return $this->view->render(template: 'user::auth/login', data: [
+            'csrfToken' => $this->csrf->get(),
             'errors' => ['email' => ['Invalid email or password.']],
         ]);
     }
@@ -86,18 +93,22 @@ readonly class AuthController
         ]);
 
         if ($errors->isNotEmpty()) {
-            return $this->view->render(template: 'user::auth/register', data: ['errors' => $errors->all()]);
+            return $this->view->render(template: 'user::auth/register', data: [
+                'csrfToken' => $this->csrf->get(),
+                'errors' => $errors->all(),
+            ]);
         }
 
         if ($this->userRepository->findByEmail(email: (string) $data['email']) !== null) {
             return $this->view->render(template: 'user::auth/register', data: [
+                'csrfToken' => $this->csrf->get(),
                 'errors' => ['email' => ['The email address is already in use.']],
             ]);
         }
 
         $now = new DateTimeImmutable();
         $user = new User(
-            id: 0,
+            id: null,
             username: (string) $data['username'],
             email: (string) $data['email'],
             password: $this->hasher->hash(value: (string) $data['password']),

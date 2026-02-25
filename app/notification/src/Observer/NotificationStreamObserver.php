@@ -9,7 +9,7 @@ use App\Message\Event\MessageCreatedEvent;
 use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use Marko\Core\Attributes\Observer;
-use Psr\SimpleCache\CacheInterface;
+use Marko\Cache\Contracts\CacheInterface;
 
 #[Observer(event: MessageCreatedEvent::class)]
 readonly class NotificationStreamObserver

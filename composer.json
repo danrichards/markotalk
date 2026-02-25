@@ -32,7 +32,11 @@
         "marko/validation": "dev-develop as 0.1.0",
         "marko/view": "dev-develop as 0.1.0",
         "marko/view-latte": "dev-develop as 0.1.0",
-        "marko/session-database": "dev-develop as 0.1.0"
+        "marko/session-database": "dev-develop as 0.1.0",
+        "marko/authentication-token": "dev-develop as 0.1.0",
+        "marko/encryption": "dev-develop as 0.1.0",
+        "marko/encryption-openssl": "dev-develop as 0.1.0",
+        "marko/cli": "dev-develop as 0.1.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.3"

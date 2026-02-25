@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "abb39359f908e0b8e91e5221bffc9ee0",
+    "content-hash": "bf096308aa01aa0070092e6404c4d67f",
     "packages": [
         {
             "name": "latte/latte",
@@ -132,6 +132,49 @@
             }
         },
         {
+            "name": "marko/authentication-token",
+            "version": "dev-develop",
+            "dist": {
+                "type": "path",
+                "url": "../marko/packages/authentication-token",
+                "reference": "9e05769bd56744081af5e4d3d630cc5965187159"
+            },
+            "require": {
+                "marko/authentication": "@dev",
+                "marko/config": "@dev",
+                "marko/core": "@dev",
+                "marko/database": "@dev",
+                "php": "^8.5"
+            },
+            "require-dev": {
+                "marko/testing": "@dev",
+                "pestphp/pest": "^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "marko": {
+                    "module": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Marko\\AuthenticationToken\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Marko\\AuthenticationToken\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Personal access token authentication for Marko Framework",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "marko/authorization",
             "version": "dev-develop",
             "dist": {
@@ -253,6 +296,47 @@
                 "MIT"
             ],
             "description": "In-memory array cache driver for Marko Framework",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "marko/cli",
+            "version": "dev-develop",
+            "dist": {
+                "type": "path",
+                "url": "../marko/packages/cli",
+                "reference": "b667069f07a89ff6a6125f2922040500a1422147"
+            },
+            "require": {
+                "php": "^8.5"
+            },
+            "require-dev": {
+                "pestphp/pest": "^4.0"
+            },
+            "bin": [
+                "bin/marko"
+            ],
+            "type": "library",
+            "extra": {
+                "marko": {
+                    "module": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Marko\\Cli\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Marko\\Cli\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Marko Framework CLI",
             "transport-options": {
                 "relative": true
             }
@@ -493,6 +577,49 @@
                 "MIT"
             ],
             "description": "Encryption contracts for Marko Framework",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "marko/encryption-openssl",
+            "version": "dev-develop",
+            "dist": {
+                "type": "path",
+                "url": "../marko/packages/encryption-openssl",
+                "reference": "af46425585e6568cbfe7a9c4768938d8194614f0"
+            },
+            "require": {
+                "ext-openssl": "*",
+                "marko/config": "@dev",
+                "marko/core": "@dev",
+                "marko/encryption": "@dev",
+                "php": "^8.5"
+            },
+            "require-dev": {
+                "marko/testing": "@dev",
+                "pestphp/pest": "^4.0"
+            },
+            "type": "marko-module",
+            "extra": {
+                "marko": {
+                    "module": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Marko\\Encryption\\OpenSsl\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Marko\\Encryption\\OpenSsl\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "OpenSSL encryption driver for Marko Framework",
             "transport-options": {
                 "relative": true
             }
@@ -5248,6 +5375,12 @@
             "alias_normalized": "0.1.0.0"
         },
         {
+            "package": "marko/authentication-token",
+            "version": "dev-develop",
+            "alias": "0.1.0",
+            "alias_normalized": "0.1.0.0"
+        },
+        {
             "package": "marko/authorization",
             "version": "dev-develop",
             "alias": "0.1.0",
@@ -5255,6 +5388,12 @@
         },
         {
             "package": "marko/cache-array",
+            "version": "dev-develop",
+            "alias": "0.1.0",
+            "alias_normalized": "0.1.0.0"
+        },
+        {
+            "package": "marko/cli",
             "version": "dev-develop",
             "alias": "0.1.0",
             "alias_normalized": "0.1.0.0"
@@ -5285,6 +5424,18 @@
         },
         {
             "package": "marko/dev-server",
+            "version": "dev-develop",
+            "alias": "0.1.0",
+            "alias_normalized": "0.1.0.0"
+        },
+        {
+            "package": "marko/encryption",
+            "version": "dev-develop",
+            "alias": "0.1.0",
+            "alias_normalized": "0.1.0.0"
+        },
+        {
+            "package": "marko/encryption-openssl",
             "version": "dev-develop",
             "alias": "0.1.0",
             "alias_normalized": "0.1.0.0"
@@ -5407,13 +5558,17 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "marko/authentication": 20,
+        "marko/authentication-token": 20,
         "marko/authorization": 20,
         "marko/cache-array": 20,
+        "marko/cli": 20,
         "marko/config": 20,
         "marko/core": 20,
         "marko/database": 20,
         "marko/database-pgsql": 20,
         "marko/dev-server": 20,
+        "marko/encryption": 20,
+        "marko/encryption-openssl": 20,
         "marko/env": 20,
         "marko/errors": 20,
         "marko/errors-simple": 20,
