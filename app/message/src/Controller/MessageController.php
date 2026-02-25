@@ -86,7 +86,7 @@ readonly class MessageController
             $maxAttempts = $this->config->getInt(key: 'markotalk.rate_limit_messages');
             $decaySeconds = $this->config->getInt(key: 'markotalk.rate_limit_window');
             $result = $this->rateLimiter->attempt(
-                key: "user:$userId:messages",
+                key: "user_${userId}_messages",
                 maxAttempts: $maxAttempts,
                 decaySeconds: $decaySeconds,
             );

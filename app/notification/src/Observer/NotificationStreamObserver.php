@@ -39,7 +39,7 @@ readonly class NotificationStreamObserver
             }
 
             $this->cache->set(
-                key: "notification_pending:{$membership->userId}",
+                key: "notification_pending_{$membership->userId}",
                 value: true,
             );
         }

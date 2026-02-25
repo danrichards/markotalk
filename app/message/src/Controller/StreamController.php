@@ -10,6 +10,7 @@ use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Service\PresenceTrackerInterface;
 use Marko\Authentication\Middleware\AuthMiddleware;
+use Marko\Config\ConfigRepositoryInterface;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Http\Request;
 use Marko\Sse\SseEvent;
@@ -18,14 +19,11 @@ use Marko\Sse\StreamingResponse;
 
 readonly class StreamController
 {
-    /**
-     * @param array<string, mixed> $config
-     */
     public function __construct(
         private SpaceRepositoryInterface $spaces,
         private MessageRepositoryInterface $messages,
         private PresenceTrackerInterface $presence,
-        private array $config,
+        private ConfigRepositoryInterface $config,
     ) {}
 
     #[Get('/spaces/{slug}/stream', middleware: [AuthMiddleware::class])]
@@ -33,9 +31,9 @@ readonly class StreamController
         string $slug,
         Request $request,
     ): StreamingResponse {
-        $pollInterval = (int) ($this->config['sse_poll_interval'] ?? 1);
-        $heartbeatInterval = (int) ($this->config['sse_heartbeat_interval'] ?? 15);
-        $timeout = (int) ($this->config['sse_timeout'] ?? 300);
+        $pollInterval = (int) $this->config->get(key: 'markotalk.sse_poll_interval');
+        $heartbeatInterval = (int) $this->config->get(key: 'markotalk.sse_heartbeat_interval');
+        $timeout = (int) $this->config->get(key: 'markotalk.sse_timeout');
 
         $space = $this->spaces->findBySlug(slug: $slug);
         $lastEventId = (int) ($request->header(name: 'Last-Event-ID') ?? 0);
@@ -52,7 +50,7 @@ readonly class StreamController
 
             $events = array_map(
                 callback: fn (Message $message): SseEvent => new SseEvent(
-                    data: $message->bodyHtml,
+                    data: $this->renderMessageHtml(message: $message),
                     event: 'message',
                     id: $message->id,
                 ),
@@ -86,5 +84,24 @@ readonly class StreamController
                 pollInterval: $pollInterval,
             ),
         );
+    }
+
+    private function renderMessageHtml(Message $message): string
+    {
+        $timestamp = $message->createdAt->format('M j, g:i A');
+        $pinnedClass = $message->isPinned ? ' message-pinned' : '';
+        $pinnedBadge = $message->isPinned ? '<span class="message-pin-badge">Pinned</span>' : '';
+
+        return <<<HTML
+        <div class="message{$pinnedClass}" data-message-id="{$message->id}">
+          <div class="message-header">
+            <div class="message-avatar"></div>
+            <span class="message-author">User #{$message->userId}</span>
+            <span class="message-timestamp">{$timestamp}</span>
+            {$pinnedBadge}
+          </div>
+          <div class="message-body">{$message->bodyHtml}</div>
+        </div>
+        HTML;
     }
 }
