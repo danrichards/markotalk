@@ -1,0 +1,11 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import './base.css';
+@import './layout.css';
+@import './components.css';
+@import './modules/notification.css';
+@import './modules/auth.css';
+@import './modules/space.css';
+@import './modules/message.css';
+@import './modules/admin.css';

@@ -1,0 +1,8 @@
+<nav class="space-list">
+  {foreach $spaces as $space}
+  <a href="/spaces/{$space->slug}" class="space-item{if $space->slug === ($currentSpace->slug ?? '')} space-item-active{/if}">
+    <span class="space-hash">#</span>
+    <span class="space-name">{$space->name}</span>
+  </a>
+  {/foreach}
+</nav>

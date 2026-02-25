@@ -1,0 +1,30 @@
+{layout 'layout'}
+
+{block title}Notifications{/block}
+
+{block content}
+<div class="notification-page">
+    <div class="notification-header">
+        <h1 class="notification-title">Notifications</h1>
+        {if count($notifications) > 0}
+        <form method="post" action="/notifications/read">
+            <button type="submit" class="btn btn-primary">Mark All as Read</button>
+        </form>
+        {/if}
+    </div>
+    <div class="notification-list">
+        {foreach $notifications as $notification}
+        <div class="notification-item {if $notification->readAt}notification-item--read{/if}">
+            <span class="notification-type-icon">&#128276;</span>
+            <div class="notification-body">
+                <p class="notification-message">{$notification->data|noescape}</p>
+            </div>
+            <span class="notification-time">{$notification->createdAt}</span>
+        </div>
+        {/foreach}
+        {if count($notifications) === 0}
+        <p class="notification-empty">No notifications yet.</p>
+        {/if}
+    </div>
+</div>
+{/block}

@@ -1,0 +1,47 @@
+{extends "layout"}
+{block title}Admin — Users — MarkoTalk{/block}
+{block content}
+<div class="admin-panel">
+  <div class="admin-header">
+    <h1 class="admin-title">User Management</h1>
+  </div>
+  <table class="admin-table">
+    <thead class="admin-table-header">
+      <tr>
+        <th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {foreach $users as $user}
+      <tr class="admin-table-row">
+        <td>{$user->username}</td>
+        <td>{$user->email}</td>
+        <td>{$user->role->value}</td>
+        <td>{if $user->isBanned}Banned{else}Active{/if}</td>
+        <td class="admin-actions">
+          {if $user->isBanned}
+          <form method="POST" action="/admin/users/{$user->id}/unban">
+            <input type="hidden" name="_token" value="{$csrfToken}">
+            <button class="admin-action admin-action-restore" type="submit">Unban</button>
+          </form>
+          {else}
+          <form method="POST" action="/admin/users/{$user->id}/ban">
+            <input type="hidden" name="_token" value="{$csrfToken}">
+            <button class="admin-action admin-action-danger" type="submit">Ban</button>
+          </form>
+          {/if}
+          <form method="POST" action="/admin/users/{$user->id}/role">
+            <input type="hidden" name="_token" value="{$csrfToken}">
+            <select name="role">
+              <option value="user"{if $user->role->value === 'user'} selected{/if}>User</option>
+              <option value="admin"{if $user->role->value === 'admin'} selected{/if}>Admin</option>
+            </select>
+            <button class="admin-action" type="submit">Change Role</button>
+          </form>
+        </td>
+      </tr>
+      {/foreach}
+    </tbody>
+  </table>
+</div>
+{/block}

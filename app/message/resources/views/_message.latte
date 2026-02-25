@@ -1,0 +1,36 @@
+<div class="message{if $message->isPinned} message-pinned{/if}" data-message-id="{$message->id}">
+  <div class="message-header">
+    <div class="message-avatar"></div>
+    <span class="message-author">{$message->displayName ?? $message->userId}</span>
+    <span class="message-timestamp">{$message->createdAt}</span>
+    {if $message->isPinned}
+    <span class="message-pin-badge">📌 Pinned</span>
+    {/if}
+  </div>
+  <div class="message-body">{$message->bodyHtml|noescape}</div>
+  {if isset($currentUser) && ($currentUser->id === $message->userId || $currentUser->role === 'admin')}
+  <div class="message-actions">
+    <button class="message-action-edit" data-message-id="{$message->id}">Edit</button>
+    <form method="POST" action="/messages/{$message->id}" class="message-action-form">
+      <input type="hidden" name="_method" value="DELETE">
+      <input type="hidden" name="_token" value="{$csrfToken}">
+      <button class="message-action-delete" type="submit">Delete</button>
+    </form>
+  </div>
+  {/if}
+  <div class="message-reactions" data-message-id="{$message->id}">
+    {foreach $reactions as $reaction}
+    <button class="message-reaction{if $reaction['user_reacted']} message-reaction-active{/if}"
+            data-emoji="{$reaction['emoji']}"
+            data-message-id="{$message->id}">
+      {$reaction['emoji']} <span class="reaction-count">{$reaction['count']}</span>
+    </button>
+    {/foreach}
+    <button class="message-reaction-add" data-message-id="{$message->id}">+</button>
+  </div>
+  <div class="emoji-picker" id="emoji-picker-{$message->id}" hidden>
+    {foreach ['👍', '❤️', '😂', '🎉', '🚀', '👀'] as $emoji}
+    <button class="emoji-option" data-emoji="{$emoji}" data-message-id="{$message->id}">{$emoji}</button>
+    {/foreach}
+  </div>
+</div>

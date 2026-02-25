@@ -1,0 +1,51 @@
+.notification-page {
+    @apply max-w-2xl mx-auto p-4;
+}
+
+.notification-list {
+    @apply space-y-2;
+}
+
+.notification-item {
+    @apply flex items-start gap-3 p-4 bg-white rounded shadow;
+}
+
+.notification-item--read {
+    @apply opacity-60;
+}
+
+.notification-type-icon {
+    @apply flex-shrink-0 text-xl;
+}
+
+.notification-body {
+    @apply flex-1 min-w-0;
+}
+
+.notification-message {
+    @apply text-sm text-gray-800;
+}
+
+.notification-time {
+    @apply text-xs text-gray-500 whitespace-nowrap;
+}
+
+.notification-bell {
+    @apply relative inline-flex items-center;
+}
+
+.notification-badge {
+    @apply absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center;
+}
+
+.notification-actions {
+    @apply flex gap-2 mb-4;
+}
+
+.notification-header {
+    @apply flex items-center justify-between mb-4;
+}
+
+.notification-title {
+    @apply text-xl font-semibold;
+}

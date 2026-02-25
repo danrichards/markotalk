@@ -1,0 +1,44 @@
+{extends "layout"}
+
+{block title}Register — MarkoTalk{/block}
+
+{block content}
+<div class="auth-container">
+  <div class="auth-card">
+    <h1 class="auth-title">Create Account</h1>
+    <form class="auth-form" method="POST" action="/register">
+      <input type="hidden" name="_token" value="{$csrfToken}">
+      <div class="auth-field">
+        <label class="auth-label" for="username">Username</label>
+        <input class="auth-input{if isset($errors['username'])} auth-input-error{/if}" type="text" id="username" name="username" value="{$old['username'] ?? ''}">
+        {if isset($errors['username'])}
+        <span class="auth-error">{$errors['username']}</span>
+        {/if}
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="email">Email</label>
+        <input class="auth-input{if isset($errors['email'])} auth-input-error{/if}" type="email" id="email" name="email" value="{$old['email'] ?? ''}">
+        {if isset($errors['email'])}
+        <span class="auth-error">{$errors['email']}</span>
+        {/if}
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="password">Password</label>
+        <input class="auth-input{if isset($errors['password'])} auth-input-error{/if}" type="password" id="password" name="password">
+        {if isset($errors['password'])}
+        <span class="auth-error">{$errors['password']}</span>
+        {/if}
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="password_confirmation">Confirm Password</label>
+        <input class="auth-input{if isset($errors['password_confirmation'])} auth-input-error{/if}" type="password" id="password_confirmation" name="password_confirmation">
+        {if isset($errors['password_confirmation'])}
+        <span class="auth-error">{$errors['password_confirmation']}</span>
+        {/if}
+      </div>
+      <button class="auth-submit" type="submit">Create Account</button>
+    </form>
+    <p class="auth-link">Already have an account? <a href="/login">Sign In</a></p>
+  </div>
+</div>
+{/block}

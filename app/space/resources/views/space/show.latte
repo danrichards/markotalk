@@ -1,0 +1,50 @@
+{extends "layout"}
+
+{block title}{$space->name} — MarkoTalk{/block}
+
+{block sidebar}
+  {* space list sidebar *}
+  <nav class="space-list">
+    {foreach $spaces as $space}
+    <a href="/spaces/{$space->slug}" class="space-item{if $space->slug === $currentSpace->slug} space-item-active{/if}">
+      <span class="space-hash">#</span>
+      <span class="space-name">{$space->name}</span>
+      {if isset($unreadCounts[$space->id]) && $unreadCounts[$space->id] > 0}
+      <span class="space-item-unread">{$unreadCounts[$space->id]}</span>
+      {/if}
+    </a>
+    {/foreach}
+  </nav>
+  {* member list in sidebar *}
+  <div class="member-section">
+    <h3 class="member-section-title">Members</h3>
+    <ul class="member-list" id="member-list">
+      {foreach $members as $member}
+      <li class="member-item" data-user-id="{$member->id}">
+        <span class="member-indicator {if $member->isOnline}is-online{else}is-offline{/if}"></span>
+        <span class="member-name">{$member->displayName ?? $member->username}</span>
+      </li>
+      {/foreach}
+    </ul>
+  </div>
+{/block}
+
+{block content}
+<div class="chat-area">
+  <div class="chat-header">
+    <h2 class="chat-title"># {$space->name}</h2>
+  </div>
+  <div class="chat-feed" id="chat-feed" data-space-slug="{$space->slug}">
+    {foreach $messages as $message}
+      {include "../../../message/resources/views/_message.latte", message: $message, currentUser: $currentUser, csrfToken: $csrfToken}
+    {/foreach}
+  </div>
+  <div class="chat-input">
+    <form class="chat-input-form" method="POST" action="/spaces/{$space->slug}/messages">
+      <input type="hidden" name="_token" value="{$csrfToken}">
+      <textarea class="chat-input-field" name="body" placeholder="Message #{$space->name}" rows="1" id="message-input"></textarea>
+      <button class="chat-input-send" type="submit">Send</button>
+    </form>
+  </div>
+</div>
+{/block}

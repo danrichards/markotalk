@@ -1,0 +1,15 @@
+.btn {
+    @apply inline-flex items-center px-4 py-2 rounded font-medium transition-colors;
+}
+
+.btn-primary {
+    @apply bg-brand text-white hover:bg-brand-dark;
+}
+
+.form-field {
+    @apply w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand;
+}
+
+.form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+}

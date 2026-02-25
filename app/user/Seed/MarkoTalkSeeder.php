@@ -1,0 +1,105 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\User\Seed;
+
+use App\Space\Entity\Space;
+use App\Space\Entity\SpaceMembership;
+use App\Space\Repository\SpaceMembershipRepositoryInterface;
+use App\Space\Repository\SpaceRepositoryInterface;
+use App\User\Entity\User;
+use App\User\Enum\UserRole;
+use App\User\Repository\UserRepositoryInterface;
+use DateTimeImmutable;
+use Marko\Config\ConfigRepositoryInterface;
+use Marko\Database\Seed\Seeder;
+use Marko\Database\Seed\SeederInterface;
+
+/** @noinspection PhpUnused */
+#[Seeder(name: 'markotalk', order: 10)]
+readonly class MarkoTalkSeeder implements SeederInterface
+{
+    public function __construct(
+        private ConfigRepositoryInterface $config,
+        private SpaceRepositoryInterface $spaceRepository,
+        private UserRepositoryInterface $userRepository,
+        private SpaceMembershipRepositoryInterface $spaceMembershipRepository,
+    ) {}
+
+    public function run(): void
+    {
+        $spaces = $this->seedSpaces();
+        $admin = $this->seedAdminUser();
+        $this->joinAdminToSpaces(admin: $admin, spaces: $spaces);
+    }
+
+    private function seedAdminUser(): User
+    {
+        $now = new DateTimeImmutable();
+
+        $user = new User(
+            id: 0,
+            username: 'admin',
+            email: 'admin@example.com',
+            password: password_hash(password: 'admin', algo: PASSWORD_BCRYPT),
+            displayName: 'Admin',
+            avatarUrl: null,
+            role: UserRole::Admin,
+            isBanned: false,
+            lastSeenAt: null,
+            rememberToken: null,
+            createdAt: $now,
+            updatedAt: $now,
+        );
+
+        $this->userRepository->save(entity: $user);
+
+        return $user;
+    }
+
+    /**
+     * @param array<Space> $spaces
+     */
+    private function joinAdminToSpaces(User $admin, array $spaces): void
+    {
+        foreach ($spaces as $space) {
+            $membership = new SpaceMembership(
+                id: null,
+                userId: $admin->id,
+                spaceId: $space->id,
+                lastReadMessageId: null,
+                joinedAt: new DateTimeImmutable(),
+            );
+
+            $this->spaceMembershipRepository->save(entity: $membership);
+        }
+    }
+
+    /**
+     * @return array<Space>
+     */
+    private function seedSpaces(): array
+    {
+        $defaultSpaces = $this->config->getArray(key: 'default_spaces');
+        $spaces = [];
+
+        foreach ($defaultSpaces as $spaceData) {
+            $space = new Space(
+                id: null,
+                name: $spaceData['name'],
+                slug: $spaceData['slug'],
+                description: $spaceData['description'],
+                isArchived: false,
+                createdBy: 0,
+                createdAt: new DateTimeImmutable(),
+                updatedAt: new DateTimeImmutable(),
+            );
+
+            $this->spaceRepository->save(entity: $space);
+            $spaces[] = $space;
+        }
+
+        return $spaces;
+    }
+}

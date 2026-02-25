@@ -1,0 +1,48 @@
+{extends "layout"}
+{block title}Admin — Spaces — MarkoTalk{/block}
+{block content}
+<div class="admin-panel">
+  <div class="admin-header">
+    <h1 class="admin-title">Space Management</h1>
+  </div>
+  <div class="admin-section">
+    <h2 class="admin-section-title">Create Space</h2>
+    <form class="admin-form" method="POST" action="/admin/spaces">
+      <input type="hidden" name="_token" value="{$csrfToken}">
+      <div class="admin-field">
+        <label class="admin-label" for="name">Name</label>
+        <input class="admin-input" type="text" id="name" name="name">
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="description">Description</label>
+        <textarea class="admin-input" id="description" name="description"></textarea>
+      </div>
+      <button class="admin-btn" type="submit">Create Space</button>
+    </form>
+  </div>
+  <table class="admin-table">
+    <thead class="admin-table-header">
+      <tr>
+        <th>Name</th><th>Slug</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {foreach $spaces as $space}
+      <tr class="admin-table-row">
+        <td>{$space->name}</td>
+        <td>{$space->slug}</td>
+        <td>{if $space->isArchived}Archived{else}Active{/if}</td>
+        <td class="admin-actions">
+          <form method="POST" action="/admin/spaces/{$space->id}/archive">
+            <input type="hidden" name="_token" value="{$csrfToken}">
+            <button class="admin-action{if $space->isArchived} admin-action-restore{else} admin-action-danger{/if}" type="submit">
+              {if $space->isArchived}Restore{else}Archive{/if}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {/foreach}
+    </tbody>
+  </table>
+</div>
+{/block}
