@@ -8,11 +8,14 @@ use App\Message\Entity\Message;
 use App\Message\Repository\MessageRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
+use App\User\Repository\UserRepositoryInterface;
 use App\User\Service\PresenceTrackerInterface;
+use Marko\Authentication\AuthManager;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Config\ConfigRepositoryInterface;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Http\Request;
+use Marko\Security\Contracts\CsrfTokenManagerInterface;
 use Marko\Sse\SseEvent;
 use Marko\Sse\SseStream;
 use Marko\Sse\StreamingResponse;
@@ -22,8 +25,11 @@ readonly class StreamController
     public function __construct(
         private SpaceRepositoryInterface $spaces,
         private MessageRepositoryInterface $messages,
+        private UserRepositoryInterface $users,
         private PresenceTrackerInterface $presence,
         private ConfigRepositoryInterface $config,
+        private AuthManager $auth,
+        private CsrfTokenManagerInterface $csrf,
     ) {}
 
     #[Get('/spaces/{slug}/stream', middleware: [AuthMiddleware::class])]
@@ -38,7 +44,10 @@ readonly class StreamController
         $space = $this->spaces->findBySlug(slug: $slug);
         $lastEventId = (int) ($request->header(name: 'Last-Event-ID') ?? 0);
 
-        $dataProvider = function () use ($space, &$lastEventId): array {
+        $currentUserId = (int) $this->auth->id();
+        $csrfToken = $this->csrf->get();
+
+        $dataProvider = function () use ($space, &$lastEventId, $currentUserId, $csrfToken): array {
             if ($space === null) {
                 return [];
             }
@@ -50,7 +59,11 @@ readonly class StreamController
 
             $events = array_map(
                 callback: fn (Message $message): SseEvent => new SseEvent(
-                    data: $this->renderMessageHtml(message: $message),
+                    data: $this->renderMessageHtml(
+                        message: $message,
+                        currentUserId: $currentUserId,
+                        csrfToken: $csrfToken,
+                    ),
                     event: 'message',
                     id: $message->id,
                 ),
@@ -86,21 +99,39 @@ readonly class StreamController
         );
     }
 
-    private function renderMessageHtml(Message $message): string
-    {
+    private function renderMessageHtml(
+        Message $message,
+        int $currentUserId,
+        string $csrfToken,
+    ): string {
+        $user = $this->users->find(id: $message->userId);
+        $authorName = htmlspecialchars(
+            string: $user !== null ? ($user->displayName ?: $user->username) : 'Unknown User',
+        );
         $timestamp = $message->createdAt->format('M j, g:i A');
         $pinnedClass = $message->isPinned ? ' message-pinned' : '';
         $pinnedBadge = $message->isPinned ? '<span class="message-pin-badge">Pinned</span>' : '';
+
+        $actionsHtml = '';
+        if ($message->userId === $currentUserId) {
+            $actionsHtml = <<<HTML
+              <div class="message-actions">
+                <button class="message-action-edit" data-message-id="{$message->id}">Edit</button>
+                <button class="message-action-delete" data-message-id="{$message->id}" data-csrf-token="{$csrfToken}">Delete</button>
+              </div>
+            HTML;
+        }
 
         return <<<HTML
         <div class="message{$pinnedClass}" data-message-id="{$message->id}">
           <div class="message-header">
             <div class="message-avatar"></div>
-            <span class="message-author">User #{$message->userId}</span>
+            <span class="message-author">{$authorName}</span>
             <span class="message-timestamp">{$timestamp}</span>
             {$pinnedBadge}
           </div>
           <div class="message-body">{$message->bodyHtml}</div>
+          {$actionsHtml}
         </div>
         HTML;
     }

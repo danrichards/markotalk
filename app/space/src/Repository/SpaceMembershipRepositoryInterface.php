@@ -50,4 +50,11 @@ interface SpaceMembershipRepositoryInterface extends RepositoryInterface
         SpaceMembership $membership,
         int $messageId,
     ): void;
+
+    /**
+     * Clear last_read_message_id for all memberships referencing a given message.
+     */
+    public function clearLastReadMessageId(
+        int $messageId,
+    ): void;
 }

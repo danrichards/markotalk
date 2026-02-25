@@ -143,6 +143,29 @@
   }
 
   document.addEventListener('click', async (e) => {
+    // Delete message
+    const deleteBtn = e.target.closest('.message-action-delete');
+    if (deleteBtn) {
+      const messageId = deleteBtn.dataset.messageId;
+      const csrfToken = deleteBtn.dataset.csrfToken || document.querySelector('[name="_token"]')?.value;
+      try {
+        const res = await fetch(`/messages/${messageId}`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        });
+        if (res.ok) {
+          const msgEl = chatFeed.querySelector(`[data-message-id="${messageId}"]`);
+          if (msgEl) msgEl.remove();
+        }
+      } catch (err) {
+        console.error('Failed to delete message', err);
+      }
+      return;
+    }
+
     const reactionBtn = e.target.closest('.message-reaction, .emoji-option');
     if (reactionBtn) {
       const emoji = reactionBtn.dataset.emoji;

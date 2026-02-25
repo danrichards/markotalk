@@ -36,17 +36,16 @@ readonly class SpaceController
     public function index(
         Request $request,
     ): Response {
-        $userId = (int) $this->auth->user()->getAuthIdentifier();
-        $userMemberships = $this->memberships->findAllForUser(userId: $userId);
+        $general = $this->spaces->findBySlug(slug: 'general');
 
-        if ($userMemberships !== []) {
-            $spaceId = $userMemberships[0]->spaceId;
+        if ($general !== null) {
+            return Response::redirect(url: '/spaces/general');
+        }
 
-            foreach ($this->spaces->findActive() as $space) {
-                if ($space->id === $spaceId) {
-                    return Response::redirect(url: '/spaces/' . $space->slug);
-                }
-            }
+        $activeSpaces = $this->spaces->findActive();
+
+        if ($activeSpaces !== []) {
+            return Response::redirect(url: '/spaces/' . $activeSpaces[0]->slug);
         }
 
         return Response::redirect(url: '/spaces');
@@ -89,6 +88,19 @@ readonly class SpaceController
             }
         }
 
+        $userMap = [];
+        foreach ($members as $member) {
+            $userMap[$member->id] = $member->displayName ?: $member->username;
+        }
+        foreach ($messages as $message) {
+            if (!isset($userMap[$message->userId])) {
+                $user = $this->users->find(id: $message->userId);
+                if ($user !== null) {
+                    $userMap[$user->id] = $user->displayName ?: $user->username;
+                }
+            }
+        }
+
         $userMemberships = $this->memberships->findAllForUser(userId: $userId);
         $unreadCounts = [];
         foreach ($userMemberships as $m) {
@@ -101,6 +113,7 @@ readonly class SpaceController
             'membership' => $membership,
             'members' => $members,
             'messages' => $messages,
+            'userMap' => $userMap,
             'unreadCounts' => $unreadCounts,
             'currentUser' => $this->auth->user(),
             'csrfToken' => $this->csrf->get(),

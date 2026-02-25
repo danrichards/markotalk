@@ -7,6 +7,7 @@ namespace App\Message\Controller;
 use App\Message\Entity\Message;
 use App\Message\Repository\MessageRepositoryInterface;
 use App\Message\Repository\ReactionRepositoryInterface;
+use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Enum\UserRole;
@@ -31,6 +32,7 @@ readonly class MessageController
     public function __construct(
         private MessageRepositoryInterface $messages,
         private SpaceRepositoryInterface $spaces,
+        private SpaceMembershipRepositoryInterface $memberships,
         private AuthManager $auth,
         private ValidatorInterface $validator,
         private ConfigRepositoryInterface $config,
@@ -221,6 +223,7 @@ readonly class MessageController
             );
         }
 
+        $this->memberships->clearLastReadMessageId(messageId: (int) $message->id);
         $this->messages->delete(entity: $message);
 
         return Response::json(

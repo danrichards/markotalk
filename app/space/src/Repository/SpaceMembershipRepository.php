@@ -119,4 +119,18 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
 
         $this->connection->execute(sql: $sql, bindings: [$messageId, $membership->id]);
     }
+
+    /**
+     * Clear last_read_message_id for all memberships referencing a given message.
+     */
+    public function clearLastReadMessageId(
+        int $messageId,
+    ): void {
+        $sql = sprintf(
+            'UPDATE %s SET last_read_message_id = NULL WHERE last_read_message_id = ?',
+            $this->metadata->tableName,
+        );
+
+        $this->connection->execute(sql: $sql, bindings: [$messageId]);
+    }
 }

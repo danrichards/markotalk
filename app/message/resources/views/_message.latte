@@ -1,7 +1,7 @@
 <div class="message{if $message->isPinned} message-pinned{/if}" data-message-id="{$message->id}">
   <div class="message-header">
     <div class="message-avatar"></div>
-    <span class="message-author">User #{$message->userId}</span>
+    <span class="message-author">{$userMap[$message->userId] ?? 'Unknown User'}</span>
     <span class="message-timestamp">{$message->createdAt|date:'M j, g:i A'}</span>
     {if $message->isPinned}
     <span class="message-pin-badge">Pinned</span>
@@ -11,11 +11,7 @@
   {if isset($currentUser) && $currentUser->id === $message->userId}
   <div class="message-actions">
     <button class="message-action-edit" data-message-id="{$message->id}">Edit</button>
-    <form method="POST" action="/messages/{$message->id}" class="message-action-form">
-      <input type="hidden" name="_method" value="DELETE">
-      <input type="hidden" name="_token" value="{$csrfToken}">
-      <button class="message-action-delete" type="submit">Delete</button>
-    </form>
+    <button class="message-action-delete" data-message-id="{$message->id}" data-csrf-token="{$csrfToken}">Delete</button>
   </div>
   {/if}
 </div>

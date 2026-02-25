@@ -17,6 +17,10 @@
             <span class="notification-badge">{$unreadCount}</span>
             {/if}
         </a>
+        <form method="POST" action="/logout" class="header-logout-form">
+            <input type="hidden" name="_token" value="{$csrfToken}">
+            <button type="submit" class="header-logout-btn">Log out</button>
+        </form>
         {/if}
         {/block}
     </header>
