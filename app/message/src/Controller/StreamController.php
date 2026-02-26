@@ -140,8 +140,8 @@ readonly class StreamController
         if ($message->userId === $currentUserId) {
             $actionsHtml = <<<HTML
               <div class="message-actions">
-                <button class="message-action-edit" data-message-id="{$message->id}">Edit</button>
-                <button class="message-action-delete" data-message-id="{$message->id}" data-csrf-token="{$csrfToken}">Delete</button>
+                <button class="message-action-edit" data-message-id="{$message->id}" title="Edit">&#9998;</button>
+                <button class="message-action-delete" data-message-id="{$message->id}" data-csrf-token="{$csrfToken}" title="Delete">&#128465;</button>
               </div>
             HTML;
         }

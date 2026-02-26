@@ -10,8 +10,8 @@
   <div class="message-body">{$message->bodyHtml|noescape}</div>
   {if isset($currentUser) && $currentUser->id === $message->userId}
   <div class="message-actions">
-    <button class="message-action-edit" data-message-id="{$message->id}">Edit</button>
-    <button class="message-action-delete" data-message-id="{$message->id}" data-csrf-token="{$csrfToken}">Delete</button>
+    <button class="message-action-edit" data-message-id="{$message->id}" title="Edit">✏</button>
+    <button class="message-action-delete" data-message-id="{$message->id}" data-csrf-token="{$csrfToken}" title="Delete">🗑</button>
   </div>
   {/if}
 </div>

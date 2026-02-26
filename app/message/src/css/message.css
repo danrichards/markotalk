@@ -1,4 +1,4 @@
-.message { @apply flex flex-col gap-1 px-4 py-2 hover:bg-gray-50 rounded; }
+.message { @apply relative flex flex-col gap-1 px-4 py-2 hover:bg-gray-50 rounded; }
 .message-pinned { @apply bg-yellow-50 border-l-2 border-yellow-400; }
 .message-header { @apply flex items-center gap-2; }
 .message-avatar { @apply w-8 h-8 rounded-full bg-brand flex-shrink-0; }
@@ -6,10 +6,10 @@
 .message-timestamp { @apply text-xs text-gray-400 ml-1; }
 .message-pin-badge { @apply text-xs text-yellow-600 font-medium; }
 .message-body { @apply text-gray-800 text-sm ml-10 max-w-none; }
-.message-actions { @apply hidden gap-2 ml-10 mt-1; }
+.message-actions { @apply hidden absolute top-1 right-2 gap-1; }
 .message:hover .message-actions { @apply flex; }
-.message-action-edit { @apply text-xs text-gray-500 hover:text-brand; }
-.message-action-delete { @apply text-xs text-gray-500 hover:text-red-500; }
+.message-action-edit { @apply text-sm text-gray-300 hover:text-brand cursor-pointer leading-none; }
+.message-action-delete { @apply text-sm text-gray-300 hover:text-red-500 cursor-pointer leading-none; }
 .message-action-form { @apply inline; }
 .message-edit-textarea { @apply w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-brand resize-y; }
 .message-edit-buttons { @apply flex gap-2 mt-1; }

@@ -230,6 +230,7 @@
     // Delete message
     const deleteBtn = e.target.closest('.message-action-delete');
     if (deleteBtn) {
+      if (!confirm('Delete this message?')) return;
       const messageId = deleteBtn.dataset.messageId;
       const csrfToken = deleteBtn.dataset.csrfToken || document.querySelector('[name="_token"]')?.value;
       try {
