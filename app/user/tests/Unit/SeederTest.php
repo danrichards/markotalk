@@ -184,6 +184,10 @@ function makeUserRepositoryMock(): UserRepositoryInterface
         }
 
         public function updateRememberToken(User $user, ?string $token): void {}
+
+        public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {}
+
+        public function clearLastSeen(User $user): void {}
     };
 }
 

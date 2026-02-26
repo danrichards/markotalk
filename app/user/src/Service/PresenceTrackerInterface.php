@@ -10,6 +10,8 @@ interface PresenceTrackerInterface
 {
     public function updateLastSeen(User $user): void;
 
+    public function markOffline(User $user): void;
+
     public function isOnline(User $user): bool;
 
     /**

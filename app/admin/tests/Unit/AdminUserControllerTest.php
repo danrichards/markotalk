@@ -69,6 +69,10 @@ class AdminUserStubRepository implements UserRepositoryInterface
         ?string $token,
     ): void {}
 
+    public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {}
+
+    public function clearLastSeen(User $user): void {}
+
     public function find(int $id): ?Entity { return $this->findResult; }
 
     public function findOrFail(int $id): Entity

@@ -17,8 +17,16 @@ readonly class DatabasePresenceTracker implements PresenceTrackerInterface
 
     public function updateLastSeen(User $user): void
     {
-        $user->lastSeenAt = new DateTimeImmutable();
-        $this->userRepository->save(entity: $user);
+        $this->userRepository->updateLastSeen(
+            user: $user,
+            timestamp: new DateTimeImmutable(),
+        );
+    }
+
+    public function markOffline(User $user): void
+    {
+        $user->lastSeenAt = null;
+        $this->userRepository->clearLastSeen(user: $user);
     }
 
     public function isOnline(User $user): bool

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\User\Repository;
 
 use App\User\Entity\User;
+use DateTimeImmutable;
 use Marko\Database\Repository\RepositoryInterface;
 
 interface UserRepositoryInterface extends RepositoryInterface
@@ -15,6 +16,21 @@ interface UserRepositoryInterface extends RepositoryInterface
     public function findByEmail(
         string $email,
     ): ?User;
+
+    /**
+     * Update the last seen timestamp for a user.
+     */
+    public function updateLastSeen(
+        User $user,
+        DateTimeImmutable $timestamp,
+    ): void;
+
+    /**
+     * Clear the last seen timestamp for a user (mark offline).
+     */
+    public function clearLastSeen(
+        User $user,
+    ): void;
 
     /**
      * Find a user by their username.

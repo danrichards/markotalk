@@ -370,6 +370,10 @@ function makeMessageUserRepository(?User $user = null): UserRepositoryInterface
 
         public function updateRememberToken(User $user, ?string $token): void {}
 
+        public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {}
+
+        public function clearLastSeen(User $user): void {}
+
         public function find(int $id): ?DatabaseEntity
         {
             return $this->user;

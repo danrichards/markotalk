@@ -6,6 +6,7 @@ namespace App\User\Repository;
 
 use App\User\Entity\User;
 use Closure;
+use DateTimeImmutable;
 use Marko\Database\Connection\ConnectionInterface;
 use Marko\Database\Entity\EntityHydrator;
 use Marko\Database\Entity\EntityMetadataFactory;
@@ -80,6 +81,33 @@ class UserRepository extends Repository implements UserRepositoryInterface
         }
 
         return $user;
+    }
+
+    /**
+     * Update the last seen timestamp for a user.
+     */
+    public function updateLastSeen(
+        User $user,
+        DateTimeImmutable $timestamp,
+    ): void {
+        $user->lastSeenAt = $timestamp;
+        $this->connection->execute(
+            'UPDATE users SET last_seen_at = ? WHERE id = ?',
+            [$timestamp->format(format: 'Y-m-d H:i:s'), $user->id],
+        );
+    }
+
+    /**
+     * Clear the last seen timestamp for a user (mark offline).
+     */
+    public function clearLastSeen(
+        User $user,
+    ): void {
+        $user->lastSeenAt = null;
+        $this->connection->execute(
+            'UPDATE users SET last_seen_at = NULL WHERE id = ?',
+            [$user->id],
+        );
     }
 
     /**

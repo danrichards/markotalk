@@ -40,6 +40,10 @@
   // SSE connection
   const eventSource = new EventSource(`/spaces/${spaceSlug}/stream`);
 
+  window.addEventListener('beforeunload', () => {
+    eventSource.close();
+  });
+
   eventSource.addEventListener('space:' + spaceSlug, (e) => {
     const event = JSON.parse(e.data);
     switch (event.type) {

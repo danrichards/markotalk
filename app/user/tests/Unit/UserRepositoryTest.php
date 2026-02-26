@@ -128,6 +128,8 @@ it('validates credentials against hashed password', function (): void {
         public function findByUsername(string $username): ?User { return null; }
         public function findByRememberToken(int $userId, string $token): ?User { return null; }
         public function updateRememberToken(User $user, ?string $token): void {}
+        public function updateLastSeen(User $user, \DateTimeImmutable $timestamp): void {}
+        public function clearLastSeen(User $user): void {}
     };
 
     $verifiedValue = null;

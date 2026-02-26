@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Space\Entity\Space;
+use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Controller\AuthController;
 use App\User\Entity\User;
 use App\User\Enum\UserRole;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Repository\UserRepositoryInterface;
+use App\User\Service\PresenceTrackerInterface;
 use Marko\Authentication\Contracts\GuardInterface;
 use Marko\Core\Event\EventDispatcherInterface;
 use Marko\Database\Entity\Entity;
@@ -84,6 +87,10 @@ class AuthStubUserRepository implements UserRepositoryInterface
     }
 
     public function updateRememberToken(User $user, ?string $token): void {}
+
+    public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {}
+
+    public function clearLastSeen(User $user): void {}
 
     public function find(int $id): ?Entity
     {
@@ -172,6 +179,31 @@ class AuthStubValidator implements ValidatorInterface
     }
 }
 
+function makeAuthStubPresenceTracker(): PresenceTrackerInterface
+{
+    return new class implements PresenceTrackerInterface {
+        public function updateLastSeen(User $user): void {}
+        public function markOffline(User $user): void {}
+        public function isOnline(User $user): bool { return false; }
+        public function getOnlineUsers(): array { return []; }
+    };
+}
+
+function makeAuthStubSpaceRepository(): SpaceRepositoryInterface
+{
+    return new class implements SpaceRepositoryInterface {
+        public function findBySlug(string $slug): ?Space { return null; }
+        public function findActive(): array { return []; }
+        public function find(int $id): ?Entity { return null; }
+        public function findOrFail(int $id): Entity { throw new RuntimeException(message: 'Not implemented'); }
+        public function findAll(): array { return []; }
+        public function findBy(array $criteria): array { return []; }
+        public function findOneBy(array $criteria): ?Entity { return null; }
+        public function save(Entity $entity): void {}
+        public function delete(Entity $entity): void {}
+    };
+}
+
 function makeAuthController(
     ?AuthStubView $view = null,
     ?FakeGuard $guard = null,
@@ -189,6 +221,8 @@ function makeAuthController(
         validator: $validator ?? new AuthStubValidator(),
         eventDispatcher: $eventDispatcher ?? new FakeEventDispatcher(),
         csrf: $csrf ?? new AuthStubCsrfTokenManager(),
+        presence: makeAuthStubPresenceTracker(),
+        spaces: makeAuthStubSpaceRepository(),
     );
 }
 

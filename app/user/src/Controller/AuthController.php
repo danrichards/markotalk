@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\User\Controller;
 
+use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Enum\UserRole;
 use App\User\Event\UserRegisteredEvent;
 use App\User\Repository\UserRepositoryInterface;
+use App\User\Service\PresenceTrackerInterface;
 use DateTimeImmutable;
 use Marko\Authentication\Contracts\GuardInterface;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Authentication\Middleware\GuestMiddleware;
 use Marko\Core\Event\EventDispatcherInterface;
 use Marko\Hashing\Contracts\HasherInterface;
+use Marko\PubSub\Message;
+use Marko\PubSub\PublisherInterface;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Attributes\Middleware;
 use Marko\Routing\Attributes\Post;
@@ -36,6 +40,9 @@ readonly class AuthController
         private ValidatorInterface $validator,
         private EventDispatcherInterface $eventDispatcher,
         private CsrfTokenManagerInterface $csrf,
+        private PresenceTrackerInterface $presence,
+        private SpaceRepositoryInterface $spaces,
+        private ?PublisherInterface $publisher = null,
     ) {}
 
     #[Get(path: '/login')]
@@ -133,8 +140,37 @@ readonly class AuthController
     #[Middleware(AuthMiddleware::class)]
     public function logout(Request $request): Response
     {
+        $user = $this->guard->user();
+
+        if ($user instanceof User) {
+            $this->presence->markOffline(user: $user);
+            $this->broadcastPresenceToAllSpaces();
+        }
+
         $this->guard->logout();
 
         return Response::redirect(url: '/login');
+    }
+
+    private function broadcastPresenceToAllSpaces(): void
+    {
+        if ($this->publisher === null) {
+            return;
+        }
+
+        $onlineIds = array_map(
+            callback: fn(User $u): int => $u->id,
+            array: $this->presence->getOnlineUsers(),
+        );
+
+        $payload = json_encode(value: ['type' => 'presence', 'onlineIds' => $onlineIds]);
+
+        foreach ($this->spaces->findActive() as $space) {
+            $channel = 'space:' . $space->slug;
+            $this->publisher->publish(
+                channel: $channel,
+                message: new Message(channel: $channel, payload: $payload),
+            );
+        }
     }
 }

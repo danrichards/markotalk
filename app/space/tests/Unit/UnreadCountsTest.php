@@ -514,6 +514,10 @@ it('updates last_read_message_id when viewing a space', function (): void {
 
         public function updateRememberToken(User $user, ?string $token): void {}
 
+        public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {}
+
+        public function clearLastSeen(User $user): void {}
+
         public function find(int $id): ?Entity { return null; }
 
         public function findOrFail(int $id): Entity
@@ -542,6 +546,8 @@ it('updates last_read_message_id when viewing a space', function (): void {
 
     $presence = new class implements PresenceTrackerInterface {
         public function updateLastSeen(User $user): void {}
+
+        public function markOffline(User $user): void {}
 
         public function isOnline(User $user): bool { return false; }
 

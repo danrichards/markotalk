@@ -43,6 +43,8 @@ function makePresenceTracker(mixed &$updatedUser): PresenceTrackerInterface
             $this->updatedUser = $user;
         }
 
+        public function markOffline(User $user): void {}
+
         public function isOnline(User $user): bool { return false; }
 
         public function getOnlineUsers(): array { return []; }
@@ -81,6 +83,8 @@ function makeStubUserRepository(array $users = []): UserRepositoryInterface
         public function findByUsername(string $username): ?User { return null; }
         public function findByRememberToken(int $userId, string $token): ?User { return null; }
         public function updateRememberToken(User $user, ?string $token): void {}
+        public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void { $user->lastSeenAt = $timestamp; }
+        public function clearLastSeen(User $user): void { $user->lastSeenAt = null; }
     };
 }
 
@@ -224,6 +228,7 @@ it('includes online user IDs in the presence event payload', function (): void {
         ) {}
 
         public function updateLastSeen(User $user): void { $this->updatedUser = $user; }
+        public function markOffline(User $user): void {}
         public function isOnline(User $user): bool { return true; }
         public function getOnlineUsers(): array { return $this->onlineUsers; }
     };

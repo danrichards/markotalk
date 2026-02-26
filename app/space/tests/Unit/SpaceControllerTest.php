@@ -224,6 +224,10 @@ function makeSpaceUserRepositoryStub(): UserRepositoryInterface
 
         public function updateRememberToken(User $user, ?string $token): void {}
 
+        public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {}
+
+        public function clearLastSeen(User $user): void {}
+
         public function find(int $id): ?Entity { return null; }
 
         public function findOrFail(int $id): Entity
@@ -258,6 +262,8 @@ function makeSpacePresenceTrackerStub(): PresenceTrackerInterface
 {
     return new class implements PresenceTrackerInterface {
         public function updateLastSeen(User $user): void {}
+
+        public function markOffline(User $user): void {}
 
         public function isOnline(User $user): bool { return false; }
 
