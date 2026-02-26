@@ -63,6 +63,7 @@ A real-time community chat platform built with the Marko PHP framework. Dogfoodi
 - Path repositories reference `../marko/packages/*` — all packages pinned to `dev-develop as 0.1.0`
 - Reference `~/Sites/myblog` for exact project setup patterns
 - Full spec at `~/Sites/markotalk.md` — follow the 6-phase build order
+- No need to rebuild CSS, as it's watched and re-compiled on the fly
 
 ## Detailed Configuration
 

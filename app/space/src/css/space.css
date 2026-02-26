@@ -20,3 +20,4 @@
 .is-online { @apply bg-green-400; }
 .is-offline { @apply bg-gray-500; }
 .member-name { @apply text-sm text-gray-300; }
+.member-item-self .member-name { @apply text-white font-bold; }

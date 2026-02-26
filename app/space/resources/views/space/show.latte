@@ -19,7 +19,14 @@
   <div class="member-section">
     <h3 class="member-section-title">Members</h3>
     <ul class="member-list" id="member-list">
+      {if isset($currentUser)}
+      <li class="member-item member-item-self" data-user-id="{$currentUser->id}">
+        <span class="member-indicator is-offline"></span>
+        <span class="member-name">{$currentUser->displayName ?? $currentUser->username}</span>
+      </li>
+      {/if}
       {foreach $members as $member}
+      {continueIf isset($currentUser) && $member->id === $currentUser->id}
       <li class="member-item" data-user-id="{$member->id}">
         <span class="member-indicator is-offline"></span>
         <span class="member-name">{$member->displayName ?? $member->username}</span>
