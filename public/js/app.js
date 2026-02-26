@@ -143,6 +143,81 @@
   }
 
   document.addEventListener('click', async (e) => {
+    // Edit message
+    const editBtn = e.target.closest('.message-action-edit');
+    if (editBtn) {
+      const messageId = editBtn.dataset.messageId;
+      const msgEl = chatFeed.querySelector(`[data-message-id="${messageId}"]`);
+      if (!msgEl || msgEl.querySelector('.message-edit-textarea')) return;
+
+      const bodyEl = msgEl.querySelector('.message-body');
+      const actionsEl = msgEl.querySelector('.message-actions');
+      const originalHtml = bodyEl.innerHTML;
+      const originalText = bodyEl.textContent;
+
+      const textarea = document.createElement('textarea');
+      textarea.className = 'message-edit-textarea';
+      textarea.value = originalText;
+      textarea.rows = 3;
+
+      const btnWrap = document.createElement('div');
+      btnWrap.className = 'message-edit-buttons';
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'message-edit-save';
+      saveBtn.textContent = 'Save';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'message-edit-cancel';
+      cancelBtn.textContent = 'Cancel';
+      btnWrap.append(saveBtn, cancelBtn);
+
+      bodyEl.innerHTML = '';
+      bodyEl.append(textarea, btnWrap);
+      if (actionsEl) actionsEl.style.display = 'none';
+      textarea.focus();
+
+      const finish = () => {
+        bodyEl.innerHTML = originalHtml;
+        if (actionsEl) actionsEl.style.display = '';
+      };
+
+      cancelBtn.addEventListener('click', finish);
+
+      textarea.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape') finish();
+        if (ev.key === 'Enter' && !ev.shiftKey) { ev.preventDefault(); saveBtn.click(); }
+      });
+
+      saveBtn.addEventListener('click', async () => {
+        const newBody = textarea.value.trim();
+        if (!newBody || newBody === originalText) { finish(); return; }
+
+        const csrfToken = msgEl.querySelector('[data-csrf-token]')?.dataset.csrfToken
+          || document.querySelector('[name="_token"]')?.value;
+        try {
+          const res = await fetch(`/messages/${messageId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'X-CSRF-TOKEN': csrfToken,
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: `body=${encodeURIComponent(newBody)}`,
+          });
+          if (res.ok) {
+            bodyEl.innerHTML = '';
+            bodyEl.textContent = newBody;
+            if (actionsEl) actionsEl.style.display = '';
+          } else {
+            finish();
+          }
+        } catch (err) {
+          console.error('Failed to edit message', err);
+          finish();
+        }
+      });
+      return;
+    }
+
     // Delete message
     const deleteBtn = e.target.closest('.message-action-delete');
     if (deleteBtn) {

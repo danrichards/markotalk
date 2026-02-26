@@ -11,6 +11,10 @@
 .message-action-edit { @apply text-xs text-gray-500 hover:text-brand; }
 .message-action-delete { @apply text-xs text-gray-500 hover:text-red-500; }
 .message-action-form { @apply inline; }
+.message-edit-textarea { @apply w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-brand resize-y; }
+.message-edit-buttons { @apply flex gap-2 mt-1; }
+.message-edit-save { @apply text-xs text-white bg-brand px-3 py-1 rounded hover:bg-brand-dark; }
+.message-edit-cancel { @apply text-xs text-gray-500 px-3 py-1 rounded hover:text-gray-700; }
 .message-reactions { @apply flex flex-wrap gap-1 ml-10 mt-1; }
 .message-reaction { @apply flex items-center gap-1 text-sm px-2 py-0.5 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors; }
 .message-reaction-active { @apply bg-brand-light border-brand text-brand; }
