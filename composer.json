@@ -36,13 +36,17 @@
         "marko/authentication-token": "dev-develop as 0.1.0",
         "marko/encryption": "dev-develop as 0.1.0",
         "marko/encryption-openssl": "dev-develop as 0.1.0",
-        "marko/cli": "dev-develop as 0.1.0"
+        "marko/cli": "dev-develop as 0.1.0",
+        "marko/pubsub": "dev-develop as 0.1.0",
+        "marko/pubsub-pgsql": "dev-develop as 0.1.0",
+        "marko/amphp": "dev-develop as 0.1.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.3"
     },
     "repositories": [
         { "type": "path", "url": "../marko/packages/admin" },
+        { "type": "path", "url": "../marko/packages/amphp" },
         { "type": "path", "url": "../marko/packages/admin-api" },
         { "type": "path", "url": "../marko/packages/admin-auth" },
         { "type": "path", "url": "../marko/packages/admin-panel" },
@@ -91,6 +95,8 @@
         { "type": "path", "url": "../marko/packages/queue" },
         { "type": "path", "url": "../marko/packages/queue-database" },
         { "type": "path", "url": "../marko/packages/queue-rabbitmq" },
+        { "type": "path", "url": "../marko/packages/pubsub" },
+        { "type": "path", "url": "../marko/packages/pubsub-pgsql" },
         { "type": "path", "url": "../marko/packages/queue-sync" },
         { "type": "path", "url": "../marko/packages/rate-limiting" },
         { "type": "path", "url": "../marko/packages/routing" },

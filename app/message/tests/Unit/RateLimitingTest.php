@@ -59,7 +59,9 @@ function makeRateLimitSpace(int $id = 1, string $slug = 'general'): Space
 
 function makeRateLimitAuthManager(?AuthenticatableInterface $user = null): AuthManager
 {
+    /** @noinspection PhpMissingParentConstructorInspection - Test stub intentionally skips parent */
     return new class ($user) extends AuthManager {
+        /** @noinspection PhpMissingParentConstructorInspection */
         public function __construct(
             private readonly ?AuthenticatableInterface $mockUser,
         ) {
@@ -97,7 +99,7 @@ function makeRateLimitSpaceRepository(?Space $space = null): SpaceRepositoryInte
 
         public function findOrFail(int $id): DatabaseEntity
         {
-            return $this->space ?? throw new RuntimeException('Not found');
+            return $this->space ?? throw new RuntimeException(message: 'Not found');
         }
 
         public function findAll(): array
@@ -137,6 +139,11 @@ function makeRateLimitMessageRepository(): MessageRepositoryInterface
             return [];
         }
 
+        public function findEditedSince(int $spaceId, DateTimeImmutable $since): array
+        {
+            return [];
+        }
+
         public function find(int $id): ?DatabaseEntity
         {
             return null;
@@ -144,7 +151,7 @@ function makeRateLimitMessageRepository(): MessageRepositoryInterface
 
         public function findOrFail(int $id): DatabaseEntity
         {
-            throw new RuntimeException("Message $id not found");
+            throw new RuntimeException(message: "Message $id not found");
         }
 
         public function findAll(): array
@@ -193,7 +200,7 @@ function makeRateLimitValidator(bool $passes = true): ValidatorInterface
             if (!$this->passes) {
                 $errors = new ValidationErrors();
                 $errors->add(field: 'body', message: 'The body field is required.');
-                throw ValidationException::withErrors($errors);
+                throw ValidationException::withErrors(errors: $errors);
             }
         }
 
@@ -233,7 +240,7 @@ function makeRateLimitConfig(
 
         public function has(string $key, ?string $scope = null): bool
         {
-            return in_array($key, [
+            return in_array(needle: $key, haystack: [
                 'markotalk.max_message_length',
                 'markotalk.rate_limit_messages',
                 'markotalk.rate_limit_window',
@@ -242,15 +249,15 @@ function makeRateLimitConfig(
 
         public function getString(string $key, ?string $scope = null): string
         {
-            return (string) $this->get($key, $scope);
+            return (string) $this->get(key: $key, scope: $scope);
         }
 
         public function getInt(string $key, ?string $scope = null): int
         {
-            $value = $this->get($key, $scope);
+            $value = $this->get(key: $key, scope: $scope);
 
             if ($value === null) {
-                throw new ConfigNotFoundException($key);
+                throw new ConfigNotFoundException(key: $key);
             }
 
             return (int) $value;
@@ -258,12 +265,12 @@ function makeRateLimitConfig(
 
         public function getBool(string $key, ?string $scope = null): bool
         {
-            return (bool) $this->get($key, $scope);
+            return (bool) $this->get(key: $key, scope: $scope);
         }
 
         public function getFloat(string $key, ?string $scope = null): float
         {
-            return (float) $this->get($key, $scope);
+            return (float) $this->get(key: $key, scope: $scope);
         }
 
         public function getArray(string $key, ?string $scope = null): array
@@ -410,6 +417,7 @@ it('limits per user, not globally', function (): void {
 
     $rateLimiter = new class ($attemptedKeys) implements RateLimiterInterface {
         public function __construct(
+            /** @noinspection PhpPropertyOnlyWrittenInspection - Reference property modifies external variable */
             private array &$attemptedKeys,
         ) {}
 
@@ -454,8 +462,8 @@ it('limits per user, not globally', function (): void {
     $controllerTwo->send(slug: 'general', request: makeRateLimitSendRequest());
 
     expect($attemptedKeys)->toHaveCount(2)
-        ->and($attemptedKeys[0])->toBe('user:1:messages')
-        ->and($attemptedKeys[1])->toBe('user:2:messages');
+        ->and($attemptedKeys[0])->toBe('user_1_messages')
+        ->and($attemptedKeys[1])->toBe('user_2_messages');
 });
 
 it('reads rate limit config from markotalk.php', function (): void {
@@ -464,7 +472,9 @@ it('reads rate limit config from markotalk.php', function (): void {
 
     $rateLimiter = new class ($capturedMaxAttempts, $capturedDecaySeconds) implements RateLimiterInterface {
         public function __construct(
+            /** @noinspection PhpPropertyOnlyWrittenInspection - Reference property modifies external variable */
             private mixed &$capturedMaxAttempts,
+            /** @noinspection PhpPropertyOnlyWrittenInspection - Reference property modifies external variable */
             private mixed &$capturedDecaySeconds,
         ) {}
 

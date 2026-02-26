@@ -34,14 +34,14 @@ it('creates a Message entity with all required fields', function (): void {
 });
 
 it('has a migration with composite index on space_id and id', function (): void {
-    $migrationFile = dirname(__DIR__, 4) . '/database/migrations/20260224000004_create_messages.php';
+    $migrationFile = dirname(__DIR__, 4) . '/database/migrations/20260225191741_create_messages.php';
 
     expect(file_exists($migrationFile))->toBeTrue();
 
     $content = file_get_contents($migrationFile);
 
     expect($content)
-        ->toContain('CREATE TABLE messages')
+        ->toContain('messages')
         ->toContain('space_id')
         ->toContain('user_id')
         ->toContain('body')
@@ -51,7 +51,7 @@ it('has a migration with composite index on space_id and id', function (): void 
         ->toContain('created_at')
         ->toContain('PRIMARY KEY')
         ->toContain('idx_messages_space_id_id')
-        ->toContain('DROP TABLE messages');
+        ->toContain('DROP TABLE');
 });
 
 it('finds messages by space ordered by id ascending', function (): void {

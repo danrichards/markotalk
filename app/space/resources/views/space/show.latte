@@ -41,7 +41,7 @@
   <div class="chat-header">
     <h2 class="chat-title"># {$space->name}</h2>
   </div>
-  <div class="chat-feed" id="chat-feed" data-space-slug="{$space->slug}">
+  <div class="chat-feed" id="chat-feed" data-space-slug="{$space->slug}" data-current-user-id="{$currentUser->id}">
     {foreach $messages as $message}
       {include "message::_message", message: $message, currentUser: $currentUser, csrfToken: $csrfToken}
     {/foreach}

@@ -9,12 +9,15 @@ use App\Space\Entity\Space;
 use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Enum\UserRole;
+use App\User\Repository\UserRepositoryInterface;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\AuthenticatableInterface;
 use Marko\Config\ConfigRepositoryInterface;
 use Marko\Config\Exceptions\ConfigNotFoundException;
 use Marko\Database\Entity\Entity as DatabaseEntity;
 use Marko\Pagination\CursorPaginator;
+use Marko\PubSub\Message as PubSubMessage;
+use Marko\PubSub\PublisherInterface;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\Validation\Contracts\ValidatorInterface;
@@ -164,6 +167,11 @@ function makeMessageRepository(array $messages = []): MessageRepositoryInterface
                 array: $this->messages,
                 callback: fn (Message $m) => $m->spaceId === $spaceId && $m->id > $sinceId,
             ));
+        }
+
+        public function findEditedSince(int $spaceId, DateTimeImmutable $since): array
+        {
+            return [];
         }
 
         public function find(int $id): ?DatabaseEntity
@@ -325,12 +333,82 @@ function makeMessageConfig(int $maxMessageLength = 4000): ConfigRepositoryInterf
     };
 }
 
+function makePublisher(): PublisherInterface
+{
+    return new class () implements PublisherInterface {
+        /** @var array<PubSubMessage> */
+        public array $published = [];
+
+        public function publish(string $channel, PubSubMessage $message): void
+        {
+            $this->published[] = $message;
+        }
+    };
+}
+
+function makeMessageUserRepository(?User $user = null): UserRepositoryInterface
+{
+    return new readonly class ($user) implements UserRepositoryInterface {
+        public function __construct(
+            private ?User $user,
+        ) {}
+
+        public function findByEmail(string $email): ?User
+        {
+            return $this->user;
+        }
+
+        public function findByUsername(string $username): ?User
+        {
+            return $this->user;
+        }
+
+        public function findByRememberToken(int $userId, string $token): ?User
+        {
+            return $this->user;
+        }
+
+        public function updateRememberToken(User $user, ?string $token): void {}
+
+        public function find(int $id): ?DatabaseEntity
+        {
+            return $this->user;
+        }
+
+        public function findOrFail(int $id): DatabaseEntity
+        {
+            return $this->user ?? throw new RuntimeException(message: 'Not found');
+        }
+
+        public function findAll(): array
+        {
+            return $this->user !== null ? [$this->user] : [];
+        }
+
+        public function save(DatabaseEntity $entity): void {}
+
+        public function delete(DatabaseEntity $entity): void {}
+
+        public function findOneBy(array $criteria): ?DatabaseEntity
+        {
+            return $this->user;
+        }
+
+        public function findBy(array $criteria): array
+        {
+            return $this->user !== null ? [$this->user] : [];
+        }
+    };
+}
+
 function makeMessageController(
     MessageRepositoryInterface $messages,
     SpaceRepositoryInterface $spaces,
     AuthManager $auth,
     ValidatorInterface $validator,
     ConfigRepositoryInterface $config,
+    ?PublisherInterface $publisher = null,
+    ?UserRepositoryInterface $users = null,
 ): MessageController {
     return new MessageController(
         messages: $messages,
@@ -338,6 +416,8 @@ function makeMessageController(
         auth: $auth,
         validator: $validator,
         config: $config,
+        publisher: $publisher,
+        users: $users,
     );
 }
 
@@ -491,4 +571,211 @@ it('returns message history as JSON on GET /spaces/{slug}/messages', function ()
         ->and($decoded)->toHaveKey('meta')
         ->and($decoded['meta'])->toHaveKey('has_more')
         ->and($decoded)->toHaveKey('links');
+});
+
+it('publishes a message event to space:{slug} channel after sending a message', function (): void {
+    $user = makeMessageUser();
+    $space = makeMessageSpace(slug: 'general');
+    $messages = makeMessageRepository();
+    $spaces = makeMessageSpaceRepository(space: $space);
+    $auth = makeMessageAuthManager(user: $user);
+    $validator = makeMessageValidator(passes: true);
+    $config = makeMessageConfig();
+    $publisher = makePublisher();
+    $users = makeMessageUserRepository(user: $user);
+    $controller = makeMessageController(
+        messages: $messages,
+        spaces: $spaces,
+        auth: $auth,
+        validator: $validator,
+        config: $config,
+        publisher: $publisher,
+        users: $users,
+    );
+
+    $controller->send(slug: 'general', request: makePostMessageRequest());
+
+    expect($publisher->published)->toHaveCount(1)
+        ->and($publisher->published[0]->channel)->toBe('space:general');
+});
+
+it('includes message id, userId, and rendered HTML in the published message payload', function (): void {
+    $user = makeMessageUser(id: 1);
+    $space = makeMessageSpace(slug: 'general');
+    $messages = makeMessageRepository();
+    $spaces = makeMessageSpaceRepository(space: $space);
+    $auth = makeMessageAuthManager(user: $user);
+    $validator = makeMessageValidator(passes: true);
+    $config = makeMessageConfig();
+    $publisher = makePublisher();
+    $users = makeMessageUserRepository(user: $user);
+    $controller = makeMessageController(
+        messages: $messages,
+        spaces: $spaces,
+        auth: $auth,
+        validator: $validator,
+        config: $config,
+        publisher: $publisher,
+        users: $users,
+    );
+
+    $controller->send(slug: 'general', request: makePostMessageRequest(body: 'Hello world'));
+
+    expect($publisher->published)->toHaveCount(1);
+    $payload = json_decode(json: $publisher->published[0]->payload, associative: true);
+    expect($payload)->toHaveKey('type')
+        ->and($payload['type'])->toBe('message')
+        ->and($payload)->toHaveKey('id')
+        ->and($payload)->toHaveKey('userId')
+        ->and($payload['userId'])->toBe(1)
+        ->and($payload)->toHaveKey('html');
+});
+
+it('publishes a message_edited event after editing a message', function (): void {
+    $user = makeMessageUser(id: 1);
+    $message = makeTestMessage(id: 1, spaceId: 1, userId: 1);
+    $space = makeMessageSpace(id: 1, slug: 'general');
+    $messages = makeMessageRepository(messages: [$message]);
+    $spaces = makeMessageSpaceRepository(space: $space);
+    $auth = makeMessageAuthManager(user: $user);
+    $validator = makeMessageValidator(passes: true);
+    $config = makeMessageConfig();
+    $publisher = makePublisher();
+    $users = makeMessageUserRepository(user: $user);
+    $controller = makeMessageController(
+        messages: $messages,
+        spaces: $spaces,
+        auth: $auth,
+        validator: $validator,
+        config: $config,
+        publisher: $publisher,
+        users: $users,
+    );
+
+    $controller->edit(id: 1, request: makeEditMessageRequest(id: 1, body: 'Updated body'));
+
+    expect($publisher->published)->toHaveCount(1)
+        ->and($publisher->published[0]->channel)->toBe('space:general');
+    $payload = json_decode(json: $publisher->published[0]->payload, associative: true);
+    expect($payload['type'])->toBe('message_edited');
+});
+
+it('includes message id and updated bodyHtml in the edited message payload', function (): void {
+    $user = makeMessageUser(id: 1);
+    $message = makeTestMessage(id: 1, spaceId: 1, userId: 1);
+    $space = makeMessageSpace(id: 1, slug: 'general');
+    $messages = makeMessageRepository(messages: [$message]);
+    $spaces = makeMessageSpaceRepository(space: $space);
+    $auth = makeMessageAuthManager(user: $user);
+    $validator = makeMessageValidator(passes: true);
+    $config = makeMessageConfig();
+    $publisher = makePublisher();
+    $users = makeMessageUserRepository(user: $user);
+    $controller = makeMessageController(
+        messages: $messages,
+        spaces: $spaces,
+        auth: $auth,
+        validator: $validator,
+        config: $config,
+        publisher: $publisher,
+        users: $users,
+    );
+
+    $controller->edit(id: 1, request: makeEditMessageRequest(id: 1, body: 'Updated body'));
+
+    $payload = json_decode(json: $publisher->published[0]->payload, associative: true);
+    expect($payload)->toHaveKey('id')
+        ->and($payload['id'])->toBe(1)
+        ->and($payload)->toHaveKey('bodyHtml')
+        ->and($payload['bodyHtml'])->toBe('Updated body');
+});
+
+it('publishes a message_deleted event after deleting a message', function (): void {
+    $user = makeMessageUser(id: 1);
+    $message = makeTestMessage(id: 1, spaceId: 1, userId: 1);
+    $space = makeMessageSpace(id: 1, slug: 'general');
+    $messages = makeMessageRepository(messages: [$message]);
+    $spaces = makeMessageSpaceRepository(space: $space);
+    $auth = makeMessageAuthManager(user: $user);
+    $validator = makeMessageValidator();
+    $config = makeMessageConfig();
+    $publisher = makePublisher();
+    $users = makeMessageUserRepository(user: $user);
+    $controller = makeMessageController(
+        messages: $messages,
+        spaces: $spaces,
+        auth: $auth,
+        validator: $validator,
+        config: $config,
+        publisher: $publisher,
+        users: $users,
+    );
+
+    $controller->delete(id: 1, request: makeDeleteMessageRequest());
+
+    expect($publisher->published)->toHaveCount(1)
+        ->and($publisher->published[0]->channel)->toBe('space:general');
+    $payload = json_decode(json: $publisher->published[0]->payload, associative: true);
+    expect($payload['type'])->toBe('message_deleted');
+});
+
+it('includes message id in the deleted message payload', function (): void {
+    $user = makeMessageUser(id: 1);
+    $message = makeTestMessage(id: 1, spaceId: 1, userId: 1);
+    $space = makeMessageSpace(id: 1, slug: 'general');
+    $messages = makeMessageRepository(messages: [$message]);
+    $spaces = makeMessageSpaceRepository(space: $space);
+    $auth = makeMessageAuthManager(user: $user);
+    $validator = makeMessageValidator();
+    $config = makeMessageConfig();
+    $publisher = makePublisher();
+    $users = makeMessageUserRepository(user: $user);
+    $controller = makeMessageController(
+        messages: $messages,
+        spaces: $spaces,
+        auth: $auth,
+        validator: $validator,
+        config: $config,
+        publisher: $publisher,
+        users: $users,
+    );
+
+    $controller->delete(id: 1, request: makeDeleteMessageRequest());
+
+    $payload = json_decode(json: $publisher->published[0]->payload, associative: true);
+    expect($payload)->toHaveKey('id')
+        ->and($payload['id'])->toBe(1);
+});
+
+it('renders message HTML without user-specific action buttons', function (): void {
+    $user = makeMessageUser(id: 1);
+    $space = makeMessageSpace(slug: 'general');
+    $messages = makeMessageRepository();
+    $spaces = makeMessageSpaceRepository(space: $space);
+    $auth = makeMessageAuthManager(user: $user);
+    $validator = makeMessageValidator(passes: true);
+    $config = makeMessageConfig();
+    $publisher = makePublisher();
+    $users = makeMessageUserRepository(user: $user);
+    $controller = makeMessageController(
+        messages: $messages,
+        spaces: $spaces,
+        auth: $auth,
+        validator: $validator,
+        config: $config,
+        publisher: $publisher,
+        users: $users,
+    );
+
+    $controller->send(slug: 'general', request: makePostMessageRequest(body: 'Hello world'));
+
+    expect($publisher->published)->toHaveCount(1);
+    $payload = json_decode(json: $publisher->published[0]->payload, associative: true);
+    $html = $payload['html'];
+    expect($html)->not->toContain('message-actions')
+        ->and($html)->not->toContain('message-action-edit')
+        ->and($html)->not->toContain('message-action-delete')
+        ->and($html)->not->toContain('csrf-token')
+        ->and($html)->toContain('class="message"')
+        ->and($html)->toContain('message-body');
 });

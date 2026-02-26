@@ -3,32 +3,20 @@
 declare(strict_types=1);
 
 use App\Message\Controller\StreamController;
-use App\Message\Entity\Message;
 use App\Message\Repository\MessageRepositoryInterface;
 use App\Space\Entity\Space;
 use App\Space\Repository\SpaceRepositoryInterface;
-use App\User\Entity\User;
-use App\User\Service\PresenceTrackerInterface;
+use App\User\Middleware\PresenceMiddleware;
+use App\User\Repository\UserRepositoryInterface;
 use Marko\Authentication\AuthManager;
-use Marko\Authentication\AuthenticatableInterface;
+use Marko\Authentication\Middleware\AuthMiddleware;
+use Marko\Config\ConfigRepositoryInterface;
 use Marko\Database\Entity\Entity;
-use Marko\Pagination\CursorPaginator;
+use Marko\PubSub\Subscription;
+use Marko\PubSub\SubscriberInterface;
+use Marko\Routing\Attributes\Get;
+use Marko\Sse\SseStream;
 use Marko\Sse\StreamingResponse;
-use Marko\Routing\Http\Request;
-
-function makeStreamRequest(int $lastEventId = 0): Request
-{
-    $server = [
-        'REQUEST_METHOD' => 'GET',
-        'REQUEST_URI' => '/spaces/general/stream',
-    ];
-
-    if ($lastEventId > 0) {
-        $server['HTTP_LAST_EVENT_ID'] = (string) $lastEventId;
-    }
-
-    return new Request(server: $server);
-}
 
 function makeStreamSpace(int $id = 1, string $slug = 'general'): Space
 {
@@ -68,7 +56,7 @@ function makeStreamSpaceRepository(?Space $space = null): SpaceRepositoryInterfa
 
         public function findOrFail(int $id): Entity
         {
-            throw new RuntimeException('Not implemented');
+            throw new RuntimeException(message: 'Not implemented');
         }
 
         public function save(Entity $entity): void {}
@@ -92,303 +80,188 @@ function makeStreamSpaceRepository(?Space $space = null): SpaceRepositoryInterfa
     };
 }
 
-function makeStreamMessageRepository(array $messages = []): MessageRepositoryInterface
+function makeStreamSubscription(): Subscription
 {
-    return new class ($messages) implements MessageRepositoryInterface {
+    return new class () implements Subscription {
+        public function getIterator(): Generator
+        {
+            return;
+            yield;
+        }
+
+        public function cancel(): void {}
+    };
+}
+
+function makeStreamSubscriber(
+    ?Subscription $subscription = null,
+    ?string &$subscribedChannel = null,
+): SubscriberInterface {
+    return new class ($subscription, $subscribedChannel) implements SubscriberInterface {
         public function __construct(
-            private array $messages,
+            private readonly ?Subscription $subscription,
+            /** @noinspection PhpPropertyOnlyWrittenInspection - Reference property modifies external variable */
+            private mixed &$subscribedChannel,
         ) {}
 
-        public function findBySpace(int $spaceId, int $limit = 50): array
+        public function subscribe(string ...$channels): Subscription
         {
-            return $this->messages;
+            $this->subscribedChannel = implode(separator: ',', array: $channels);
+
+            return $this->subscription ?? makeStreamSubscription();
         }
 
-        public function findBySpaceSince(int $spaceId, int $sinceId): array
+        public function psubscribe(string ...$patterns): Subscription
         {
-            return array_values(array_filter(
-                $this->messages,
-                fn (Message $m) => $m->id !== null && $m->id > $sinceId,
-            ));
-        }
-
-        public function find(int $id): ?Entity
-        {
-            return null;
-        }
-
-        public function findOrFail(int $id): Entity
-        {
-            throw new RuntimeException('Not implemented');
-        }
-
-        public function save(Entity $entity): void {}
-
-        public function delete(Entity $entity): void {}
-
-        public function findAll(): array
-        {
-            return [];
-        }
-
-        public function findOneBy(array $criteria): ?Entity
-        {
-            return null;
-        }
-
-        public function findBy(array $criteria): array
-        {
-            return [];
-        }
-
-        public function findPaginated(int $spaceId, int $perPage = 50, ?string $cursor = null): CursorPaginator
-        {
-            return new CursorPaginator(
-                items: array_values(array_filter(
-                    $this->messages,
-                    fn (Message $m) => $m->spaceId === $spaceId,
-                )),
-                perPage: $perPage,
-            );
+            return makeStreamSubscription();
         }
     };
 }
 
-function makeStreamAuthManager(?AuthenticatableInterface $user = null): AuthManager
+function makeStreamConfig(array $values = []): ConfigRepositoryInterface
 {
-    return new class ($user) extends AuthManager {
+    $defaults = [
+        'markotalk.sse_timeout' => 300,
+    ];
+    $merged = array_merge($defaults, $values);
+
+    return new class ($merged) implements ConfigRepositoryInterface {
         public function __construct(
-            private readonly ?AuthenticatableInterface $mockUser,
-        ) {
-            // Skip parent constructor
+            private readonly array $values,
+        ) {}
+
+        public function get(string $key, ?string $scope = null): mixed
+        {
+            return $this->values[$key] ?? null;
         }
 
-        public function user(): ?AuthenticatableInterface
+        public function has(string $key, ?string $scope = null): bool
         {
-            return $this->mockUser;
-        }
-    };
-}
-
-function makeStreamAuthUser(): AuthenticatableInterface
-{
-    return new class implements AuthenticatableInterface {
-        public function getAuthIdentifier(): int|string
-        {
-            return 1;
+            return isset($this->values[$key]);
         }
 
-        public function getAuthIdentifierName(): string
+        public function getString(string $key, ?string $scope = null): string
         {
-            return 'id';
+            return (string) ($this->values[$key] ?? '');
         }
 
-        public function getAuthPassword(): string
+        public function getInt(string $key, ?string $scope = null): int
         {
-            return 'hashed_password';
+            return (int) ($this->values[$key] ?? 0);
         }
 
-        public function getRememberToken(): ?string
+        public function getBool(string $key, ?string $scope = null): bool
         {
-            return null;
+            return (bool) ($this->values[$key] ?? false);
         }
 
-        public function setRememberToken(?string $token): void {}
-
-        public function getRememberTokenName(): string
+        public function getFloat(string $key, ?string $scope = null): float
         {
-            return 'remember_token';
-        }
-    };
-}
-
-function makeStreamPresenceTracker(): PresenceTrackerInterface
-{
-    return new class () implements PresenceTrackerInterface {
-        public function updateLastSeen(User $user): void {}
-
-        public function isOnline(User $user): bool
-        {
-            return false;
+            return (float) ($this->values[$key] ?? 0.0);
         }
 
-        public function getOnlineUsers(): array
+        public function getArray(string $key, ?string $scope = null): array
         {
-            return [];
+            return (array) ($this->values[$key] ?? []);
+        }
+
+        public function all(?string $scope = null): array
+        {
+            return $this->values;
+        }
+
+        public function withScope(string $scope): ConfigRepositoryInterface
+        {
+            return $this;
         }
     };
 }
 
 function makeStreamController(
     ?SpaceRepositoryInterface $spaces = null,
-    ?MessageRepositoryInterface $messages = null,
-    ?PresenceTrackerInterface $presence = null,
-    array $config = [],
+    ?SubscriberInterface $subscriber = null,
+    ?ConfigRepositoryInterface $config = null,
 ): StreamController {
-    $defaultConfig = [
-        'sse_poll_interval' => 1,
-        'sse_heartbeat_interval' => 15,
-        'sse_timeout' => 300,
-    ];
-
     return new StreamController(
-        spaces: $spaces ?? makeStreamSpaceRepository(makeStreamSpace()),
-        messages: $messages ?? makeStreamMessageRepository(),
-        presence: $presence ?? makeStreamPresenceTracker(),
-        config: array_merge($defaultConfig, $config),
+        spaces: $spaces ?? makeStreamSpaceRepository(space: makeStreamSpace()),
+        subscriber: $subscriber ?? makeStreamSubscriber(),
+        config: $config ?? makeStreamConfig(),
     );
 }
 
 it('returns a StreamingResponse with text/event-stream content type', function (): void {
     $controller = makeStreamController();
 
-    $response = $controller->stream(slug: 'general', request: makeStreamRequest());
+    $response = $controller->stream(slug: 'general');
 
     expect($response)->toBeInstanceOf(StreamingResponse::class)
         ->and($response->headers())->toHaveKey('Content-Type')
         ->and($response->headers()['Content-Type'])->toBe('text/event-stream');
 });
 
-it('uses SseStream with config-driven poll interval and timeout', function (): void {
-    $controller = makeStreamController(config: [
-        'sse_poll_interval' => 3,
-        'sse_heartbeat_interval' => 30,
-        'sse_timeout' => 600,
-    ]);
+it('creates an SseStream with a subscription instead of a dataProvider', function (): void {
+    $subscription = makeStreamSubscription();
+    $subscriber = makeStreamSubscriber(subscription: $subscription);
+    $controller = makeStreamController(subscriber: $subscriber);
 
-    $response = $controller->stream(slug: 'general', request: makeStreamRequest());
+    $response = $controller->stream(slug: 'general');
 
-    expect($response)->toBeInstanceOf(StreamingResponse::class);
+    $streamProp = (new ReflectionClass(objectOrClass: $response))->getProperty(name: 'stream');
+    $sseStream = $streamProp->getValue(object: $response);
 
-    $streamProp = (new ReflectionClass($response))->getProperty('stream');
-    $stream = $streamProp->getValue($response);
+    expect($sseStream)->toBeInstanceOf(SseStream::class);
 
-    expect($stream)->toBeInstanceOf(\Marko\Sse\SseStream::class);
+    $subscriptionProp = (new ReflectionClass(objectOrClass: $sseStream))->getProperty(name: 'subscription');
 
-    $pollProp = (new ReflectionClass($stream))->getProperty('pollInterval');
-    $heartbeatProp = (new ReflectionClass($stream))->getProperty('heartbeatInterval');
-    $timeoutProp = (new ReflectionClass($stream))->getProperty('timeout');
-
-    expect($pollProp->getValue($stream))->toBe(3)
-        ->and($heartbeatProp->getValue($stream))->toBe(30)
-        ->and($timeoutProp->getValue($stream))->toBe(600);
+    expect($subscriptionProp->getValue(object: $sseStream))->toBe($subscription);
 });
 
-it('queries messages newer than the Last-Event-ID', function (): void {
-    $messages = [
-        new Message(
-            id: 5,
-            spaceId: 1,
-            userId: 1,
-            body: 'Message 5',
-            bodyHtml: '<p>Message 5</p>',
-            isPinned: false,
-            editedAt: null,
-            createdAt: new DateTimeImmutable('2026-02-24 00:00:00'),
-        ),
-    ];
-    $messageRepository = makeStreamMessageRepository($messages);
-    $space = makeStreamSpace(id: 1, slug: 'general');
-    $spaceRepository = makeStreamSpaceRepository($space);
-    $controller = makeStreamController(
-        spaces: $spaceRepository,
-        messages: $messageRepository,
-    );
+it('subscribes to the space:{slug} channel', function (): void {
+    $subscribedChannel = null;
+    $subscriber = makeStreamSubscriber(subscribedChannel: $subscribedChannel);
+    $controller = makeStreamController(subscriber: $subscriber);
 
-    // Send request with Last-Event-ID: 3, so only messages with id > 3 should be returned
-    $request = makeStreamRequest(lastEventId: 3);
-    $response = $controller->stream(slug: 'general', request: $request);
+    $controller->stream(slug: 'general');
 
-    expect($response)->toBeInstanceOf(StreamingResponse::class);
-
-    // Extract the data provider from the SseStream
-    $streamProp = (new ReflectionClass($response))->getProperty('stream');
-    $sseStream = $streamProp->getValue($response);
-
-    $providerProp = (new ReflectionClass($sseStream))->getProperty('dataProvider');
-    $dataProvider = $providerProp->getValue($sseStream);
-
-    $events = $dataProvider();
-
-    // Message 5 has id > 3, so it should be returned as an event
-    $messageEvents = array_values(array_filter(
-        $events,
-        fn (\Marko\Sse\SseEvent $event): bool => $event->event === 'message',
-    ));
-
-    expect($messageEvents)->toHaveCount(1);
+    expect($subscribedChannel)->toBe('space:general');
 });
 
-it('formats new messages as SseEvent with message HTML as data', function (): void {
-    $messages = [
-        new Message(
-            id: 10,
-            spaceId: 1,
-            userId: 1,
-            body: 'Hello **world**',
-            bodyHtml: '<p>Hello <strong>world</strong></p>',
-            isPinned: false,
-            editedAt: null,
-            createdAt: new DateTimeImmutable('2026-02-24 00:00:00'),
-        ),
-    ];
-    $messageRepository = makeStreamMessageRepository($messages);
-    $space = makeStreamSpace(id: 1, slug: 'general');
-    $spaceRepository = makeStreamSpaceRepository($space);
-    $controller = makeStreamController(
-        spaces: $spaceRepository,
-        messages: $messageRepository,
-    );
+it('uses the configured sse_timeout for the stream', function (): void {
+    $config = makeStreamConfig(values: ['markotalk.sse_timeout' => 600]);
+    $controller = makeStreamController(config: $config);
 
-    $response = $controller->stream(slug: 'general', request: makeStreamRequest());
+    $response = $controller->stream(slug: 'general');
 
-    $streamProp = (new ReflectionClass($response))->getProperty('stream');
-    $sseStream = $streamProp->getValue($response);
+    $streamProp = (new ReflectionClass(objectOrClass: $response))->getProperty(name: 'stream');
+    $sseStream = $streamProp->getValue(object: $response);
 
-    $providerProp = (new ReflectionClass($sseStream))->getProperty('dataProvider');
-    $dataProvider = $providerProp->getValue($sseStream);
+    $timeoutProp = (new ReflectionClass(objectOrClass: $sseStream))->getProperty(name: 'timeout');
 
-    $events = $dataProvider();
-
-    $messageEvents = array_values(array_filter(
-        $events,
-        fn (\Marko\Sse\SseEvent $event): bool => $event->event === 'message',
-    ));
-
-    expect($messageEvents)->toHaveCount(1);
-
-    $event = $messageEvents[0];
-
-    expect($event)->toBeInstanceOf(\Marko\Sse\SseEvent::class)
-        ->and($event->data)->toBe('<p>Hello <strong>world</strong></p>')
-        ->and($event->event)->toBe('message')
-        ->and($event->id)->toBe(10);
+    expect($timeoutProp->getValue(object: $sseStream))->toBe(600);
 });
 
-it('sends heartbeat pings at the configured interval', function (): void {
-    $controller = makeStreamController(config: [
-        'sse_poll_interval' => 1,
-        'sse_heartbeat_interval' => 20,
-        'sse_timeout' => 300,
-    ]);
-
-    $response = $controller->stream(slug: 'general', request: makeStreamRequest());
-
-    $streamProp = (new ReflectionClass($response))->getProperty('stream');
-    $sseStream = $streamProp->getValue($response);
-
-    $heartbeatProp = (new ReflectionClass($sseStream))->getProperty('heartbeatInterval');
-
-    expect($heartbeatProp->getValue($sseStream))->toBe(20);
-});
-
-it('requires authentication', function (): void {
-    $method = new ReflectionMethod(StreamController::class, 'stream');
-    $attributes = $method->getAttributes(\Marko\Routing\Attributes\Get::class);
+it('requires AuthMiddleware and PresenceMiddleware', function (): void {
+    $method = new ReflectionMethod(objectOrMethod: StreamController::class, method: 'stream');
+    $attributes = $method->getAttributes(name: Get::class);
 
     expect($attributes)->toHaveCount(1);
 
     $getAttribute = $attributes[0]->newInstance();
 
-    expect($getAttribute->middleware)->toContain(\Marko\Authentication\Middleware\AuthMiddleware::class);
+    expect($getAttribute->middleware)->toContain(AuthMiddleware::class)
+        ->and($getAttribute->middleware)->toContain(PresenceMiddleware::class);
+});
+
+it('does not inject MessageRepositoryInterface, UserRepositoryInterface, or AuthManager', function (): void {
+    $constructor = new ReflectionMethod(objectOrMethod: StreamController::class, method: '__construct');
+    $params = $constructor->getParameters();
+
+    $paramTypes = array_map(
+        callback: fn (ReflectionParameter $p): string => (string) $p->getType(),
+        array: $params,
+    );
+
+    expect($paramTypes)->not->toContain(MessageRepositoryInterface::class)
+        ->and($paramTypes)->not->toContain(UserRepositoryInterface::class)
+        ->and($paramTypes)->not->toContain(AuthManager::class);
 });

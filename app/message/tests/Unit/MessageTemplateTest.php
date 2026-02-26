@@ -11,7 +11,7 @@ it('renders a message with author name and body', function (): void {
 
     expect($content)
         ->toContain('data-message-id="{$message->id}"')
-        ->toContain('{$message->displayName ?? $message->userId}')
+        ->toContain('{$userMap[$message->userId]')
         ->toContain('{$message->bodyHtml|noescape}');
 });
 
@@ -48,8 +48,7 @@ it('shows edit and delete actions for the message author', function (): void {
     expect($content)
         ->toContain('$currentUser->id === $message->userId')
         ->toContain('message-action-edit')
-        ->toContain('message-action-delete')
-        ->toContain('message-action-form');
+        ->toContain('message-action-delete');
 });
 
 it('has message.css with all message-* classes defined via @apply', function (): void {

@@ -113,6 +113,8 @@ class StubSpaceMembershipRepository implements SpaceMembershipRepositoryInterfac
     public function findBy(array $criteria): array { return []; }
     public function findOneBy(array $criteria): ?Entity { return null; }
 
+    public function clearLastReadMessageId(int $messageId): void {}
+
     public function save(Entity $entity): void
     {
         if ($entity instanceof SpaceMembership) {
@@ -143,6 +145,8 @@ class StubMessageRepository implements MessageRepositoryInterface
         return new CursorPaginator(items: [], perPage: $perPage, cursor: $cursor);
     }
 
+    public function findEditedSince(int $spaceId, \DateTimeImmutable $since): array { return []; }
+
     public function find(int $id): ?Entity { return null; }
     public function findOrFail(int $id): Entity { throw new RuntimeException(message: 'Not found'); }
     public function findAll(): array { return []; }
@@ -166,7 +170,7 @@ function makeObserver(
     ?ConfigRepositoryInterface $config = null,
 ): WelcomeMessageObserver {
     $defaultConfig = new FakeConfigRepository(config: [
-        'default_spaces' => makeDefaultSpacesConfig(),
+        'markotalk.default_spaces' => makeDefaultSpacesConfig(),
     ]);
 
     return new WelcomeMessageObserver(
@@ -237,7 +241,7 @@ it('reads default spaces from config/markotalk.php', function (): void {
     $user = makeTestUser();
 
     $customConfig = new FakeConfigRepository(config: [
-        'default_spaces' => [
+        'markotalk.default_spaces' => [
             ['name' => 'Custom', 'slug' => 'custom', 'description' => 'Custom space'],
         ],
     ]);

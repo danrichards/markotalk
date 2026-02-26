@@ -25,7 +25,7 @@ it('renders the chat view with space name header', function (): void {
     $template = file_get_contents('/Users/markshust/Sites/markotalk/app/space/resources/views/space/show.latte');
 
     expect($template)
-        ->toContain('{extends "layout"}')
+        ->toContain('{extends "landing::layout"}')
         ->and($template)->toContain('{block content}')
         ->and($template)->toContain('class="chat-area"')
         ->and($template)->toContain('class="chat-header"')

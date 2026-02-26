@@ -8,6 +8,9 @@ use App\Space\Entity\Space;
 use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
+use App\User\Entity\User;
+use App\User\Repository\UserRepositoryInterface;
+use App\User\Service\PresenceTrackerInterface;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\AuthenticatableInterface;
 use Marko\Authentication\Middleware\AuthMiddleware;
@@ -16,6 +19,7 @@ use Marko\Pagination\CursorPaginator;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
+use Marko\Security\Contracts\CsrfTokenManagerInterface;
 use Marko\View\ViewInterface;
 
 // ─── Helper factories ────────────────────────────────────────────────────────
@@ -76,6 +80,8 @@ function makeSpaceRepositoryStub(
 
         public function findOneBy(array $criteria): ?Entity { return null; }
 
+        public function clearLastReadMessageId(int $messageId): void {}
+
         public function save(Entity $entity): void {}
 
         public function delete(Entity $entity): void {}
@@ -124,6 +130,8 @@ function makeSpaceMembershipRepositoryStub(
         public function findBy(array $criteria): array { return []; }
 
         public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function clearLastReadMessageId(int $messageId): void {}
 
         public function save(Entity $entity): void
         {
@@ -179,6 +187,8 @@ function makeMessageRepositoryStub(): MessageRepositoryInterface
 
         public function findBySpaceSince(int $spaceId, int $sinceId): array { return []; }
 
+        public function findEditedSince(int $spaceId, \DateTimeImmutable $since): array { return []; }
+
         public function findPaginated(int $spaceId, int $perPage = 50, ?string $cursor = null): CursorPaginator
         {
             return new CursorPaginator(items: [], perPage: $perPage);
@@ -203,6 +213,58 @@ function makeMessageRepositoryStub(): MessageRepositoryInterface
     };
 }
 
+function makeSpaceUserRepositoryStub(): UserRepositoryInterface
+{
+    return new class implements UserRepositoryInterface {
+        public function findByEmail(string $email): ?User { return null; }
+
+        public function findByUsername(string $username): ?User { return null; }
+
+        public function findByRememberToken(int $userId, string $token): ?User { return null; }
+
+        public function updateRememberToken(User $user, ?string $token): void {}
+
+        public function find(int $id): ?Entity { return null; }
+
+        public function findOrFail(int $id): Entity
+        {
+            throw new RuntimeException(message: 'Not implemented');
+        }
+
+        public function findAll(): array { return []; }
+
+        public function findBy(array $criteria): array { return []; }
+
+        public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function save(Entity $entity): void {}
+
+        public function delete(Entity $entity): void {}
+    };
+}
+
+function makeSpaceCsrfTokenManagerStub(): CsrfTokenManagerInterface
+{
+    return new class implements CsrfTokenManagerInterface {
+        public function get(): string { return 'test-token'; }
+
+        public function validate(string $token): bool { return true; }
+
+        public function regenerate(): string { return 'test-token'; }
+    };
+}
+
+function makeSpacePresenceTrackerStub(): PresenceTrackerInterface
+{
+    return new class implements PresenceTrackerInterface {
+        public function updateLastSeen(User $user): void {}
+
+        public function isOnline(User $user): bool { return false; }
+
+        public function getOnlineUsers(): array { return []; }
+    };
+}
+
 function makeSpaceController(
     SpaceRepositoryInterface $spaces,
     SpaceMembershipRepositoryInterface $memberships,
@@ -213,8 +275,11 @@ function makeSpaceController(
         spaces: $spaces,
         memberships: $memberships,
         messages: makeMessageRepositoryStub(),
+        users: makeSpaceUserRepositoryStub(),
         view: $view,
         auth: $auth,
+        csrf: makeSpaceCsrfTokenManagerStub(),
+        presence: makeSpacePresenceTrackerStub(),
     );
 }
 
@@ -288,7 +353,7 @@ it('shows the chat view for GET /spaces/{slug}', function (): void {
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(200)
-        ->and($view->lastTemplate)->toBe('space::show')
+        ->and($view->lastTemplate)->toBe('space::space/show')
         ->and($view->lastData['space'])->toBe($space);
 });
 

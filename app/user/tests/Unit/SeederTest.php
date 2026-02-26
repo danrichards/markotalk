@@ -24,7 +24,7 @@ function makeConfigRepository(array $defaultSpaces): ConfigRepositoryInterface
         public function get(string $key, ?string $scope = null): mixed
         {
             return match ($key) {
-                'default_spaces' => $this->defaultSpaces,
+                'default_spaces', 'markotalk.default_spaces' => $this->defaultSpaces,
                 default => null,
             };
         }
@@ -57,7 +57,7 @@ function makeConfigRepository(array $defaultSpaces): ConfigRepositoryInterface
         public function getArray(string $key, ?string $scope = null): array
         {
             return match ($key) {
-                'default_spaces' => $this->defaultSpaces,
+                'default_spaces', 'markotalk.default_spaces' => $this->defaultSpaces,
                 default => [],
             };
         }
@@ -217,6 +217,8 @@ function makeSpaceMembershipRepositoryMock(): SpaceMembershipRepositoryInterface
         {
             return null;
         }
+
+        public function clearLastReadMessageId(int $messageId): void {}
 
         public function save(Entity $entity): void
         {

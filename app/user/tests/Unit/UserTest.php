@@ -96,7 +96,7 @@ it('uses UserRole backed enum for the role field', function (): void {
 });
 
 it('has a migration that creates the users table with all columns and indexes', function (): void {
-    $migrationPath = __DIR__ . '/../../../../database/migrations/20260224000001_create_users.php';
+    $migrationPath = __DIR__ . '/../../../../database/migrations/20260225000000_create_users.php';
 
     expect(file_exists(filename: $migrationPath))->toBeTrue();
 

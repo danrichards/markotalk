@@ -10,6 +10,9 @@ use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepository;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
+use App\User\Entity\User;
+use App\User\Repository\UserRepositoryInterface;
+use App\User\Service\PresenceTrackerInterface;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\AuthenticatableInterface;
 use Marko\Database\Connection\ConnectionInterface;
@@ -20,6 +23,7 @@ use Marko\Database\Entity\EntityMetadataFactory;
 use Marko\Pagination\CursorPaginator;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
+use Marko\Security\Contracts\CsrfTokenManagerInterface;
 use Marko\View\ViewInterface;
 
 // ─── Helper factories ────────────────────────────────────────────────────────
@@ -304,6 +308,8 @@ function makeUnreadMessageRepositoryStub(array $messages = []): MessageRepositor
 
         public function findBySpaceSince(int $spaceId, int $sinceId): array { return []; }
 
+        public function findEditedSince(int $spaceId, \DateTimeImmutable $since): array { return []; }
+
         public function findPaginated(int $spaceId, int $perPage = 50, ?string $cursor = null): CursorPaginator
         {
             return new CursorPaginator(items: [], perPage: $perPage);
@@ -373,6 +379,8 @@ function makeUnreadMembershipRepositoryStub(
         public function findBy(array $criteria): array { return []; }
 
         public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function clearLastReadMessageId(int $messageId): void {}
 
         public function save(Entity $entity): void
         {
@@ -497,12 +505,58 @@ it('updates last_read_message_id when viewing a space', function (): void {
     $view = makeUnreadControllerView();
     $auth = makeUnreadAuthManager(user: $user);
 
+    $userRepository = new class implements UserRepositoryInterface {
+        public function findByEmail(string $email): ?User { return null; }
+
+        public function findByUsername(string $username): ?User { return null; }
+
+        public function findByRememberToken(int $userId, string $token): ?User { return null; }
+
+        public function updateRememberToken(User $user, ?string $token): void {}
+
+        public function find(int $id): ?Entity { return null; }
+
+        public function findOrFail(int $id): Entity
+        {
+            throw new RuntimeException(message: 'Not implemented');
+        }
+
+        public function findAll(): array { return []; }
+
+        public function findBy(array $criteria): array { return []; }
+
+        public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function save(Entity $entity): void {}
+
+        public function delete(Entity $entity): void {}
+    };
+
+    $csrf = new class implements CsrfTokenManagerInterface {
+        public function get(): string { return 'test-token'; }
+
+        public function validate(string $token): bool { return true; }
+
+        public function regenerate(): string { return 'test-token'; }
+    };
+
+    $presence = new class implements PresenceTrackerInterface {
+        public function updateLastSeen(User $user): void {}
+
+        public function isOnline(User $user): bool { return false; }
+
+        public function getOnlineUsers(): array { return []; }
+    };
+
     $controller = new SpaceController(
         spaces: $spaces,
         memberships: $memberships,
         messages: $messages,
+        users: $userRepository,
         view: $view,
         auth: $auth,
+        csrf: $csrf,
+        presence: $presence,
     );
 
     $controller->show(slug: 'general', request: new Request(server: ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/spaces/general']));
@@ -514,7 +568,7 @@ it('displays unread count badge next to space name in sidebar', function (): voi
     $template = file_get_contents('/Users/markshust/Sites/markotalk/app/space/resources/views/space/show.latte');
 
     expect($template)
-        ->toContain('$unreadCounts[$space->id]')
+        ->toContain('$unreadCounts[$navSpace->id]')
         ->and($template)->toContain('class="space-item-unread"');
 });
 
@@ -522,5 +576,5 @@ it('hides badge when unread count is zero', function (): void {
     $template = file_get_contents('/Users/markshust/Sites/markotalk/app/space/resources/views/space/show.latte');
 
     expect($template)
-        ->toContain('$unreadCounts[$space->id] > 0');
+        ->toContain('$unreadCounts[$navSpace->id] > 0');
 });

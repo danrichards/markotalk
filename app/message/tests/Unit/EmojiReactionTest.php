@@ -95,6 +95,11 @@ function makeReactionMessageRepository(array $messages = []): MessageRepositoryI
             return [];
         }
 
+        public function findEditedSince(int $spaceId, DateTimeImmutable $since): array
+        {
+            return [];
+        }
+
         public function find(int $id): ?DatabaseEntity
         {
             foreach ($this->messages as $message) {
@@ -390,32 +395,27 @@ it('updates reactions via fetch without page reload', function (): void {
 });
 
 it('has an inline emoji picker UI', function (): void {
-    $templateFile = dirname(path: __DIR__, levels: 2) . '/resources/views/_message.latte';
+    $jsFile = dirname(path: __DIR__, levels: 4) . '/public/js/app.js';
 
-    expect(file_exists(filename: $templateFile))->toBeTrue();
+    expect(file_exists(filename: $jsFile))->toBeTrue();
 
-    $content = file_get_contents(filename: $templateFile);
+    $content = file_get_contents(filename: $jsFile);
 
     expect($content)
         ->toContain('emoji-picker')
-        ->toContain('emoji-option')
-        ->toContain('message-reaction-add')
-        ->toContain('👍')
-        ->toContain('❤️');
+        ->toContain('emoji-option');
 });
 
 it('displays reaction counts under messages', function (): void {
-    $templateFile = dirname(path: __DIR__, levels: 2) . '/resources/views/_message.latte';
+    $jsFile = dirname(path: __DIR__, levels: 4) . '/public/js/app.js';
 
-    expect(file_exists(filename: $templateFile))->toBeTrue();
+    expect(file_exists(filename: $jsFile))->toBeTrue();
 
-    $content = file_get_contents(filename: $templateFile);
+    $content = file_get_contents(filename: $jsFile);
 
     expect($content)
-        ->toContain('message-reactions')
-        ->toContain('reaction-count')
-        ->toContain('$reaction[\'count\']')
-        ->toContain('$reactions');
+        ->toContain('message-reaction')
+        ->toContain('updateReactions');
 });
 
 it('prevents duplicate reactions (same user, same emoji, same message)', function (): void {

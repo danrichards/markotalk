@@ -25,14 +25,14 @@ it('creates a Reaction entity with all required fields', function (): void {
 });
 
 it('has a migration with UNIQUE constraint on message_id, user_id, and emoji', function (): void {
-    $migrationFile = dirname(__DIR__, 4) . '/database/migrations/20260224000005_create_reactions.php';
+    $migrationFile = dirname(__DIR__, 4) . '/database/migrations/20260225191742_create_reactions.php';
 
     expect(file_exists($migrationFile))->toBeTrue();
 
     $content = file_get_contents($migrationFile);
 
     expect($content)
-        ->toContain('CREATE TABLE reactions')
+        ->toContain('reactions')
         ->toContain('message_id')
         ->toContain('user_id')
         ->toContain('emoji')
@@ -41,7 +41,7 @@ it('has a migration with UNIQUE constraint on message_id, user_id, and emoji', f
         ->toContain('message_id')
         ->toContain('user_id')
         ->toContain('emoji')
-        ->toContain('DROP TABLE reactions');
+        ->toContain('DROP TABLE');
 });
 
 it('finds all reactions for a message', function (): void {

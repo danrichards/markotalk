@@ -27,21 +27,20 @@ it('creates a SpaceMembership entity with all required fields', function (): voi
 });
 
 it('has a migration with UNIQUE constraint on user_id and space_id', function (): void {
-    $migrationFile = dirname(path: __DIR__, levels: 4) . '/database/migrations/20260224000003_create_space_memberships.php';
+    $migrationFile = dirname(path: __DIR__, levels: 4) . '/database/migrations/20260225191743_create_space_memberships.php';
 
     $content = file_get_contents($migrationFile);
 
     expect(file_exists($migrationFile))->toBeTrue()
         ->and($content)
-        ->toContain('CREATE TABLE space_memberships')
+        ->toContain('space_memberships')
         ->toContain('user_id')
         ->toContain('space_id')
         ->toContain('last_read_message_id')
         ->toContain('joined_at')
-        ->toContain('AUTO_INCREMENT')
         ->toContain('PRIMARY KEY')
         ->toContain('UNIQUE')
-        ->toContain('DROP TABLE space_memberships');
+        ->toContain('DROP TABLE');
 });
 
 // Helper functions

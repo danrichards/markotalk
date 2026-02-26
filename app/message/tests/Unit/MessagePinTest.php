@@ -76,6 +76,11 @@ function makePinMessageRepository(array $messages = []): MessageRepositoryInterf
             return [];
         }
 
+        public function findEditedSince(int $spaceId, DateTimeImmutable $since): array
+        {
+            return [];
+        }
+
         public function find(int $id): ?DatabaseEntity
         {
             foreach ($this->messages as $message) {

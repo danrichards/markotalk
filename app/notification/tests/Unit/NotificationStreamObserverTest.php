@@ -7,8 +7,9 @@ use App\Message\Event\MessageCreatedEvent;
 use App\Notification\Observer\NotificationStreamObserver;
 use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
+use Marko\Cache\Contracts\CacheInterface;
+use Marko\Cache\Contracts\CacheItemInterface;
 use Marko\Core\Attributes\Observer;
-use Psr\SimpleCache\CacheInterface;
 
 function makeCache(): CacheInterface
 {
@@ -29,7 +30,7 @@ function makeCache(): CacheInterface
         public function set(
             string $key,
             mixed $value,
-            null|int|\DateInterval $ttl = null,
+            ?int $ttl = null,
         ): bool {
             $this->storage[$key] = $value;
             $this->setCalls[] = $key;
@@ -51,9 +52,14 @@ function makeCache(): CacheInterface
             return true;
         }
 
-        /** @param iterable<string> $keys */
+        public function getItem(string $key): CacheItemInterface
+        {
+            throw new \RuntimeException(message: 'Not implemented');
+        }
+
+        /** @param array<string> $keys */
         public function getMultiple(
-            iterable $keys,
+            array $keys,
             mixed $default = null,
         ): iterable {
             $result = [];
@@ -66,11 +72,11 @@ function makeCache(): CacheInterface
         }
 
         /**
-         * @param iterable<string, mixed> $values
+         * @param array<string, mixed> $values
          */
         public function setMultiple(
-            iterable $values,
-            null|int|\DateInterval $ttl = null,
+            array $values,
+            ?int $ttl = null,
         ): bool {
             foreach ($values as $key => $value) {
                 $this->storage[$key] = $value;
@@ -79,8 +85,8 @@ function makeCache(): CacheInterface
             return true;
         }
 
-        /** @param iterable<string> $keys */
-        public function deleteMultiple(iterable $keys): bool
+        /** @param array<string> $keys */
+        public function deleteMultiple(array $keys): bool
         {
             foreach ($keys as $key) {
                 unset($this->storage[$key]);
@@ -127,6 +133,8 @@ function makeMembershipRepository(array $memberships = []): SpaceMembershipRepos
         {
             return null;
         }
+
+        public function clearLastReadMessageId(int $messageId): void {}
 
         public function save(\Marko\Database\Entity\Entity $entity): void {}
 
@@ -227,10 +235,10 @@ it('identifies users who should receive notification count updates', function ()
     $observer->handle(event: $event);
 
     // Author (userId=5) should NOT have a notification flag set
-    expect($cache->has(key: 'notification_pending:5'))->toBeFalse()
+    expect($cache->has(key: 'notification_pending_5'))->toBeFalse()
         // Other members SHOULD have flags set
-        ->and($cache->has(key: 'notification_pending:6'))->toBeTrue()
-        ->and($cache->has(key: 'notification_pending:7'))->toBeTrue();
+        ->and($cache->has(key: 'notification_pending_6'))->toBeTrue()
+        ->and($cache->has(key: 'notification_pending_7'))->toBeTrue();
 });
 
 it('stores notification state for SSE heartbeat pickup', function (): void {
@@ -243,7 +251,7 @@ it('stores notification state for SSE heartbeat pickup', function (): void {
     $event = new MessageCreatedEvent(message: $message);
     $observer->handle(event: $event);
 
-    $key = 'notification_pending:6';
+    $key = 'notification_pending_6';
 
     expect($cache->get(key: $key))->toBeTrue()
         ->and($cache->setCalls)->toContain($key);

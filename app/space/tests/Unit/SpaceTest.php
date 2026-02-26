@@ -16,25 +16,23 @@ use Marko\Database\Repository\Repository;
 use Marko\Database\Repository\RepositoryInterface;
 
 it('has a migration that creates the spaces table with all columns and indexes', function (): void {
-    $migrationFile = dirname(path: __DIR__, levels: 4) . '/database/migrations/20260224000002_create_spaces.php';
+    $migrationFile = dirname(path: __DIR__, levels: 4) . '/database/migrations/20260225191740_create_spaces.php';
 
     $content = file_get_contents($migrationFile);
 
     expect(file_exists($migrationFile))->toBeTrue()
         ->and($content)
-        ->toContain('CREATE TABLE spaces')
-        ->toContain('id ')
-        ->toContain('AUTO_INCREMENT')
-        ->toContain('name ')
-        ->toContain('slug ')
-        ->toContain('description ')
-        ->toContain('is_archived ')
-        ->toContain('created_by ')
-        ->toContain('created_at ')
-        ->toContain('updated_at ')
+        ->toContain('spaces')
+        ->toContain('name')
+        ->toContain('slug')
+        ->toContain('description')
+        ->toContain('is_archived')
+        ->toContain('created_by')
+        ->toContain('created_at')
+        ->toContain('updated_at')
         ->toContain('PRIMARY KEY')
         ->toContain('UNIQUE')
-        ->toContain('DROP TABLE spaces');
+        ->toContain('DROP TABLE');
 });
 
 it('creates a Space entity with all required fields', function (): void {

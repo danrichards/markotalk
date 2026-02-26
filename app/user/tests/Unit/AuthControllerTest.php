@@ -19,7 +19,18 @@ use Marko\Testing\Fake\FakeGuard;
 use Marko\Validation\Contracts\ValidatorInterface;
 use Marko\Validation\Exceptions\ValidationException;
 use Marko\Validation\Validation\ValidationErrors;
+use Marko\Security\Contracts\CsrfTokenManagerInterface;
 use Marko\View\ViewInterface;
+
+// Stub CsrfTokenManagerInterface for tests
+class AuthStubCsrfTokenManager implements CsrfTokenManagerInterface
+{
+    public function get(): string { return 'test-token'; }
+
+    public function validate(string $token): bool { return true; }
+
+    public function regenerate(): string { return 'test-token'; }
+}
 
 // Stub ViewInterface for tests
 class AuthStubView implements ViewInterface
@@ -168,6 +179,7 @@ function makeAuthController(
     ?AuthStubHasher $hasher = null,
     ?AuthStubValidator $validator = null,
     ?FakeEventDispatcher $eventDispatcher = null,
+    ?CsrfTokenManagerInterface $csrf = null,
 ): AuthController {
     return new AuthController(
         view: $view ?? new AuthStubView(),
@@ -176,6 +188,7 @@ function makeAuthController(
         hasher: $hasher ?? new AuthStubHasher(),
         validator: $validator ?? new AuthStubValidator(),
         eventDispatcher: $eventDispatcher ?? new FakeEventDispatcher(),
+        csrf: $csrf ?? new AuthStubCsrfTokenManager(),
     );
 }
 

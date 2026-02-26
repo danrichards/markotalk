@@ -7,6 +7,8 @@
   const spaceSlug = chatFeed.dataset.spaceSlug || document.body.dataset.spaceSlug;
   if (!spaceSlug) return;
 
+  const currentUserId = parseInt(chatFeed.dataset.currentUserId) || null;
+
   let nextCursor = null;
   let isLoadingOlder = false;
   let userScrolledUp = false;
@@ -38,41 +40,58 @@
   // SSE connection
   const eventSource = new EventSource(`/spaces/${spaceSlug}/stream`);
 
-  eventSource.addEventListener('message', (e) => {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = e.data;
-    const msgEl = tmp.firstElementChild;
-    if (msgEl) {
-      const msgId = msgEl.dataset.messageId;
-      if (msgId && !messageExists(msgId)) {
-        appendMessage(e.data);
+  eventSource.addEventListener('space:' + spaceSlug, (e) => {
+    const event = JSON.parse(e.data);
+    switch (event.type) {
+      case 'message': {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = event.html;
+        const msgEl = tmp.firstElementChild;
+        if (msgEl) {
+          const msgId = msgEl.dataset.messageId;
+          if (msgId && !messageExists(msgId)) {
+            appendMessage(event.html);
+            if (currentUserId && event.userId === currentUserId) {
+              const csrfToken = document.querySelector('[name="_token"]')?.value ?? '';
+              const newMsgEl = chatFeed.querySelector(`[data-message-id="${msgId}"]`);
+              if (newMsgEl && !newMsgEl.querySelector('.message-actions')) {
+                newMsgEl.insertAdjacentHTML('beforeend', `<div class="message-actions"><button class="message-action-edit" data-message-id="${msgId}" title="Edit">&#9999;</button><button class="message-action-delete" data-message-id="${msgId}" data-csrf-token="${csrfToken}" title="Delete">&#128465;</button></div>`);
+              }
+            }
+          }
+        }
+        break;
+      }
+      case 'message_edited': {
+        const msgEl = chatFeed.querySelector(`[data-message-id="${event.id}"]`);
+        if (msgEl) {
+          const bodyEl = msgEl.querySelector('.message-body');
+          if (bodyEl) bodyEl.innerHTML = event.bodyHtml;
+        }
+        break;
+      }
+      case 'message_deleted': {
+        const msgEl = chatFeed.querySelector(`[data-message-id="${event.id}"]`);
+        if (msgEl) msgEl.remove();
+        break;
+      }
+      case 'presence': {
+        const onlineIds = event.onlineIds;
+        document.querySelectorAll('.member-item').forEach(item => {
+          const userId = parseInt(item.dataset.userId);
+          const indicator = item.querySelector('.member-indicator');
+          if (!indicator) return;
+          if (onlineIds.includes(userId)) {
+            indicator.classList.remove('is-offline');
+            indicator.classList.add('is-online');
+          } else {
+            indicator.classList.remove('is-online');
+            indicator.classList.add('is-offline');
+          }
+        });
+        break;
       }
     }
-  });
-
-  eventSource.addEventListener('message_edited', (e) => {
-    const data = JSON.parse(e.data);
-    const msgEl = chatFeed.querySelector(`[data-message-id="${data.id}"]`);
-    if (msgEl) {
-      const bodyEl = msgEl.querySelector('.message-body');
-      if (bodyEl) bodyEl.innerHTML = data.bodyHtml;
-    }
-  });
-
-  eventSource.addEventListener('presence', (e) => {
-    const onlineIds = JSON.parse(e.data);
-    document.querySelectorAll('.member-item').forEach(item => {
-      const userId = parseInt(item.dataset.userId);
-      const indicator = item.querySelector('.member-indicator');
-      if (!indicator) return;
-      if (onlineIds.includes(userId)) {
-        indicator.classList.remove('is-offline');
-        indicator.classList.add('is-online');
-      } else {
-        indicator.classList.remove('is-online');
-        indicator.classList.add('is-offline');
-      }
-    });
   });
 
   // Load older messages on scroll to top

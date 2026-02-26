@@ -11,6 +11,7 @@ use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Enum\UserRole;
+use App\User\Repository\UserRepositoryInterface;
 use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
 use App\User\Middleware\PresenceMiddleware;
@@ -18,6 +19,8 @@ use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Config\ConfigRepositoryInterface;
 use Marko\Authorization\Contracts\GateInterface;
 use Marko\Authorization\Exceptions\AuthorizationException;
+use Marko\PubSub\Message as PubSubMessage;
+use Marko\PubSub\PublisherInterface;
 use Marko\RateLimiting\Contracts\RateLimiterInterface;
 use Marko\Routing\Attributes\Delete;
 use Marko\Routing\Attributes\Get;
@@ -33,17 +36,19 @@ readonly class MessageController
     public function __construct(
         private MessageRepositoryInterface $messages,
         private SpaceRepositoryInterface $spaces,
-        private SpaceMembershipRepositoryInterface $memberships,
         private AuthManager $auth,
         private ValidatorInterface $validator,
         private ConfigRepositoryInterface $config,
+        private ?SpaceMembershipRepositoryInterface $memberships = null,
         private ?GateInterface $gate = null,
         private ?RateLimiterInterface $rateLimiter = null,
         private ?ReactionRepositoryInterface $reactions = null,
+        private ?PublisherInterface $publisher = null,
+        private ?UserRepositoryInterface $users = null,
     ) {}
 
     /**
-     * @throws \JsonException
+     * @throws \JsonException|\Marko\Config\Exceptions\ConfigNotFoundException
      */
     #[Post('/spaces/{slug}/messages', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function send(
@@ -121,12 +126,32 @@ readonly class MessageController
 
         $this->messages->save(entity: $message);
 
+        if ($this->publisher !== null) {
+            $html = $this->renderMessageHtml(message: $message);
+            $payload = json_encode(
+                value: [
+                    'type' => 'message',
+                    'id' => $message->id,
+                    'userId' => $message->userId,
+                    'html' => $html,
+                ],
+                flags: JSON_THROW_ON_ERROR,
+            );
+            $this->publisher->publish(
+                channel: "space:{$slug}",
+                message: new PubSubMessage(channel: "space:{$slug}", payload: $payload),
+            );
+        }
+
         return Response::json(
             data: ['id' => $message->id],
             statusCode: 201,
         );
     }
 
+    /**
+     * @throws \JsonException|\Marko\Config\Exceptions\ConfigNotFoundException
+     */
     #[Put('/messages/{id}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function edit(
         int $id,
@@ -184,12 +209,32 @@ readonly class MessageController
 
         $this->messages->save(entity: $message);
 
+        if ($this->publisher !== null) {
+            $space = $this->spaces->find(id: $message->spaceId);
+            $slug = $space !== null ? $space->slug : (string) $message->spaceId;
+            $payload = json_encode(
+                value: [
+                    'type' => 'message_edited',
+                    'id' => $message->id,
+                    'bodyHtml' => $message->bodyHtml,
+                ],
+                flags: JSON_THROW_ON_ERROR,
+            );
+            $this->publisher->publish(
+                channel: "space:{$slug}",
+                message: new PubSubMessage(channel: "space:{$slug}", payload: $payload),
+            );
+        }
+
         return Response::json(
             data: ['id' => $message->id],
             statusCode: 200,
         );
     }
 
+    /**
+     * @throws \JsonException
+     */
     #[Delete('/messages/{id}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function delete(
         int $id,
@@ -224,8 +269,27 @@ readonly class MessageController
             );
         }
 
-        $this->memberships->clearLastReadMessageId(messageId: (int) $message->id);
+        $messageId = (int) $message->id;
+        $spaceId = $message->spaceId;
+
+        $this->memberships?->clearLastReadMessageId(messageId: $messageId);
         $this->messages->delete(entity: $message);
+
+        if ($this->publisher !== null) {
+            $space = $this->spaces->find(id: $spaceId);
+            $slug = $space !== null ? $space->slug : (string) $spaceId;
+            $payload = json_encode(
+                value: [
+                    'type' => 'message_deleted',
+                    'id' => $messageId,
+                ],
+                flags: JSON_THROW_ON_ERROR,
+            );
+            $this->publisher->publish(
+                channel: "space:{$slug}",
+                message: new PubSubMessage(channel: "space:{$slug}", payload: $payload),
+            );
+        }
 
         return Response::json(
             data: ['success' => true],
@@ -349,5 +413,28 @@ readonly class MessageController
         $data['items'] = $items;
 
         return Response::json(data: $data);
+    }
+
+    private function renderMessageHtml(Message $message): string
+    {
+        $userEntity = $this->users?->find(id: $message->userId);
+        $authorName = htmlspecialchars(
+            string: $userEntity !== null ? ($userEntity->displayName ?: $userEntity->username) : 'Unknown User',
+        );
+        $timestamp = $message->createdAt->format(format: 'M j, g:i A');
+        $pinnedClass = $message->isPinned ? ' message-pinned' : '';
+        $pinnedBadge = $message->isPinned ? '<span class="message-pin-badge">Pinned</span>' : '';
+
+        return <<<HTML
+        <div class="message{$pinnedClass}" data-message-id="{$message->id}">
+          <div class="message-header">
+            <div class="message-avatar"></div>
+            <span class="message-author">{$authorName}</span>
+            <span class="message-timestamp">{$timestamp}</span>
+            {$pinnedBadge}
+          </div>
+          <div class="message-body">{$message->bodyHtml}</div>
+        </div>
+        HTML;
     }
 }

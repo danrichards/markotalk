@@ -21,7 +21,7 @@ it('has a composer.json with all required marko package dependencies', function 
         'marko/config',
         'marko/core',
         'marko/database',
-        'marko/database-mysql',
+        'marko/database-pgsql',
         'marko/env',
         'marko/errors',
         'marko/errors-simple',
@@ -35,7 +35,6 @@ it('has a composer.json with all required marko package dependencies', function 
         'marko/routing',
         'marko/security',
         'marko/session',
-        'marko/session-file',
         'marko/sse',
         'marko/testing',
         'marko/validation',
@@ -120,7 +119,7 @@ it('has config/database.php with MySQL configuration', function (): void {
     $config = require $configPath;
 
     expect($config)->toBeArray()
-        ->and($config['driver'])->toBe('mysql')
+        ->and($config['driver'])->toBe('pgsql')
         ->and($config)->toHaveKey('host')
         ->and($config)->toHaveKey('port')
         ->and($config)->toHaveKey('database')
