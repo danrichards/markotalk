@@ -13,6 +13,7 @@ use App\User\Entity\User;
 use App\User\Enum\UserRole;
 use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
+use App\User\Middleware\PresenceMiddleware;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Config\ConfigRepositoryInterface;
 use Marko\Authorization\Contracts\GateInterface;
@@ -44,7 +45,7 @@ readonly class MessageController
     /**
      * @throws \JsonException
      */
-    #[Post('/spaces/{slug}/messages', middleware: [AuthMiddleware::class])]
+    #[Post('/spaces/{slug}/messages', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function send(
         string $slug,
         Request $request,
@@ -88,7 +89,7 @@ readonly class MessageController
             $maxAttempts = $this->config->getInt(key: 'markotalk.rate_limit_messages');
             $decaySeconds = $this->config->getInt(key: 'markotalk.rate_limit_window');
             $result = $this->rateLimiter->attempt(
-                key: "user_${userId}_messages",
+                key: "user_{$userId}_messages",
                 maxAttempts: $maxAttempts,
                 decaySeconds: $decaySeconds,
             );
@@ -126,7 +127,7 @@ readonly class MessageController
         );
     }
 
-    #[Put('/messages/{id}', middleware: [AuthMiddleware::class])]
+    #[Put('/messages/{id}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function edit(
         int $id,
         Request $request,
@@ -189,7 +190,7 @@ readonly class MessageController
         );
     }
 
-    #[Delete('/messages/{id}', middleware: [AuthMiddleware::class])]
+    #[Delete('/messages/{id}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function delete(
         int $id,
         Request $request,
@@ -232,7 +233,7 @@ readonly class MessageController
         );
     }
 
-    #[Post('/messages/{id}/pin', middleware: [AuthMiddleware::class])]
+    #[Post('/messages/{id}/pin', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function pin(
         int $id,
         Request $request,
@@ -264,7 +265,7 @@ readonly class MessageController
         return Response::redirect(url: $referer);
     }
 
-    #[Post('/messages/{id}/reactions', middleware: [AuthMiddleware::class])]
+    #[Post('/messages/{id}/reactions', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function react(
         int $id,
         Request $request,
@@ -307,7 +308,7 @@ readonly class MessageController
         return Response::json(data: $grouped);
     }
 
-    #[Get('/spaces/{slug}/messages', middleware: [AuthMiddleware::class])]
+    #[Get('/spaces/{slug}/messages', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function history(
         string $slug,
         Request $request,

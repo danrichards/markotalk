@@ -9,9 +9,12 @@ use App\Space\Entity\Space;
 use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
+use App\User\Entity\User;
 use App\User\Repository\UserRepositoryInterface;
+use App\User\Service\PresenceTrackerInterface;
 use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
+use App\User\Middleware\PresenceMiddleware;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Attributes\Post;
@@ -30,9 +33,10 @@ readonly class SpaceController
         private ViewInterface $view,
         private AuthManager $auth,
         private CsrfTokenManagerInterface $csrf,
+        private PresenceTrackerInterface $presence,
     ) {}
 
-    #[Get('/home', middleware: [AuthMiddleware::class])]
+    #[Get('/home', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function index(
         Request $request,
     ): Response {
@@ -51,7 +55,7 @@ readonly class SpaceController
         return Response::redirect(url: '/spaces');
     }
 
-    #[Get('/spaces/{slug}', middleware: [AuthMiddleware::class])]
+    #[Get('/spaces/{slug}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function show(
         string $slug,
         Request $request,
@@ -107,6 +111,11 @@ readonly class SpaceController
             $unreadCounts[$m->spaceId] = $this->memberships->countUnread(userId: $userId, spaceId: $m->spaceId);
         }
 
+        $onlineUserIds = array_map(
+            callback: fn (User $user): int => $user->id,
+            array: $this->presence->getOnlineUsers(),
+        );
+
         return $this->view->render(template: 'space::space/show', data: [
             'space' => $space,
             'spaces' => $allSpaces,
@@ -115,12 +124,13 @@ readonly class SpaceController
             'messages' => $messages,
             'userMap' => $userMap,
             'unreadCounts' => $unreadCounts,
+            'onlineUserIds' => $onlineUserIds,
             'currentUser' => $this->auth->user(),
             'csrfToken' => $this->csrf->get(),
         ]);
     }
 
-    #[Post('/spaces/{slug}/join', middleware: [AuthMiddleware::class])]
+    #[Post('/spaces/{slug}/join', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function join(
         string $slug,
         Request $request,
@@ -141,7 +151,7 @@ readonly class SpaceController
         return Response::redirect(url: '/spaces/' . $slug);
     }
 
-    #[Post('/spaces/{slug}/leave', middleware: [AuthMiddleware::class])]
+    #[Post('/spaces/{slug}/leave', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function leave(
         string $slug,
         Request $request,

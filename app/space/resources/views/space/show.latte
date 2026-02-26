@@ -21,14 +21,14 @@
     <ul class="member-list" id="member-list">
       {if isset($currentUser)}
       <li class="member-item member-item-self" data-user-id="{$currentUser->id}">
-        <span class="member-indicator is-offline"></span>
+        <span class="member-indicator is-online"></span>
         <span class="member-name">{$currentUser->displayName ?? $currentUser->username}</span>
       </li>
       {/if}
       {foreach $members as $member}
       {continueIf isset($currentUser) && $member->id === $currentUser->id}
       <li class="member-item" data-user-id="{$member->id}">
-        <span class="member-indicator is-offline"></span>
+        <span class="member-indicator {if isset($onlineUserIds) && in_array($member->id, $onlineUserIds)}is-online{else}is-offline{/if}"></span>
         <span class="member-name">{$member->displayName ?? $member->username}</span>
       </li>
       {/foreach}

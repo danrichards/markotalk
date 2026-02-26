@@ -12,6 +12,7 @@ use App\User\Repository\UserRepositoryInterface;
 use App\User\Service\PresenceTrackerInterface;
 use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
+use App\User\Middleware\PresenceMiddleware;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Config\ConfigRepositoryInterface;
 use Marko\Routing\Attributes\Get;
@@ -33,7 +34,7 @@ readonly class StreamController
         private CsrfTokenManagerInterface $csrf,
     ) {}
 
-    #[Get('/spaces/{slug}/stream', middleware: [AuthMiddleware::class])]
+    #[Get('/spaces/{slug}/stream', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function stream(
         string $slug,
         Request $request,
