@@ -6,7 +6,7 @@ A real-time community chat platform built with the Marko PHP framework. Dogfoodi
 
 - **Language**: PHP 8.5+
 - **Framework**: Marko PHP Framework (local at `~/Sites/marko`)
-- **Database**: MySQL
+- **Database**: PostgreSQL
 - **Templates**: Latte 3.0 (`marko/view-latte`)
 - **Real-Time**: SSE (`marko/sse`)
 - **Testing**: Pest PHP 4.3

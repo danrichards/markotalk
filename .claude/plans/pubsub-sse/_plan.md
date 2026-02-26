@@ -4,7 +4,7 @@
 2026-02-26
 
 ## Status
-in_progress
+completed
 
 ## Objective
 Replace the blocking `sleep(1)` poll loop in StreamController with PostgreSQL LISTEN/NOTIFY pub/sub via `marko/pubsub-pgsql`, so SSE clients receive events instantly without per-connection database polling.
@@ -34,13 +34,13 @@ The `SseStream.iterateSubscription()` maps `Message.channel → SSE event type`,
 PostgreSQL NOTIFY has an 8000-byte payload limit. MarkoTalk's max message length is 2000 chars — rendered HTML + JSON envelope stays well under 4KB even at maximum.
 
 ## Success Criteria
-- [ ] New packages installed and configured for PostgreSQL pub/sub
-- [ ] StreamController uses subscription-based SseStream (no polling, no sleep)
-- [ ] MessageController publishes events after send/edit/delete
-- [ ] PresenceMiddleware publishes presence events on space requests
-- [ ] Client JS handles single-channel event routing
-- [ ] All tests passing
-- [ ] Code follows project standards
+- [x] New packages installed and configured for PostgreSQL pub/sub
+- [x] StreamController uses subscription-based SseStream (no polling, no sleep)
+- [x] MessageController publishes events after send/edit/delete
+- [x] PresenceMiddleware publishes presence events on space requests
+- [x] Client JS handles single-channel event routing
+- [x] All tests passing
+- [x] Code follows project standards
 
 ## Task Overview
 | Task | Description | Depends On | Status |
