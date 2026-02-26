@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Message\Repository;
 
 use App\Message\Entity\Message;
+use DateTimeImmutable;
 use Marko\Database\Repository\RepositoryInterface;
 use Marko\Pagination\CursorPaginator;
 use Marko\Pagination\PaginationException;
@@ -29,6 +30,16 @@ interface MessageRepositoryInterface extends RepositoryInterface
     public function findBySpaceSince(
         int $spaceId,
         int $sinceId,
+    ): array;
+
+    /**
+     * Find messages in a space edited after a given timestamp (for SSE polling).
+     *
+     * @return array<Message>
+     */
+    public function findEditedSince(
+        int $spaceId,
+        DateTimeImmutable $since,
     ): array;
 
     /**

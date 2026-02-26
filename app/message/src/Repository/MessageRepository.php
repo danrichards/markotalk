@@ -174,4 +174,33 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
             array: $rows,
         );
     }
+
+    /**
+     * Find messages in a space edited after a given timestamp.
+     *
+     * @return array<Message>
+     */
+    public function findEditedSince(
+        int $spaceId,
+        \DateTimeImmutable $since,
+    ): array {
+        $sql = sprintf(
+            'SELECT * FROM %s WHERE space_id = ? AND edited_at > ? ORDER BY id ASC',
+            $this->metadata->tableName,
+        );
+
+        $rows = $this->connection->query(
+            sql: $sql,
+            bindings: [$spaceId, $since->format('Y-m-d H:i:s')],
+        );
+
+        return array_map(
+            callback: fn (array $row): Message => $this->hydrator->hydrate(
+                entityClass: static::ENTITY_CLASS,
+                row: $row,
+                metadata: $this->metadata,
+            ),
+            array: $rows,
+        );
+    }
 }

@@ -50,6 +50,15 @@
     }
   });
 
+  eventSource.addEventListener('message_edited', (e) => {
+    const data = JSON.parse(e.data);
+    const msgEl = chatFeed.querySelector(`[data-message-id="${data.id}"]`);
+    if (msgEl) {
+      const bodyEl = msgEl.querySelector('.message-body');
+      if (bodyEl) bodyEl.innerHTML = data.bodyHtml;
+    }
+  });
+
   eventSource.addEventListener('presence', (e) => {
     const onlineIds = JSON.parse(e.data);
     document.querySelectorAll('.member-item').forEach(item => {

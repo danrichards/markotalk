@@ -10,6 +10,7 @@ use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Repository\UserRepositoryInterface;
 use App\User\Service\PresenceTrackerInterface;
+use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Config\ConfigRepositoryInterface;
@@ -46,8 +47,9 @@ readonly class StreamController
 
         $currentUserId = (int) $this->auth->id();
         $csrfToken = $this->csrf->get();
+        $lastEditCheck = new DateTimeImmutable();
 
-        $dataProvider = function () use ($space, &$lastEventId, $currentUserId, $csrfToken): array {
+        $dataProvider = function () use ($space, &$lastEventId, &$lastEditCheck, $currentUserId, $csrfToken): array {
             if ($space === null) {
                 return [];
             }
@@ -73,6 +75,28 @@ readonly class StreamController
             if (count(value: $newMessages) > 0) {
                 $lastMessage = end(array: $newMessages);
                 $lastEventId = $lastMessage->id ?? $lastEventId;
+            }
+
+            // Check for edited messages since last poll
+            $newMessageIds = array_map(
+                callback: fn (Message $m): int => (int) $m->id,
+                array: $newMessages,
+            );
+            $editedMessages = $this->messages->findEditedSince(
+                spaceId: (int) $space->id,
+                since: $lastEditCheck,
+            );
+            $lastEditCheck = new DateTimeImmutable();
+
+            foreach ($editedMessages as $edited) {
+                // Skip messages already sent as new
+                if (in_array((int) $edited->id, $newMessageIds, true)) {
+                    continue;
+                }
+                $events[] = new SseEvent(
+                    data: ['id' => $edited->id, 'bodyHtml' => $edited->bodyHtml],
+                    event: 'message_edited',
+                );
             }
 
             $onlineUsers = $this->presence->getOnlineUsers();

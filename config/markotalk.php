@@ -7,7 +7,7 @@ return [
     'rate_limit_messages' => 10,
     'rate_limit_window' => 30,
     'presence_timeout' => 30,
-    'sse_poll_interval' => 3,
+    'sse_poll_interval' => 1,
     'sse_heartbeat_interval' => 15,
     'sse_timeout' => 300,
     'default_spaces' => [
