@@ -18,7 +18,6 @@ use App\User\Middleware\PresenceMiddleware;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Attributes\Post;
-use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\Security\Contracts\CsrfTokenManagerInterface;
 use Marko\View\ViewInterface;
@@ -26,10 +25,10 @@ use Marko\View\ViewInterface;
 readonly class SpaceController
 {
     public function __construct(
-        private SpaceRepositoryInterface $spaces,
-        private SpaceMembershipRepositoryInterface $memberships,
-        private MessageRepositoryInterface $messages,
-        private UserRepositoryInterface $users,
+        private SpaceRepositoryInterface $spaceRepository,
+        private SpaceMembershipRepositoryInterface $spaceMembershipRepository,
+        private MessageRepositoryInterface $messageRepository,
+        private UserRepositoryInterface $userRepository,
         private ViewInterface $view,
         private AuthManager $auth,
         private CsrfTokenManagerInterface $csrf,
@@ -37,16 +36,14 @@ readonly class SpaceController
     ) {}
 
     #[Get('/home', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
-    public function index(
-        Request $request,
-    ): Response {
-        $general = $this->spaces->findBySlug(slug: 'general');
+    public function index(): Response {
+        $general = $this->spaceRepository->findBySlug(slug: 'general');
 
-        if ($general !== null) {
+        if ($general instanceof Space) {
             return Response::redirect(url: '/spaces/general');
         }
 
-        $activeSpaces = $this->spaces->findActive();
+        $activeSpaces = $this->spaceRepository->findActive();
 
         if ($activeSpaces !== []) {
             return Response::redirect(url: '/spaces/' . $activeSpaces[0]->slug);
@@ -55,39 +52,41 @@ readonly class SpaceController
         return Response::redirect(url: '/spaces');
     }
 
+    /**
+     * @throws \Marko\Authentication\Exceptions\AuthException
+     */
     #[Get('/spaces/{slug}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function show(
         string $slug,
-        Request $request,
     ): Response {
-        $space = $this->spaces->findBySlug(slug: $slug);
+        $space = $this->spaceRepository->findBySlug(slug: $slug);
 
-        if ($space === null) {
+        if (!$space instanceof Space) {
             return new Response(body: 'Not Found', statusCode: 404);
         }
 
         $userId = (int) $this->auth->user()->getAuthIdentifier();
-        $membership = $this->memberships->findByUserAndSpace(userId: $userId, spaceId: (int) $space->id);
+        $membership = $this->spaceMembershipRepository->findByUserAndSpace(userId: $userId, spaceId: (int) $space->id);
 
-        if ($membership === null) {
+        if (!$membership instanceof SpaceMembership) {
             $membership = $this->createMembership(userId: $userId, space: $space);
         }
 
-        $messages = $this->messages->findBySpace(spaceId: (int) $space->id);
+        $messages = $this->messageRepository->findBySpace(spaceId: (int) $space->id);
 
         if ($messages !== []) {
-            $this->memberships->updateLastReadMessageId(
+            $this->spaceMembershipRepository->updateLastReadMessageId(
                 membership: $membership,
                 messageId: (int) $messages[array_key_last($messages)]->id,
             );
         }
 
-        $allSpaces = $this->spaces->findActive();
-        $spaceMemberships = $this->memberships->findAllForSpace(spaceId: (int) $space->id);
+        $allSpaces = $this->spaceRepository->findActive();
+        $spaceMemberships = $this->spaceMembershipRepository->findAllForSpace(spaceId: (int) $space->id);
         $members = [];
         foreach ($spaceMemberships as $m) {
-            $user = $this->users->find(id: $m->userId);
-            if ($user !== null) {
+            $user = $this->userRepository->find(id: $m->userId);
+            if ($user instanceof User) {
                 $members[] = $user;
             }
         }
@@ -98,17 +97,17 @@ readonly class SpaceController
         }
         foreach ($messages as $message) {
             if (!isset($userMap[$message->userId])) {
-                $user = $this->users->find(id: $message->userId);
-                if ($user !== null) {
+                $user = $this->userRepository->find(id: $message->userId);
+                if ($user instanceof User) {
                     $userMap[$user->id] = $user->displayName ?: $user->username;
                 }
             }
         }
 
-        $userMemberships = $this->memberships->findAllForUser(userId: $userId);
+        $userMemberships = $this->spaceMembershipRepository->findAllForUser(userId: $userId);
         $unreadCounts = [];
         foreach ($userMemberships as $m) {
-            $unreadCounts[$m->spaceId] = $this->memberships->countUnread(userId: $userId, spaceId: $m->spaceId);
+            $unreadCounts[$m->spaceId] = $this->spaceMembershipRepository->countUnread(userId: $userId, spaceId: $m->spaceId);
         }
 
         $onlineUserIds = array_map(
@@ -130,43 +129,47 @@ readonly class SpaceController
         ]);
     }
 
+    /**
+     * @throws \Marko\Authentication\Exceptions\AuthException
+     */
     #[Post('/spaces/{slug}/join', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function join(
         string $slug,
-        Request $request,
     ): Response {
-        $space = $this->spaces->findBySlug(slug: $slug);
+        $space = $this->spaceRepository->findBySlug(slug: $slug);
 
-        if ($space === null) {
+        if (!$space instanceof Space) {
             return new Response(body: 'Not Found', statusCode: 404);
         }
 
         $userId = (int) $this->auth->user()->getAuthIdentifier();
-        $existing = $this->memberships->findByUserAndSpace(userId: $userId, spaceId: (int) $space->id);
+        $existing = $this->spaceMembershipRepository->findByUserAndSpace(userId: $userId, spaceId: (int) $space->id);
 
-        if ($existing === null) {
+        if (!$existing instanceof SpaceMembership) {
             $this->createMembership(userId: $userId, space: $space);
         }
 
         return Response::redirect(url: '/spaces/' . $slug);
     }
 
+    /**
+     * @throws \Marko\Authentication\Exceptions\AuthException
+     */
     #[Post('/spaces/{slug}/leave', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function leave(
         string $slug,
-        Request $request,
     ): Response {
-        $space = $this->spaces->findBySlug(slug: $slug);
+        $space = $this->spaceRepository->findBySlug(slug: $slug);
 
-        if ($space === null) {
+        if (!$space instanceof Space) {
             return new Response(body: 'Not Found', statusCode: 404);
         }
 
         $userId = (int) $this->auth->user()->getAuthIdentifier();
-        $membership = $this->memberships->findByUserAndSpace(userId: $userId, spaceId: (int) $space->id);
+        $membership = $this->spaceMembershipRepository->findByUserAndSpace(userId: $userId, spaceId: (int) $space->id);
 
-        if ($membership !== null) {
-            $this->memberships->delete(entity: $membership);
+        if ($membership instanceof SpaceMembership) {
+            $this->spaceMembershipRepository->delete(entity: $membership);
         }
 
         return Response::redirect(url: '/home');
@@ -183,7 +186,7 @@ readonly class SpaceController
             lastReadMessageId: null,
             joinedAt: new DateTimeImmutable(),
         );
-        $this->memberships->save(entity: $membership);
+        $this->spaceMembershipRepository->save(entity: $membership);
 
         return $membership;
     }

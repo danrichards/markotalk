@@ -117,6 +117,11 @@ class AuthStubUserRepository implements UserRepositoryInterface
         return null;
     }
 
+    public function existsBy(array $criteria): bool
+    {
+        return $this->findOneBy(criteria: $criteria) !== null;
+    }
+
     public function save(Entity $entity): void
     {
         $this->savedUser = $entity instanceof User ? $entity : null;
@@ -199,6 +204,7 @@ function makeAuthStubSpaceRepository(): SpaceRepositoryInterface
         public function findAll(): array { return []; }
         public function findBy(array $criteria): array { return []; }
         public function findOneBy(array $criteria): ?Entity { return null; }
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
         public function save(Entity $entity): void {}
         public function delete(Entity $entity): void {}
     };
@@ -222,7 +228,7 @@ function makeAuthController(
         eventDispatcher: $eventDispatcher ?? new FakeEventDispatcher(),
         csrf: $csrf ?? new AuthStubCsrfTokenManager(),
         presence: makeAuthStubPresenceTracker(),
-        spaces: makeAuthStubSpaceRepository(),
+        spaceRepository: makeAuthStubSpaceRepository(),
     );
 }
 
@@ -230,8 +236,7 @@ it('shows the login form on GET /login', function (): void {
     $view = new AuthStubView();
     $controller = makeAuthController(view: $view);
 
-    $request = new Request();
-    $response = $controller->showLogin(request: $request);
+    $response = $controller->showLogin();
 
     expect($response->statusCode())->toBe(200)
         ->and($view->lastTemplate)->toBe('user::auth/login');
@@ -241,8 +246,7 @@ it('shows the registration form on GET /register', function (): void {
     $view = new AuthStubView();
     $controller = makeAuthController(view: $view);
 
-    $request = new Request();
-    $response = $controller->showRegister(request: $request);
+    $response = $controller->showRegister();
 
     expect($response->statusCode())->toBe(200)
         ->and($view->lastTemplate)->toBe('user::auth/register');
@@ -336,8 +340,7 @@ it('logs the user out on POST /logout and redirects to login', function (): void
     $guard->setUser(user: $user);
     $controller = makeAuthController(guard: $guard);
 
-    $request = new Request();
-    $response = $controller->logout(request: $request);
+    $response = $controller->logout();
 
     expect($guard->logoutCalled)->toBeTrue()
         ->and($response->statusCode())->toBe(302)

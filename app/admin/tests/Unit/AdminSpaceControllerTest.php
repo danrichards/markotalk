@@ -28,14 +28,14 @@ function makeAdminSpaceView(): ViewInterface
             $this->lastTemplate = $template;
             $this->lastData = $data;
 
-            return new Response(body: '<html>admin spaces</html>', statusCode: 200);
+            return new Response(body: '<html lang="">admin spaces</html>', statusCode: 200);
         }
 
         public function renderToString(
             string $template,
             array $data = [],
         ): string {
-            return '<html>admin spaces</html>';
+            return '<html lang="">admin spaces</html>';
         }
     };
 }
@@ -70,13 +70,7 @@ function makeAdminSpaceRepository(
 
         public function find(int $id): ?Entity
         {
-            foreach ($this->all as $space) {
-                if ($space->id === $id) {
-                    return $space;
-                }
-            }
-
-            return null;
+            return array_find($this->all, fn(Space $space) => $space->id === $id);
         }
 
         public function findOrFail(int $id): Entity
@@ -84,7 +78,7 @@ function makeAdminSpaceRepository(
             $space = $this->find(id: $id);
 
             if ($space === null) {
-                throw new RuntimeException(message: "Space {$id} not found");
+                throw new RuntimeException(message: "Space $id not found");
             }
 
             return $space;
@@ -113,10 +107,15 @@ function makeAdminSpaceRepository(
             return null;
         }
 
+        public function existsBy(array $criteria): bool
+        {
+            return $this->findOneBy(criteria: $criteria) !== null;
+        }
+
         public function save(Entity $entity): void
         {
             $this->saveCalled = true;
-            $this->savedEntity = $entity;
+            $this->savedEntity = $entity instanceof Space ? $entity : null;
         }
 
         public function delete(Entity $entity): void {}
@@ -128,7 +127,7 @@ function makeAdminSpaceController(
     ViewInterface $view,
 ): AdminSpaceController {
     return new AdminSpaceController(
-        spaces: $spaces,
+        spaceRepository: $spaces,
         view: $view,
     );
 }
@@ -149,11 +148,6 @@ function makeAdminSpace(
         createdAt: new DateTimeImmutable(datetime: '2026-02-24 00:00:00'),
         updatedAt: new DateTimeImmutable(datetime: '2026-02-24 00:00:00'),
     );
-}
-
-function makeAdminSpaceGetRequest(string $uri = '/admin/spaces'): Request
-{
-    return new Request(server: ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => $uri]);
 }
 
 function makeAdminSpacePostRequest(
@@ -186,7 +180,7 @@ it('lists all spaces including archived ones for admins', function (): void {
     $view = makeAdminSpaceView();
     $controller = makeAdminSpaceController(spaces: $spaces, view: $view);
 
-    $response = $controller->index(request: makeAdminSpaceGetRequest());
+    $response = $controller->index();
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(200)
@@ -263,10 +257,7 @@ it('archives a space', function (): void {
     $view = makeAdminSpaceView();
     $controller = makeAdminSpaceController(spaces: $spaces, view: $view);
 
-    $response = $controller->archive(
-        id: '1',
-        request: makeAdminSpacePostRequest(uri: '/admin/spaces/1/archive'),
-    );
+    $response = $controller->archive(id: '1');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -276,7 +267,11 @@ it('archives a space', function (): void {
         ->and($spaces->savedEntity->isArchived)->toBeTrue();
 });
 
-it('requires admin role for all actions', function (): void {
+it(/**
+ * @throws \ReflectionException
+ */ /**
+ * @throws \ReflectionException
+ */ 'requires admin role for all actions', function (): void {
     $reflection = new ReflectionClass(objectOrClass: AdminSpaceController::class);
     $methods = ['index', 'create', 'update', 'archive'];
 
@@ -296,6 +291,6 @@ it('requires admin role for all actions', function (): void {
             }
         }
 
-        expect($hasAdminMiddleware)->toBeTrue("Method {$methodName} must have AdminMiddleware");
+        expect($hasAdminMiddleware)->toBeTrue("Method $methodName must have AdminMiddleware");
     }
 });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Message\Controller\MessageController;
 use App\Message\Entity\Message;
+use App\Message\Entity\Reaction;
 use App\Message\Repository\MessageRepositoryInterface;
 use App\Message\Repository\ReactionRepositoryInterface;
 use App\Space\Entity\Space;
@@ -102,13 +103,7 @@ function makeReactionMessageRepository(array $messages = []): MessageRepositoryI
 
         public function find(int $id): ?DatabaseEntity
         {
-            foreach ($this->messages as $message) {
-                if ($message->id === $id) {
-                    return $message;
-                }
-            }
-
-            return null;
+            return array_find($this->messages, fn(Message $message) => $message->id === $id);
         }
 
         public function findOrFail(int $id): DatabaseEntity
@@ -140,6 +135,8 @@ function makeReactionMessageRepository(array $messages = []): MessageRepositoryI
         {
             return null;
         }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function findBy(array $criteria): array
         {
@@ -184,6 +181,8 @@ function makeReactionSpaceRepository(): SpaceRepositoryInterface
         {
             return null;
         }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function findBy(array $criteria): array
         {
@@ -334,18 +333,18 @@ function makeReactionRepository(
         public function findOneBy(array $criteria): ?DatabaseEntity
         {
             if ($this->existingReaction) {
-                /** @noinspection PhpMissingParentConstructorInspection - Test stub intentionally skips parent */
-                return new class extends DatabaseEntity {
-                    /** @noinspection PhpMissingParentConstructorInspection */
-                    public function __construct()
-                    {
-                        // minimal stub
-                    }
-                };
+                return new Reaction(
+                    id: 1,
+                    messageId: (int) ($criteria['message_id'] ?? 0),
+                    userId: (int) ($criteria['user_id'] ?? 0),
+                    emoji: (string) ($criteria['emoji'] ?? ''),
+                );
             }
 
             return null;
         }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function findBy(array $criteria): array
         {
@@ -360,8 +359,8 @@ function makeReactionController(
     AuthManager $auth,
 ): MessageController {
     return new MessageController(
-        messages: $messages,
-        spaces: makeReactionSpaceRepository(),
+        messageRepository: $messages,
+        spaceRepository: makeReactionSpaceRepository(),
         auth: $auth,
         validator: makeReactionValidator(),
         config: makeReactionConfig(),

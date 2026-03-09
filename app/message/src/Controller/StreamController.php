@@ -16,23 +16,24 @@ use Marko\Sse\StreamingResponse;
 readonly class StreamController
 {
     public function __construct(
-        private SpaceRepositoryInterface $spaces,
+        private SpaceRepositoryInterface $spaceRepository,
         private SubscriberInterface $subscriber,
         private ConfigRepositoryInterface $config,
     ) {}
 
     /**
      * @throws \Marko\Config\Exceptions\ConfigNotFoundException
+     * @throws \Marko\Sse\Exceptions\SseException
      */
     #[Get('/spaces/{slug}/stream', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function stream(
         string $slug,
     ): StreamingResponse {
-        $this->spaces->findBySlug(slug: $slug);
+        $this->spaceRepository->findBySlug(slug: $slug);
 
         $timeout = $this->config->getInt(key: 'markotalk.sse_timeout');
 
-        $subscription = $this->subscriber->subscribe("space:{$slug}");
+        $subscription = $this->subscriber->subscribe("space:$slug");
 
         return new StreamingResponse(
             stream: new SseStream(

@@ -73,3 +73,23 @@ Project configuration files are in `.claude/`:
 - `testing.md` — Test configuration, TDD workflow, and conventions
 - `code-standards.md` — Coding conventions and linting setup
 - `styling.md` — Tailwind CSS approach, naming conventions, and template rules
+
+## Code Intelligence and Navigation
+
+Prefer LSP over Grep/Glob/Read for code navigation:
+- `goToDefinition` / `goToImplementation` to jump to source
+- `findReferences` to see all usages across the codebase
+- `workspaceSymbol` to find where something is defined
+- `documentSymbol` to list all symbols in a file
+- `hover` for type info without reading the file
+- `incomingCalls` / `outgoingCalls` for call hierarchy
+
+Before renaming or changing a function signature, use `findReferences` to find all call sites first.
+
+Use Grep/Glob only for text/pattern searches (comments, strings, config values) where LSP doesn't help.
+
+After writing or editing code, check LSP diagnostics before moving on. Fix any type errors or missing imports immediately.
+
+### LSP Diagnostics
+- When LSP diagnostics flag issues (unused variables, unused parameters, missing imports, type errors), fix them immediately — don't leave them for the user to notice.
+- This applies to both new code you write AND pre-existing issues you encounter in files you're editing

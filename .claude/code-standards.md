@@ -56,6 +56,41 @@ Follows the Marko Framework code standards (see `~/Sites/marko/.claude/code-stan
 - Static factory methods for common cases
 - All thrown exceptions must have `@throws` PHPDoc
 
+## Type Narrowing
+
+Use `instanceof` instead of null checks (`=== null` / `!== null`) when checking return values from repository methods, auth calls, or any method that returns a nullable entity type. This simultaneously checks for null and narrows the type for static analysis.
+
+```php
+// WRONG — null check only, no type narrowing
+$user = $this->userRepository->find(id: $id);
+if ($user === null) {
+    return new Response(body: 'Not Found', statusCode: 404);
+}
+
+// CORRECT — null check + type narrowing in one
+$user = $this->userRepository->find(id: $id);
+if (!$user instanceof User) {
+    return new Response(body: 'Not Found', statusCode: 404);
+}
+
+// WRONG — positive null check
+if ($currentUser !== null && $currentUser->id === $targetId) {
+
+// CORRECT — instanceof narrows to the specific type
+if ($currentUser instanceof User && $currentUser->id === $targetId) {
+
+// WRONG — ternary with null check
+$slug = $space !== null ? $space->slug : 'fallback';
+
+// CORRECT — ternary with instanceof
+$slug = $space instanceof Space ? $space->slug : 'fallback';
+```
+
+This applies to:
+- Repository `find()`, `findOneBy()`, `findBySlug()`, `findByEmail()`, etc.
+- `$this->auth->user()` and `$this->guard->user()`
+- Any method returning `?Entity` or `?AuthenticatableInterface`
+
 ## Configuration
 - PHP files only (no YAML, XML, DSL)
 - Environment variables ONLY in config files

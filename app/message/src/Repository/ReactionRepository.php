@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Message\Repository;
 
 use App\Message\Entity\Reaction;
-use Closure;
-use Marko\Database\Connection\ConnectionInterface;
-use Marko\Database\Entity\EntityHydrator;
-use Marko\Database\Entity\EntityMetadataFactory;
+use Marko\Database\Entity\Entity;
 use Marko\Database\Repository\Repository;
 
 /**
@@ -17,20 +14,6 @@ use Marko\Database\Repository\Repository;
 class ReactionRepository extends Repository implements ReactionRepositoryInterface
 {
     protected const string ENTITY_CLASS = Reaction::class;
-
-    public function __construct(
-        ConnectionInterface $connection,
-        EntityMetadataFactory $metadataFactory,
-        EntityHydrator $hydrator,
-        ?Closure $queryBuilderFactory = null,
-    ) {
-        parent::__construct(
-            connection: $connection,
-            metadataFactory: $metadataFactory,
-            hydrator: $hydrator,
-            queryBuilderFactory: $queryBuilderFactory,
-        );
-    }
 
     /**
      * Find all reactions for a message.
@@ -47,7 +30,7 @@ class ReactionRepository extends Repository implements ReactionRepositoryInterfa
         $rows = $this->connection->query(sql: $sql, bindings: [$messageId]);
 
         return array_map(
-            callback: fn (array $row): Reaction => $this->hydrator->hydrate(
+            callback: fn (array $row): Entity => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,

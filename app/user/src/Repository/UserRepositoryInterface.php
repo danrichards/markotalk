@@ -8,6 +8,9 @@ use App\User\Entity\User;
 use DateTimeImmutable;
 use Marko\Database\Repository\RepositoryInterface;
 
+/**
+ * @extends RepositoryInterface<User>
+ */
 interface UserRepositoryInterface extends RepositoryInterface
 {
     /**

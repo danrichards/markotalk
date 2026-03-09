@@ -80,6 +80,8 @@ function makeSpaceRepositoryStub(
 
         public function findOneBy(array $criteria): ?Entity { return null; }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function clearLastReadMessageId(int $messageId): void {}
 
         public function save(Entity $entity): void {}
@@ -130,6 +132,8 @@ function makeSpaceMembershipRepositoryStub(
         public function findBy(array $criteria): array { return []; }
 
         public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function clearLastReadMessageId(int $messageId): void {}
 
@@ -207,6 +211,8 @@ function makeMessageRepositoryStub(): MessageRepositoryInterface
 
         public function findOneBy(array $criteria): ?Entity { return null; }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function save(Entity $entity): void {}
 
         public function delete(Entity $entity): void {}
@@ -240,6 +246,8 @@ function makeSpaceUserRepositoryStub(): UserRepositoryInterface
         public function findBy(array $criteria): array { return []; }
 
         public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function save(Entity $entity): void {}
 
@@ -278,10 +286,10 @@ function makeSpaceController(
     AuthManager $auth,
 ): SpaceController {
     return new SpaceController(
-        spaces: $spaces,
-        memberships: $memberships,
-        messages: makeMessageRepositoryStub(),
-        users: makeSpaceUserRepositoryStub(),
+        spaceRepository: $spaces,
+        spaceMembershipRepository: $memberships,
+        messageRepository: makeMessageRepositoryStub(),
+        userRepository: makeSpaceUserRepositoryStub(),
         view: $view,
         auth: $auth,
         csrf: makeSpaceCsrfTokenManagerStub(),
@@ -337,7 +345,7 @@ it('redirects GET / to the first joined space', function (): void {
     $auth = makeSpaceControllerAuthManager(user: $user);
 
     $controller = makeSpaceController(spaces: $spaces, memberships: $memberships, view: $view, auth: $auth);
-    $response = $controller->index(request: makeSpaceGetRequest());
+    $response = $controller->index();
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -355,7 +363,7 @@ it('shows the chat view for GET /spaces/{slug}', function (): void {
     $auth = makeSpaceControllerAuthManager(user: $user);
 
     $controller = makeSpaceController(spaces: $spaces, memberships: $memberships, view: $view, auth: $auth);
-    $response = $controller->show(slug: 'general', request: makeSpaceGetRequest(uri: '/spaces/general'));
+    $response = $controller->show(slug: 'general');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(200)
@@ -370,7 +378,7 @@ it('returns 404 for a non-existent space slug', function (): void {
     $auth = makeSpaceControllerAuthManager(user: makeAuthUser());
 
     $controller = makeSpaceController(spaces: $spaces, memberships: $memberships, view: $view, auth: $auth);
-    $response = $controller->show(slug: 'nonexistent', request: makeSpaceGetRequest(uri: '/spaces/nonexistent'));
+    $response = $controller->show(slug: 'nonexistent');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(404);
@@ -386,7 +394,7 @@ it('joins a space on POST /spaces/{slug}/join', function (): void {
     $auth = makeSpaceControllerAuthManager(user: $user);
 
     $controller = makeSpaceController(spaces: $spaces, memberships: $memberships, view: $view, auth: $auth);
-    $response = $controller->join(slug: 'general', request: makeSpacePostRequest());
+    $response = $controller->join(slug: 'general');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -405,7 +413,7 @@ it('leaves a space on POST /spaces/{slug}/leave', function (): void {
     $auth = makeSpaceControllerAuthManager(user: $user);
 
     $controller = makeSpaceController(spaces: $spaces, memberships: $memberships, view: $view, auth: $auth);
-    $response = $controller->leave(slug: 'general', request: makeSpacePostRequest(uri: '/spaces/general/leave'));
+    $response = $controller->leave(slug: 'general');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -440,7 +448,7 @@ it('redirects to /home after leaving a space', function (): void {
     $auth = makeSpaceControllerAuthManager(user: $user);
 
     $controller = makeSpaceController(spaces: $spaces, memberships: $memberships, view: $view, auth: $auth);
-    $response = $controller->leave(slug: 'general', request: makeSpacePostRequest(uri: '/spaces/general/leave'));
+    $response = $controller->leave(slug: 'general');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)

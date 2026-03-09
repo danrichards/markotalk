@@ -5,36 +5,35 @@ declare(strict_types=1);
 namespace App\Notification\Controller;
 
 use Marko\Authentication\AuthManager;
-use Marko\Authentication\AuthenticatableInterface;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Notification\Contracts\NotifiableInterface;
 use Marko\Notification\Database\Repository\NotificationRepositoryInterface;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Attributes\Post;
-use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\View\ViewInterface;
 
 readonly class NotificationController
 {
     public function __construct(
-        private NotificationRepositoryInterface $notifications,
+        private NotificationRepositoryInterface $notificationRepository,
         private ViewInterface $view,
         private AuthManager $auth,
     ) {}
 
+    /**
+     * @throws \Marko\Authentication\Exceptions\AuthException
+     */
     #[Get('/notifications', middleware: [AuthMiddleware::class])]
-    public function index(
-        Request $request,
-    ): Response {
+    public function index(): Response {
         $user = $this->auth->user();
 
         if (!$user instanceof NotifiableInterface) {
             return Response::redirect('/login');
         }
 
-        $notifications = $this->notifications->forNotifiable(notifiable: $user);
-        $unreadCount = $this->notifications->unreadCount(notifiable: $user);
+        $notifications = $this->notificationRepository->forNotifiable(notifiable: $user);
+        $unreadCount = $this->notificationRepository->unreadCount(notifiable: $user);
 
         return $this->view->render('notification::index', [
             'notifications' => $notifications,
@@ -45,24 +44,24 @@ readonly class NotificationController
     #[Post('/notifications/{id}/read', middleware: [AuthMiddleware::class])]
     public function markRead(
         string $id,
-        Request $request,
     ): Response {
-        $this->notifications->markAsRead(notificationId: $id);
+        $this->notificationRepository->markAsRead(notificationId: $id);
 
         return Response::redirect('/notifications');
     }
 
+    /**
+     * @throws \Marko\Authentication\Exceptions\AuthException
+     */
     #[Post('/notifications/read', middleware: [AuthMiddleware::class])]
-    public function markAllRead(
-        Request $request,
-    ): Response {
+    public function markAllRead(): Response {
         $user = $this->auth->user();
 
         if (!$user instanceof NotifiableInterface) {
             return Response::redirect('/login');
         }
 
-        $this->notifications->markAllAsRead(notifiable: $user);
+        $this->notificationRepository->markAllAsRead(notifiable: $user);
 
         return Response::redirect('/notifications');
     }

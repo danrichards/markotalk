@@ -73,6 +73,8 @@ function makeStreamSpaceRepository(?Space $space = null): SpaceRepositoryInterfa
             return null;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function findBy(array $criteria): array
         {
             return [];
@@ -183,7 +185,7 @@ function makeStreamController(
     ?ConfigRepositoryInterface $config = null,
 ): StreamController {
     return new StreamController(
-        spaces: $spaces ?? makeStreamSpaceRepository(space: makeStreamSpace()),
+        spaceRepository: $spaces ?? makeStreamSpaceRepository(space: makeStreamSpace()),
         subscriber: $subscriber ?? makeStreamSubscriber(),
         config: $config ?? makeStreamConfig(),
     );

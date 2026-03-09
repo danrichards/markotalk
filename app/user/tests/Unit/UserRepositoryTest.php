@@ -122,6 +122,7 @@ it('validates credentials against hashed password', function (): void {
         public function findAll(): array { return []; }
         public function findBy(array $criteria): array { return []; }
         public function findOneBy(array $criteria): ?\Marko\Database\Entity\Entity { return null; }
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
         public function save(\Marko\Database\Entity\Entity $entity): void {}
         public function delete(\Marko\Database\Entity\Entity $entity): void {}
         public function findByEmail(string $email): ?User { return null; }

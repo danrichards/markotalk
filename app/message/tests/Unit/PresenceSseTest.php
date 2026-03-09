@@ -66,6 +66,8 @@ function makePresenceSpaceRepository(?Space $space = null): SpaceRepositoryInter
             return null;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function findBy(array $criteria): array
         {
             return [];
@@ -170,7 +172,7 @@ function makePresenceController(
     ?ConfigRepositoryInterface $config = null,
 ): StreamController {
     return new StreamController(
-        spaces: $spaces ?? makePresenceSpaceRepository(space: makePresenceSpace()),
+        spaceRepository: $spaces ?? makePresenceSpaceRepository(space: makePresenceSpace()),
         subscriber: $subscriber ?? makePresenceSubscriber(),
         config: $config ?? makePresenceConfig(),
     );

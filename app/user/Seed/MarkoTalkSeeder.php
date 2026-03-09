@@ -13,6 +13,7 @@ use App\User\Enum\UserRole;
 use App\User\Repository\UserRepositoryInterface;
 use DateTimeImmutable;
 use Marko\Config\ConfigRepositoryInterface;
+use Marko\Config\Exceptions\ConfigNotFoundException;
 use Marko\Database\Seed\Seeder;
 use Marko\Database\Seed\SeederInterface;
 
@@ -27,6 +28,9 @@ readonly class MarkoTalkSeeder implements SeederInterface
         private SpaceMembershipRepositoryInterface $spaceMembershipRepository,
     ) {}
 
+    /**
+     * @throws ConfigNotFoundException
+     */
     public function run(): void
     {
         $admin = $this->seedAdminUser();
@@ -78,6 +82,7 @@ readonly class MarkoTalkSeeder implements SeederInterface
 
     /**
      * @return array<Space>
+     * @throws ConfigNotFoundException
      */
     private function seedSpaces(int $createdBy): array
     {

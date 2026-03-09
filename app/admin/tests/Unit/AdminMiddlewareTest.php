@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Admin\Middleware\AdminMiddleware;
 use App\User\Entity\User;
 use App\User\Enum\UserRole;
-use Marko\Authentication\Contracts\GuardInterface;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\Routing\Middleware\MiddlewareInterface;

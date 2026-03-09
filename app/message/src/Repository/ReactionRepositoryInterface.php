@@ -7,6 +7,9 @@ namespace App\Message\Repository;
 use App\Message\Entity\Reaction;
 use Marko\Database\Repository\RepositoryInterface;
 
+/**
+ * @extends RepositoryInterface<Reaction>
+ */
 interface ReactionRepositoryInterface extends RepositoryInterface
 {
     /**
@@ -14,7 +17,9 @@ interface ReactionRepositoryInterface extends RepositoryInterface
      *
      * @return array<Reaction>
      */
-    public function findByMessage(int $messageId): array;
+    public function findByMessage(
+        int $messageId,
+    ): array;
 
     /**
      * Find reactions grouped by emoji with counts and whether the given user reacted.

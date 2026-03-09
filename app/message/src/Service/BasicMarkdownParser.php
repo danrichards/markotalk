@@ -42,8 +42,9 @@ readonly class BasicMarkdownParser implements MarkdownParserInterface
         );
 
         // Links: [text](url) -> <a href="url">text</a>
+        /** @noinspection HtmlUnknownTarget */
         $result = preg_replace(
-            pattern: '/\[([^\]]+)\]\(([^)]+)\)/',
+            pattern: '/\[([^]]+)]\(([^)]+)\)/',
             replacement: '<a href="$2">$1</a>',
             subject: (string) $result,
         );

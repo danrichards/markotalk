@@ -116,6 +116,8 @@ function makeRateLimitSpaceRepository(?Space $space = null): SpaceRepositoryInte
             return $this->space;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function findBy(array $criteria): array
         {
             return $this->space !== null ? [$this->space] : [];
@@ -170,6 +172,8 @@ function makeRateLimitMessageRepository(): MessageRepositoryInterface
         {
             return null;
         }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function findBy(array $criteria): array
         {
@@ -336,8 +340,8 @@ function makeRateLimitController(
     RateLimiterInterface $rateLimiter,
 ): MessageController {
     return new MessageController(
-        messages: $messages,
-        spaces: $spaces,
+        messageRepository: $messages,
+        spaceRepository: $spaces,
         auth: $auth,
         validator: $validator,
         config: $config,

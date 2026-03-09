@@ -11,14 +11,13 @@ class UserPolicy
 {
     public function ban(
         User $user,
-        User $targetUser,
     ): bool {
         return $user->role === UserRole::Admin;
     }
 
+    /** @noinspection PhpUnused */
     public function updateRole(
         User $user,
-        User $targetUser,
     ): bool {
         return $user->role === UserRole::Admin;
     }

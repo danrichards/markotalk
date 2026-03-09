@@ -79,6 +79,7 @@ class StubSpaceRepository implements SpaceRepositoryInterface
     public function findAll(): array { return []; }
     public function findBy(array $criteria): array { return []; }
     public function findOneBy(array $criteria): ?Entity { return null; }
+    public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
     public function save(Entity $entity): void {}
     public function delete(Entity $entity): void {}
 }
@@ -112,6 +113,7 @@ class StubSpaceMembershipRepository implements SpaceMembershipRepositoryInterfac
     public function findAll(): array { return []; }
     public function findBy(array $criteria): array { return []; }
     public function findOneBy(array $criteria): ?Entity { return null; }
+    public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
     public function clearLastReadMessageId(int $messageId): void {}
 
@@ -152,6 +154,7 @@ class StubMessageRepository implements MessageRepositoryInterface
     public function findAll(): array { return []; }
     public function findBy(array $criteria): array { return []; }
     public function findOneBy(array $criteria): ?Entity { return null; }
+    public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
     public function save(Entity $entity): void
     {

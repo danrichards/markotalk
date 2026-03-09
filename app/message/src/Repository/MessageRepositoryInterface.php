@@ -8,8 +8,11 @@ use App\Message\Entity\Message;
 use DateTimeImmutable;
 use Marko\Database\Repository\RepositoryInterface;
 use Marko\Pagination\CursorPaginator;
-use Marko\Pagination\PaginationException;
+use Marko\Pagination\Exceptions\PaginationException;
 
+/**
+ * @extends RepositoryInterface<Message>
+ */
 interface MessageRepositoryInterface extends RepositoryInterface
 {
     /**

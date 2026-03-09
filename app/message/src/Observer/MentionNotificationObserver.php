@@ -9,6 +9,7 @@ use App\Message\Event\MentionDetectedEvent;
 use App\Notification\Notification\MentionNotification;
 use App\Space\Entity\Space;
 use App\Space\Repository\SpaceRepositoryInterface;
+use App\User\Entity\User;
 use App\User\Repository\UserRepositoryInterface;
 use Marko\Core\Attributes\Observer;
 use Marko\Notification\NotificationSender;
@@ -17,12 +18,16 @@ use Marko\Notification\NotificationSender;
 readonly class MentionNotificationObserver
 {
     public function __construct(
-        private UserRepositoryInterface $users,
-        private SpaceRepositoryInterface $spaces,
+        private UserRepositoryInterface $userRepository,
+        private SpaceRepositoryInterface $spaceRepository,
         private NotificationSender $sender,
         private UserRepositoryInterface $authorRepository,
     ) {}
 
+    /**
+     * @throws \Marko\Notification\Exceptions\NotificationException
+     * @throws \Marko\Notification\Exceptions\ChannelException
+     */
     public function handle(MentionDetectedEvent $event): void
     {
         $message = $event->message;
@@ -31,9 +36,9 @@ readonly class MentionNotificationObserver
             return;
         }
 
-        $mentioned = $this->users->findByUsername(username: $event->username);
+        $mentioned = $this->userRepository->findByUsername(username: $event->username);
 
-        if ($mentioned === null) {
+        if (!$mentioned instanceof User) {
             return;
         }
 
@@ -41,15 +46,14 @@ readonly class MentionNotificationObserver
             return;
         }
 
-        $space = $this->spaces->find(id: $message->spaceId);
+        $space = $this->spaceRepository->find(id: $message->spaceId);
 
         if (!$space instanceof Space) {
             return;
         }
 
         $author = $this->authorRepository->find(id: $message->userId);
-        $authorUsername = $author !== null ? $author->username : '';
-
+        $authorUsername = $author instanceof User ? $author->username : '';
         $notification = new MentionNotification(
             messageId: $message->id ?? 0,
             spaceSlug: $space->slug,

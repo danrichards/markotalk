@@ -27,15 +27,13 @@ function makeUserPolicyTestUser(int $id = 1, UserRole $role = UserRole::User): U
 it('allows admin to ban users', function (): void {
     $policy = new UserPolicy();
     $admin = makeUserPolicyTestUser(role: UserRole::Admin);
-    $targetUser = makeUserPolicyTestUser(id: 2);
 
-    expect($policy->ban(user: $admin, targetUser: $targetUser))->toBeTrue();
+    expect($policy->ban(user: $admin))->toBeTrue();
 });
 
 it('denies regular users from banning users', function (): void {
     $policy = new UserPolicy();
     $user = makeUserPolicyTestUser();
-    $targetUser = makeUserPolicyTestUser(id: 2);
 
-    expect($policy->ban(user: $user, targetUser: $targetUser))->toBeFalse();
+    expect($policy->ban(user: $user))->toBeFalse();
 });

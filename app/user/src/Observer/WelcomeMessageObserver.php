@@ -6,6 +6,7 @@ namespace App\User\Observer;
 
 use App\Message\Entity\Message;
 use App\Message\Repository\MessageRepositoryInterface;
+use App\Space\Entity\Space;
 use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use App\Space\Repository\SpaceRepositoryInterface;
@@ -38,13 +39,12 @@ readonly class WelcomeMessageObserver
         }
 
         $defaultSpaces = $this->config->getArray(key: 'markotalk.default_spaces');
-
         $generalSpace = null;
 
         foreach ($defaultSpaces as $spaceConfig) {
             $space = $this->spaceRepository->findBySlug(slug: $spaceConfig['slug']);
 
-            if ($space === null) {
+            if (!$space instanceof Space) {
                 continue;
             }
 
@@ -63,7 +63,7 @@ readonly class WelcomeMessageObserver
             }
         }
 
-        if ($generalSpace !== null) {
+        if ($generalSpace instanceof Space) {
             $body = sprintf('Welcome @%s to MarkoTalk!', $user->username);
             $message = new Message(
                 id: null,

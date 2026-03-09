@@ -41,13 +41,13 @@ readonly class AuthController
         private EventDispatcherInterface $eventDispatcher,
         private CsrfTokenManagerInterface $csrf,
         private PresenceTrackerInterface $presence,
-        private SpaceRepositoryInterface $spaces,
+        private SpaceRepositoryInterface $spaceRepository,
         private ?PublisherInterface $publisher = null,
     ) {}
 
     #[Get(path: '/login')]
     #[Middleware(GuestMiddleware::class)]
-    public function showLogin(Request $request): Response
+    public function showLogin(): Response
     {
         return $this->view->render(template: 'user::auth/login', data: [
             'csrfToken' => $this->csrf->get(),
@@ -56,7 +56,7 @@ readonly class AuthController
 
     #[Get(path: '/register')]
     #[Middleware(GuestMiddleware::class)]
-    public function showRegister(Request $request): Response
+    public function showRegister(): Response
     {
         return $this->view->render(template: 'user::auth/register', data: [
             'csrfToken' => $this->csrf->get(),
@@ -106,7 +106,7 @@ readonly class AuthController
             ]);
         }
 
-        if ($this->userRepository->findByEmail(email: (string) $data['email']) !== null) {
+        if ($this->userRepository->findByEmail(email: (string) $data['email']) instanceof User) {
             return $this->view->render(template: 'user::auth/register', data: [
                 'csrfToken' => $this->csrf->get(),
                 'errors' => ['email' => ['The email address is already in use.']],
@@ -138,7 +138,7 @@ readonly class AuthController
 
     #[Post(path: '/logout')]
     #[Middleware(AuthMiddleware::class)]
-    public function logout(Request $request): Response
+    public function logout(): Response
     {
         $user = $this->guard->user();
 
@@ -165,7 +165,7 @@ readonly class AuthController
 
         $payload = json_encode(value: ['type' => 'presence', 'onlineIds' => $onlineIds]);
 
-        foreach ($this->spaces->findActive() as $space) {
+        foreach ($this->spaceRepository->findActive() as $space) {
             $channel = 'space:' . $space->slug;
             $this->publisher->publish(
                 channel: $channel,

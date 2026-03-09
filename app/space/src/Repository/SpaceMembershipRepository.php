@@ -46,7 +46,7 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
         $rows = $this->connection->query(sql: $sql, bindings: [$userId]);
 
         return array_map(
-            callback: fn (array $row): SpaceMembership => $this->hydrator->hydrate(
+            callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,
@@ -71,7 +71,7 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
         $rows = $this->connection->query(sql: $sql, bindings: [$spaceId]);
 
         return array_map(
-            callback: fn (array $row): SpaceMembership => $this->hydrator->hydrate(
+            callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,

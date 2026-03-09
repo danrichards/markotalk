@@ -83,13 +83,7 @@ function makePinMessageRepository(array $messages = []): MessageRepositoryInterf
 
         public function find(int $id): ?DatabaseEntity
         {
-            foreach ($this->messages as $message) {
-                if ($message->id === $id) {
-                    return $message;
-                }
-            }
-
-            return null;
+            return array_find($this->messages, fn(Message $message) => $message->id === $id);
         }
 
         public function findOrFail(int $id): DatabaseEntity
@@ -124,6 +118,8 @@ function makePinMessageRepository(array $messages = []): MessageRepositoryInterf
         {
             return null;
         }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function findBy(array $criteria): array
         {
@@ -235,6 +231,8 @@ function makePinSpaceRepository(): SpaceRepositoryInterface
             return null;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function findBy(array $criteria): array
         {
             return [];
@@ -320,8 +318,8 @@ function makePinController(
     ?AuthManager $auth = null,
 ): MessageController {
     return new MessageController(
-        messages: $messages,
-        spaces: makePinSpaceRepository(),
+        messageRepository: $messages,
+        spaceRepository: makePinSpaceRepository(),
         auth: $auth ?? makePinAuthManager(user: makePinUser()),
         validator: makePinValidator(),
         config: makePinConfig(),

@@ -83,6 +83,8 @@ class ProfileStubUserRepository implements UserRepositoryInterface
 
     public function findOneBy(array $criteria): ?Entity { return null; }
 
+    public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
     public function save(Entity $entity): void
     {
         $this->savedUser = $entity instanceof User ? $entity : null;
@@ -192,7 +194,7 @@ it('shows the profile edit form with current user data', function (): void {
     $repository = new ProfileStubUserRepository(user: $user);
     $controller = makeProfileController(repository: $repository, view: $view, auth: $auth);
 
-    $response = $controller->edit(request: makeProfileGetRequest());
+    $response = $controller->edit();
 
     expect($response->statusCode())->toBe(200)
         ->and($view->lastTemplate)->toBe('user::profile/edit')
@@ -256,7 +258,7 @@ it('requires authentication', function (): void {
     $auth = makeProfileAuthManager();
     $controller = makeProfileController(auth: $auth);
 
-    $editResponse = $controller->edit(request: makeProfileGetRequest());
+    $editResponse = $controller->edit();
     $updateResponse = $controller->update(request: makeProfilePostRequest(post: ['display_name' => 'Test']));
 
     expect($editResponse->statusCode())->toBe(302)

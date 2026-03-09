@@ -169,7 +169,7 @@ function makeNotificationController(
     AuthManager $auth,
 ): NotificationController {
     return new NotificationController(
-        notifications: $repository,
+        notificationRepository: $repository,
         view: $view,
         auth: $auth,
     );
@@ -199,7 +199,7 @@ it('lists all notifications for the authenticated user', function (): void {
     $auth = makeStubAuthManager(user: $user);
     $controller = makeNotificationController(repository: $repository, view: $view, auth: $auth);
 
-    $response = $controller->index(request: makeNotificationGetRequest());
+    $response = $controller->index();
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(200);
@@ -212,7 +212,7 @@ it('marks a single notification as read', function (): void {
     $auth = makeStubAuthManager(user: $user);
     $controller = makeNotificationController(repository: $repository, view: $view, auth: $auth);
 
-    $response = $controller->markRead(id: 'abc-123', request: makeNotificationPostRequest());
+    $response = $controller->markRead(id: 'abc-123');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -227,7 +227,7 @@ it('marks all notifications as read', function (): void {
     $auth = makeStubAuthManager(user: $user);
     $controller = makeNotificationController(repository: $repository, view: $view, auth: $auth);
 
-    $response = $controller->markAllRead(request: makeNotificationPostRequest());
+    $response = $controller->markAllRead();
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -246,7 +246,7 @@ it('shows unread count in the header bell icon', function (): void {
     $auth = makeStubAuthManager(user: $user);
     $controller = makeNotificationController(repository: $repository, view: $view, auth: $auth);
 
-    $response = $controller->index(request: makeNotificationGetRequest());
+    $response = $controller->index();
 
     expect($response->statusCode())->toBe(200)
         ->and($view->lastData['unreadCount'])->toBe(1);

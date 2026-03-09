@@ -29,6 +29,9 @@ readonly class DatabasePresenceTracker implements PresenceTrackerInterface
         $this->userRepository->clearLastSeen(user: $user);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     public function isOnline(User $user): bool
     {
         if ($user->lastSeenAt === null) {
@@ -42,6 +45,7 @@ readonly class DatabasePresenceTracker implements PresenceTrackerInterface
 
     /**
      * @return User[]
+     * @throws \DateMalformedStringException
      */
     public function getOnlineUsers(): array
     {

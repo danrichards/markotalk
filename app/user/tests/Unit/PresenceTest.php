@@ -77,6 +77,7 @@ function makeStubUserRepository(array $users = []): UserRepositoryInterface
         public function findAll(): array { return $this->users; }
         public function findBy(array $criteria): array { return $this->users; }
         public function findOneBy(array $criteria): ?User { return $this->users[0] ?? null; }
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
         public function save(Entity $entity): void {}
         public function delete(Entity $entity): void {}
         public function findByEmail(string $email): ?User { return null; }

@@ -105,6 +105,11 @@ function makeSpaceRepositoryMock(): SpaceRepositoryInterface
             return null;
         }
 
+        public function existsBy(array $criteria): bool
+        {
+            return $this->findOneBy(criteria: $criteria) !== null;
+        }
+
         public function save(Entity $entity): void
         {
             if ($entity instanceof Space) {
@@ -156,6 +161,11 @@ function makeUserRepositoryMock(): UserRepositoryInterface
         public function findOneBy(array $criteria): ?Entity
         {
             return null;
+        }
+
+        public function existsBy(array $criteria): bool
+        {
+            return $this->findOneBy(criteria: $criteria) !== null;
         }
 
         public function save(Entity $entity): void
@@ -220,6 +230,11 @@ function makeSpaceMembershipRepositoryMock(): SpaceMembershipRepositoryInterface
         public function findOneBy(array $criteria): ?Entity
         {
             return null;
+        }
+
+        public function existsBy(array $criteria): bool
+        {
+            return $this->findOneBy(criteria: $criteria) !== null;
         }
 
         public function clearLastReadMessageId(int $messageId): void {}

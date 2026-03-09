@@ -44,7 +44,7 @@ class SpaceRepository extends Repository implements SpaceRepositoryInterface
         $rows = $this->connection->query(sql: $sql, bindings: [0]);
 
         return array_map(
-            callback: fn (array $row): Space => $this->hydrator->hydrate(
+            callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,

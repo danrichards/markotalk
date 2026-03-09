@@ -36,12 +36,10 @@ class HtmlSanitizer implements HtmlSanitizerInterface
         ) ?? $html;
 
         // Only allow http/https in href — replace any non-http/https href with #
-        $html = preg_replace(
+        return preg_replace(
             pattern: '/href\s*=\s*"(?!https?:\/\/)[^"]*"/i',
             replacement: 'href="#"',
             subject: $html,
         ) ?? $html;
-
-        return $html;
     }
 }

@@ -17,14 +17,13 @@ readonly class SpacePolicy
 
     public function update(
         User $user,
-        Space $space,
     ): bool {
         return $user->role === UserRole::Admin;
     }
 
+    /** @noinspection PhpUnused */
     public function archive(
         User $user,
-        Space $space,
     ): bool {
         return $user->role === UserRole::Admin;
     }

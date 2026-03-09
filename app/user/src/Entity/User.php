@@ -80,7 +80,7 @@ class User extends Entity implements AuthorizableInterface, NotifiableInterface
         return false;
     }
 
-    public function routeNotificationFor(string $channel): mixed
+    public function routeNotificationFor(string $channel): string|array
     {
         return match ($channel) {
             'mail' => $this->email,

@@ -10,15 +10,19 @@ use App\Space\Entity\SpaceMembership;
 use App\Space\Repository\SpaceMembershipRepositoryInterface;
 use Marko\Core\Attributes\Observer;
 use Marko\Cache\Contracts\CacheInterface;
+use Marko\Cache\Exceptions\InvalidKeyException;
 
 #[Observer(event: MessageCreatedEvent::class)]
 readonly class NotificationStreamObserver
 {
     public function __construct(
         private CacheInterface $cache,
-        private SpaceMembershipRepositoryInterface $memberships,
+        private SpaceMembershipRepositoryInterface $spaceMembershipRepository,
     ) {}
 
+    /**
+     * @throws InvalidKeyException
+     */
     public function handle(MessageCreatedEvent $event): void
     {
         $message = $event->message;
@@ -27,7 +31,7 @@ readonly class NotificationStreamObserver
             return;
         }
 
-        $spaceMembers = $this->memberships->findAllForSpace(spaceId: $message->spaceId);
+        $spaceMembers = $this->spaceMembershipRepository->findAllForSpace(spaceId: $message->spaceId);
 
         foreach ($spaceMembers as $membership) {
             if (!$membership instanceof SpaceMembership) {
@@ -39,7 +43,7 @@ readonly class NotificationStreamObserver
             }
 
             $this->cache->set(
-                key: "notification_pending_{$membership->userId}",
+                key: "notification_pending_$membership->userId",
                 value: true,
             );
         }

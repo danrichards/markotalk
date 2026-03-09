@@ -7,6 +7,9 @@ namespace App\Space\Repository;
 use App\Space\Entity\SpaceMembership;
 use Marko\Database\Repository\RepositoryInterface;
 
+/**
+ * @extends RepositoryInterface<SpaceMembership>
+ */
 interface SpaceMembershipRepositoryInterface extends RepositoryInterface
 {
     /**

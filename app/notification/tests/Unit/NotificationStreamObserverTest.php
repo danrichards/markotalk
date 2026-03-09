@@ -134,6 +134,8 @@ function makeMembershipRepository(array $memberships = []): SpaceMembershipRepos
             return null;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function clearLastReadMessageId(int $messageId): void {}
 
         public function save(\Marko\Database\Entity\Entity $entity): void {}
@@ -206,7 +208,7 @@ function makeStreamObserverMembership(
 it('listens for MessageCreatedEvent', function (): void {
     $cache = makeCache();
     $memberships = makeMembershipRepository();
-    $observer = new NotificationStreamObserver(cache: $cache, memberships: $memberships);
+    $observer = new NotificationStreamObserver(cache: $cache, spaceMembershipRepository: $memberships);
 
     expect($observer)->toBeInstanceOf(NotificationStreamObserver::class);
 });
@@ -229,7 +231,7 @@ it('identifies users who should receive notification count updates', function ()
     $otherMembership1 = makeStreamObserverMembership(userId: 6);
     $otherMembership2 = makeStreamObserverMembership(userId: 7);
     $memberships = makeMembershipRepository(memberships: [$authorMembership, $otherMembership1, $otherMembership2]);
-    $observer = new NotificationStreamObserver(cache: $cache, memberships: $memberships);
+    $observer = new NotificationStreamObserver(cache: $cache, spaceMembershipRepository: $memberships);
 
     $event = new MessageCreatedEvent(message: $message);
     $observer->handle(event: $event);
@@ -246,7 +248,7 @@ it('stores notification state for SSE heartbeat pickup', function (): void {
     $message = makeMessage();
     $member = makeStreamObserverMembership(userId: 6);
     $memberships = makeMembershipRepository(memberships: [$member]);
-    $observer = new NotificationStreamObserver(cache: $cache, memberships: $memberships);
+    $observer = new NotificationStreamObserver(cache: $cache, spaceMembershipRepository: $memberships);
 
     $event = new MessageCreatedEvent(message: $message);
     $observer->handle(event: $event);

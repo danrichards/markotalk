@@ -5,11 +5,7 @@ declare(strict_types=1);
 namespace App\User\Repository;
 
 use App\User\Entity\User;
-use Closure;
 use DateTimeImmutable;
-use Marko\Database\Connection\ConnectionInterface;
-use Marko\Database\Entity\EntityHydrator;
-use Marko\Database\Entity\EntityMetadataFactory;
 use Marko\Database\Repository\Repository;
 
 /**
@@ -18,20 +14,6 @@ use Marko\Database\Repository\Repository;
 class UserRepository extends Repository implements UserRepositoryInterface
 {
     protected const string ENTITY_CLASS = User::class;
-
-    public function __construct(
-        ConnectionInterface $connection,
-        EntityMetadataFactory $metadataFactory,
-        EntityHydrator $hydrator,
-        ?Closure $queryBuilderFactory = null,
-    ) {
-        parent::__construct(
-            connection: $connection,
-            metadataFactory: $metadataFactory,
-            hydrator: $hydrator,
-            queryBuilderFactory: $queryBuilderFactory,
-        );
-    }
 
     /**
      * Find a user by their email address.

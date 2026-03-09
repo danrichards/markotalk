@@ -9,6 +9,7 @@ use App\User\Entity\User;
 use App\User\Enum\UserRole;
 use App\User\Repository\UserRepositoryInterface;
 use Marko\Authentication\AuthManager;
+use Marko\Authentication\Exceptions\AuthException;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Attributes\Post;
 use Marko\Routing\Http\Request;
@@ -24,7 +25,7 @@ readonly class AdminUserController
     ) {}
 
     #[Get('/admin/users', middleware: [AdminMiddleware::class])]
-    public function index(Request $request): Response
+    public function index(): Response
     {
         $users = $this->userRepository->findAll();
 
@@ -33,14 +34,17 @@ readonly class AdminUserController
         ]);
     }
 
+    /**
+     * @throws AuthException
+     */
     #[Post('/admin/users/{id}/ban', middleware: [AdminMiddleware::class])]
     public function ban(
         string $id,
-        Request $request,
     ): Response {
         $currentUser = $this->auth->user();
+        $isSelf = $currentUser instanceof User && (int) $currentUser->getAuthIdentifier() === (int) $id;
 
-        if ($currentUser !== null && (int) $currentUser->getAuthIdentifier() === (int) $id) {
+        if ($isSelf) {
             return new Response(body: 'Cannot ban yourself', statusCode: 422);
         }
 
@@ -59,7 +63,6 @@ readonly class AdminUserController
     #[Post('/admin/users/{id}/unban', middleware: [AdminMiddleware::class])]
     public function unban(
         string $id,
-        Request $request,
     ): Response {
         $user = $this->userRepository->find(id: (int) $id);
 

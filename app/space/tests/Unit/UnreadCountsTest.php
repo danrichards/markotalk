@@ -328,6 +328,8 @@ function makeUnreadMessageRepositoryStub(array $messages = []): MessageRepositor
 
         public function findOneBy(array $criteria): ?Entity { return null; }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function save(Entity $entity): void {}
 
         public function delete(Entity $entity): void {}
@@ -379,6 +381,8 @@ function makeUnreadMembershipRepositoryStub(
         public function findBy(array $criteria): array { return []; }
 
         public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function clearLastReadMessageId(int $messageId): void {}
 
@@ -447,6 +451,8 @@ function makeUnreadSpaceRepositoryStub(?Space $bySlug = null): SpaceRepositoryIn
         public function findBy(array $criteria): array { return []; }
 
         public function findOneBy(array $criteria): ?Entity { return null; }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function save(Entity $entity): void {}
 
@@ -531,6 +537,8 @@ it('updates last_read_message_id when viewing a space', function (): void {
 
         public function findOneBy(array $criteria): ?Entity { return null; }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function save(Entity $entity): void {}
 
         public function delete(Entity $entity): void {}
@@ -555,17 +563,17 @@ it('updates last_read_message_id when viewing a space', function (): void {
     };
 
     $controller = new SpaceController(
-        spaces: $spaces,
-        memberships: $memberships,
-        messages: $messages,
-        users: $userRepository,
+        spaceRepository: $spaces,
+        spaceMembershipRepository: $memberships,
+        messageRepository: $messages,
+        userRepository: $userRepository,
         view: $view,
         auth: $auth,
         csrf: $csrf,
         presence: $presence,
     );
 
-    $controller->show(slug: 'general', request: new Request(server: ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '/spaces/general']));
+    $controller->show(slug: 'general');
 
     expect($memberships->lastReadMessageIdUpdated)->toBe(42);
 });

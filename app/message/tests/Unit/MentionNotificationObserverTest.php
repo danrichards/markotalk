@@ -118,6 +118,8 @@ function makeMentionUserRepository(?User $user = null): UserRepositoryInterface
             return $this->user;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function save(DatabaseEntity $entity): void {}
 
         public function delete(DatabaseEntity $entity): void {}
@@ -166,6 +168,8 @@ function makeMentionSpaceRepository(?Space $space = null): SpaceRepositoryInterf
             return $this->space;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function save(DatabaseEntity $entity): void {}
 
         public function delete(DatabaseEntity $entity): void {}
@@ -210,10 +214,10 @@ function makeMentionNotificationSender(array &$sent): NotificationSender
 // Tests
 
 it('sends a MentionNotification when a valid user is mentioned', function (): void {
-    $author = makeMentionUser(id: 1, username: 'alice');
-    $mentioned = makeMentionUser(id: 2, username: 'johndoe');
-    $space = makeMentionSpace(id: 1, slug: 'general');
-    $message = makeMentionMessage(id: 5, spaceId: 1, userId: 1, body: 'Hey @johndoe!');
+    $author = makeMentionUser(username: 'alice');
+    $mentioned = makeMentionUser(id: 2);
+    $space = makeMentionSpace();
+    $message = makeMentionMessage(id: 5, body: 'Hey @johndoe!');
 
     $users = makeMentionUserRepository(user: $mentioned);
     $spaces = makeMentionSpaceRepository(space: $space);
@@ -223,8 +227,8 @@ it('sends a MentionNotification when a valid user is mentioned', function (): vo
     $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
-        users: $users,
-        spaces: $spaces,
+        userRepository: $users,
+        spaceRepository: $spaces,
         sender: $sender,
         authorRepository: $authorRepo,
     );
@@ -238,19 +242,19 @@ it('sends a MentionNotification when a valid user is mentioned', function (): vo
 });
 
 it('skips notification when mentioned username does not exist', function (): void {
-    $space = makeMentionSpace(id: 1, slug: 'general');
-    $message = makeMentionMessage(id: 5, spaceId: 1, userId: 1, body: 'Hey @nonexistent!');
+    $space = makeMentionSpace();
+    $message = makeMentionMessage(id: 5, body: 'Hey @nonexistent!');
 
-    $users = makeMentionUserRepository(user: null);
+    $users = makeMentionUserRepository();
     $spaces = makeMentionSpaceRepository(space: $space);
     $sent = [];
     $sender = makeMentionNotificationSender(sent: $sent);
-    $author = makeMentionUser(id: 1, username: 'alice');
+    $author = makeMentionUser(username: 'alice');
     $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
-        users: $users,
-        spaces: $spaces,
+        userRepository: $users,
+        spaceRepository: $spaces,
         sender: $sender,
         authorRepository: $authorRepo,
     );
@@ -271,10 +275,10 @@ it('uses #[Observer(event: MentionDetectedEvent::class)]', function (): void {
 });
 
 it('resolves the mentioned username to a User entity', function (): void {
-    $author = makeMentionUser(id: 1, username: 'alice');
+    $author = makeMentionUser(username: 'alice');
     $mentioned = makeMentionUser(id: 2, username: 'bobsmith');
-    $space = makeMentionSpace(id: 1, slug: 'dev');
-    $message = makeMentionMessage(id: 10, spaceId: 1, userId: 1, body: 'Hey @bobsmith, check this out!');
+    $space = makeMentionSpace(slug: 'dev');
+    $message = makeMentionMessage(id: 10, body: 'Hey @bobsmith, check this out!');
 
     $resolvedUsernames = [];
     $usersRepo = new class ($mentioned, $resolvedUsernames) implements UserRepositoryInterface {
@@ -336,6 +340,8 @@ it('resolves the mentioned username to a User entity', function (): void {
             return null;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function save(DatabaseEntity $entity): void {}
 
         public function delete(DatabaseEntity $entity): void {}
@@ -347,8 +353,8 @@ it('resolves the mentioned username to a User entity', function (): void {
     $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
-        users: $usersRepo,
-        spaces: $spaces,
+        userRepository: $usersRepo,
+        spaceRepository: $spaces,
         sender: $sender,
         authorRepository: $authorRepo,
     );
@@ -363,9 +369,9 @@ it('resolves the mentioned username to a User entity', function (): void {
 });
 
 it('skips notification when user mentions themselves', function (): void {
-    $author = makeMentionUser(id: 1, username: 'alice');
-    $space = makeMentionSpace(id: 1, slug: 'general');
-    $message = makeMentionMessage(id: 5, spaceId: 1, userId: 1, body: 'Hey @alice!');
+    $author = makeMentionUser(username: 'alice');
+    $space = makeMentionSpace();
+    $message = makeMentionMessage(id: 5, body: 'Hey @alice!');
 
     // The mentioned user has the same id as the message author
     $users = makeMentionUserRepository(user: $author);
@@ -375,8 +381,8 @@ it('skips notification when user mentions themselves', function (): void {
     $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
-        users: $users,
-        spaces: $spaces,
+        userRepository: $users,
+        spaceRepository: $spaces,
         sender: $sender,
         authorRepository: $authorRepo,
     );

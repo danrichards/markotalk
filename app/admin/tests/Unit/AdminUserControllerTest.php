@@ -2,20 +2,26 @@
 
 declare(strict_types=1);
 
+namespace App\Admin\Tests\Unit;
+
 use App\Admin\Controller\AdminUserController;
+use App\Admin\Middleware\AdminMiddleware;
 use App\User\Entity\User;
 use App\User\Enum\UserRole;
 use App\User\Repository\UserRepositoryInterface;
+use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\AuthenticatableInterface;
 use Marko\Database\Entity\Entity;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\View\ViewInterface;
+use ReflectionClass;
+use RuntimeException;
 
 // ─── Stub classes ────────────────────────────────────────────────────────────
 
-class AdminUserStubView implements ViewInterface
+class AdminUserControllerTest implements ViewInterface
 {
     public string $lastTemplate = '';
 
@@ -29,7 +35,7 @@ class AdminUserStubView implements ViewInterface
         $this->lastTemplate = $template;
         $this->lastData = $data;
 
-        return Response::html(html: '<html>admin users</html>');
+        return Response::html(html: '<html lang="">admin users</html>');
     }
 
     public function renderToString(
@@ -39,7 +45,7 @@ class AdminUserStubView implements ViewInterface
         $this->lastTemplate = $template;
         $this->lastData = $data;
 
-        return '<html>admin users</html>';
+        return '<html lang="">admin users</html>';
     }
 }
 
@@ -49,13 +55,18 @@ class AdminUserStubRepository implements UserRepositoryInterface
 
     public function __construct(
         /** @var User[] */
-        private array $allUsers = [],
-        private ?User $findResult = null,
-    ) {}
+        private readonly array $allUsers = [],
+        private readonly ?User $findResult = null,
+    ) {
+    }
 
-    public function findByEmail(string $email): ?User { return null; }
+    public function findByEmail(string $email): ?User {
+        return null;
+    }
 
-    public function findByUsername(string $username): ?User { return null; }
+    public function findByUsername(string $username): ?User {
+        return null;
+    }
 
     public function findByRememberToken(
         int $userId,
@@ -67,16 +78,20 @@ class AdminUserStubRepository implements UserRepositoryInterface
     public function updateRememberToken(
         User $user,
         ?string $token,
-    ): void {}
+    ): void {
+    }
 
-    public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {}
+    public function updateLastSeen(User $user, DateTimeImmutable $timestamp): void {
+    }
 
-    public function clearLastSeen(User $user): void {}
+    public function clearLastSeen(User $user): void {
+    }
 
-    public function find(int $id): ?Entity { return $this->findResult; }
+    public function find(int $id): ?Entity {
+        return $this->findResult;
+    }
 
-    public function findOrFail(int $id): Entity
-    {
+    public function findOrFail(int $id): Entity {
         if ($this->findResult === null) {
             throw new RuntimeException(message: 'User not found');
         }
@@ -84,18 +99,28 @@ class AdminUserStubRepository implements UserRepositoryInterface
         return $this->findResult;
     }
 
-    public function findAll(): array { return $this->allUsers; }
+    public function findAll(): array {
+        return $this->allUsers;
+    }
 
-    public function findBy(array $criteria): array { return []; }
+    public function findBy(array $criteria): array {
+        return [];
+    }
 
-    public function findOneBy(array $criteria): ?Entity { return null; }
+    public function findOneBy(array $criteria): ?Entity {
+        return null;
+    }
 
-    public function save(Entity $entity): void
-    {
+    public function existsBy(array $criteria): bool {
+        return $this->findOneBy(criteria: $criteria) !== null;
+    }
+
+    public function save(Entity $entity): void {
         $this->savedUser = $entity instanceof User ? $entity : null;
     }
 
-    public function delete(Entity $entity): void {}
+    public function delete(Entity $entity): void {
+    }
 }
 
 // ─── Helper factories ─────────────────────────────────────────────────────────
@@ -120,8 +145,7 @@ function makeAdminUser(
     );
 }
 
-function makeRegularUser(int $id = 2): User
-{
+function makeRegularUser(int $id = 2): User {
     return new User(
         id: $id,
         username: 'johndoe',
@@ -138,42 +162,31 @@ function makeRegularUser(int $id = 2): User
     );
 }
 
-function makeAdminUserControllerAuthManager(?AuthenticatableInterface $user = null): AuthManager
-{
-    return new class (mockUser: $user) extends AuthManager {
-        public function __construct(
-            private readonly ?AuthenticatableInterface $mockUser,
-        ) {
-            // Skip parent constructor
-        }
-
-        public function user(): ?AuthenticatableInterface
+function makeAdminUserControllerAuthManager(?AuthenticatableInterface $user = null): AuthManager {
+    return new class (mockUser: $user) extends AuthManager
         {
-            return $this->mockUser;
-        }
-    };
+            public function __construct(
+                private readonly ?AuthenticatableInterface $mockUser,
+            ) {
+                // Skip parent constructor
+            }
+
+            public function user(): ?AuthenticatableInterface {
+                return $this->mockUser;
+            }
+        };
 }
 
 function makeAdminUserController(
     ?AdminUserStubRepository $repository = null,
-    ?AdminUserStubView $view = null,
+    ?AdminUserControllerTest $view = null,
     ?AuthManager $auth = null,
 ): AdminUserController {
     return new AdminUserController(
         userRepository: $repository ?? new AdminUserStubRepository(),
-        view: $view ?? new AdminUserStubView(),
+        view: $view ?? new AdminUserControllerTest(),
         auth: $auth ?? makeAdminUserControllerAuthManager(),
     );
-}
-
-function makeAdminUserGetRequest(string $uri = '/admin/users'): Request
-{
-    return new Request(server: ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => $uri]);
-}
-
-function makeAdminUserPostRequest(string $uri = '/admin/users/2/ban'): Request
-{
-    return new Request(server: ['REQUEST_METHOD' => 'POST', 'REQUEST_URI' => $uri]);
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -182,11 +195,11 @@ it('lists all users for admins', function (): void {
     $admin = makeAdminUser();
     $user = makeRegularUser();
     $repository = new AdminUserStubRepository(allUsers: [$admin, $user]);
-    $view = new AdminUserStubView();
+    $view = new AdminUserControllerTest();
     $auth = makeAdminUserControllerAuthManager(user: $admin);
     $controller = makeAdminUserController(repository: $repository, view: $view, auth: $auth);
 
-    $response = $controller->index(request: makeAdminUserGetRequest());
+    $response = $controller->index();
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(200)
@@ -201,7 +214,7 @@ it('bans a user', function (): void {
     $auth = makeAdminUserControllerAuthManager(user: $admin);
     $controller = makeAdminUserController(repository: $repository, auth: $auth);
 
-    $response = $controller->ban(id: '2', request: makeAdminUserPostRequest());
+    $response = $controller->ban(id: '2');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -230,7 +243,7 @@ it('unbans a user', function (): void {
     $auth = makeAdminUserControllerAuthManager(user: $admin);
     $controller = makeAdminUserController(repository: $repository, auth: $auth);
 
-    $response = $controller->unban(id: '2', request: makeAdminUserPostRequest(uri: '/admin/users/2/unban'));
+    $response = $controller->unban(id: '2');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -265,7 +278,7 @@ it('prevents admin from banning themselves', function (): void {
     $auth = makeAdminUserControllerAuthManager(user: $admin);
     $controller = makeAdminUserController(repository: $repository, auth: $auth);
 
-    $response = $controller->ban(id: '1', request: makeAdminUserPostRequest(uri: '/admin/users/1/ban'));
+    $response = $controller->ban(id: '1');
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(422)
@@ -285,13 +298,13 @@ it('requires admin role for all actions', function (): void {
             $instance = $attribute->newInstance();
             if (property_exists(object_or_class: $instance, property: 'middleware')) {
                 $middleware = $instance->middleware;
-                if (in_array(needle: \App\Admin\Middleware\AdminMiddleware::class, haystack: $middleware, strict: true)) {
+                if (in_array(needle: AdminMiddleware::class, haystack: $middleware, strict: true)) {
                     $hasAdminMiddleware = true;
                     break;
                 }
             }
         }
 
-        expect($hasAdminMiddleware)->toBeTrue("Method {$methodName} must have AdminMiddleware");
+        expect($hasAdminMiddleware)->toBeTrue("Method $methodName must have AdminMiddleware");
     }
 });

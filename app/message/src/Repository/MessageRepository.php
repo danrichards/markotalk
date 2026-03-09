@@ -7,6 +7,7 @@ namespace App\Message\Repository;
 use App\Message\Entity\Message;
 use App\Message\Event\MessageCreatedEvent;
 use Closure;
+use DateTimeImmutable;
 use Marko\Core\Event\EventDispatcherInterface;
 use Marko\Database\Connection\ConnectionInterface;
 use Marko\Database\Entity\Entity;
@@ -15,7 +16,7 @@ use Marko\Database\Entity\EntityMetadataFactory;
 use Marko\Database\Repository\Repository;
 use Marko\Pagination\Cursor;
 use Marko\Pagination\CursorPaginator;
-use Marko\Pagination\PaginationException;
+use Marko\Pagination\Exceptions\PaginationException;
 
 /**
  * @extends Repository<Message>
@@ -71,7 +72,7 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         $rows = $this->connection->query(sql: $sql, bindings: [$spaceId, $limit]);
 
         return array_map(
-            callback: fn (array $row): Message => $this->hydrator->hydrate(
+            callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,
@@ -124,7 +125,7 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         }
 
         $items = array_map(
-            callback: fn (array $row): Message => $this->hydrator->hydrate(
+            callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,
@@ -166,7 +167,7 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         $rows = $this->connection->query(sql: $sql, bindings: [$spaceId, $sinceId]);
 
         return array_map(
-            callback: fn (array $row): Message => $this->hydrator->hydrate(
+            callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,
@@ -182,7 +183,7 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
      */
     public function findEditedSince(
         int $spaceId,
-        \DateTimeImmutable $since,
+        DateTimeImmutable $since,
     ): array {
         $sql = sprintf(
             'SELECT * FROM %s WHERE space_id = ? AND edited_at > ? ORDER BY id ASC',
@@ -195,7 +196,7 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         );
 
         return array_map(
-            callback: fn (array $row): Message => $this->hydrator->hydrate(
+            callback: fn (array $row) => $this->hydrator->hydrate(
                 entityClass: static::ENTITY_CLASS,
                 row: $row,
                 metadata: $this->metadata,

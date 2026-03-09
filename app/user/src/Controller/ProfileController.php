@@ -7,6 +7,7 @@ namespace App\User\Controller;
 use App\User\Entity\User;
 use App\User\Repository\UserRepositoryInterface;
 use Marko\Authentication\AuthManager;
+use Marko\Authentication\Exceptions\AuthException;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Routing\Attributes\Get;
 use Marko\Routing\Attributes\Middleware;
@@ -25,9 +26,12 @@ readonly class ProfileController
         private ValidatorInterface $validator,
     ) {}
 
+    /**
+     * @throws AuthException
+     */
     #[Get(path: '/profile')]
     #[Middleware(AuthMiddleware::class)]
-    public function edit(Request $request): Response
+    public function edit(): Response
     {
         $user = $this->auth->user();
 
@@ -40,6 +44,9 @@ readonly class ProfileController
         ]);
     }
 
+    /**
+     * @throws AuthException
+     */
     #[Post(path: '/profile')]
     #[Middleware(AuthMiddleware::class)]
     public function update(Request $request): Response

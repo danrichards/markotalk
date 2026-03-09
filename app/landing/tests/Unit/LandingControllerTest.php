@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Landing\Controller\LandingController;
 use Marko\Authentication\AuthManager;
 use Marko\Authentication\AuthenticatableInterface;
-use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\View\ViewInterface;
 
@@ -26,7 +25,7 @@ function makeLandingView(): ViewInterface
             $this->lastTemplate = $template;
             $this->lastData = $data;
 
-            return Response::html(html: '<html><body>MarkoTalk</body></html>');
+            return Response::html(html: '<html lang=""><body>MarkoTalk</body></html>');
         }
 
         public function renderToString(
@@ -36,7 +35,7 @@ function makeLandingView(): ViewInterface
             $this->lastTemplate = $template;
             $this->lastData = $data;
 
-            return '<html><body>MarkoTalk</body></html>';
+            return '<html lang=""><body>MarkoTalk</body></html>';
         }
     };
 }
@@ -75,11 +74,9 @@ function makeLandingController(
 // ─── Tests ───────────────────────────────────────────────────────────────────
 
 it('returns 200 for GET / without authentication', function (): void {
-    $auth = makeLandingAuthManager(user: null);
+    $auth = makeLandingAuthManager();
     $controller = makeLandingController(auth: $auth);
-
-    $request = new Request();
-    $response = $controller->index(request: $request);
+    $response = $controller->index();
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(200);
@@ -102,8 +99,7 @@ it('redirects authenticated users from / to /home', function (): void {
     $auth = makeLandingAuthManager(user: $user);
     $controller = makeLandingController(auth: $auth);
 
-    $request = new Request();
-    $response = $controller->index(request: $request);
+    $response = $controller->index();
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(302)
@@ -114,8 +110,7 @@ it('renders the landing page template with landing::index', function (): void {
     $view = makeLandingView();
     $controller = makeLandingController(view: $view);
 
-    $request = new Request();
-    $controller->index(request: $request);
+    $controller->index();
 
     expect($view->lastTemplate)->toBe('landing::index');
 });

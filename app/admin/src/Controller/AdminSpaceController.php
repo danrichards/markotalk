@@ -18,37 +18,32 @@ use Marko\View\ViewInterface;
 readonly class AdminSpaceController
 {
     public function __construct(
-        private SpaceRepositoryInterface $spaces,
+        private SpaceRepositoryInterface $spaceRepository,
         private ViewInterface $view,
     ) {}
 
     #[Get('/admin/spaces', middleware: [AdminMiddleware::class])]
-    public function index(
-        Request $request,
-    ): Response {
-        $spaces = $this->spaces->findAll();
+    public function index(): Response {
+        $spaceRepository = $this->spaceRepository->findAll();
 
-        return $this->view->render(template: 'admin::spaces.index', data: ['spaces' => $spaces]);
+        return $this->view->render(template: 'admin::spaces.index', data: [
+            'spaces' => $spaceRepository,
+        ]);
     }
 
     #[Post('/admin/spaces', middleware: [AdminMiddleware::class])]
     public function create(
         Request $request,
     ): Response {
-        $name = (string) $request->post(key: 'name', default: '');
-        $description = $request->post(key: 'description') !== null
-            ? (string) $request->post(key: 'description')
-            : null;
+        $name = $request->post(key: 'name') ?? '';
+        $description = $request->post(key: 'description');
 
-        $existing = $this->spaces->findOneBy(criteria: ['name' => $name]);
-
-        if ($existing !== null) {
+        if ($this->spaceRepository->existsBy(criteria: ['name' => $name])) {
             return new Response(body: 'Space name already exists', statusCode: 422);
         }
 
         $slug = strtolower(string: str_replace(search: ' ', replace: '-', subject: $name));
         $now = new DateTimeImmutable();
-
         $space = new Space(
             id: null,
             name: $name,
@@ -60,7 +55,7 @@ readonly class AdminSpaceController
             updatedAt: $now,
         );
 
-        $this->spaces->save(entity: $space);
+        $this->spaceRepository->save(entity: $space);
 
         return Response::redirect(url: '/admin/spaces');
     }
@@ -70,19 +65,16 @@ readonly class AdminSpaceController
         string $id,
         Request $request,
     ): Response {
-        $space = $this->spaces->find(id: (int) $id);
+        $space = $this->spaceRepository->find(id: (int) $id);
 
-        if ($space === null) {
+        if (!$space instanceof Space) {
             return new Response(body: 'Not Found', statusCode: 404);
         }
 
-        $name = (string) $request->post(key: 'name', default: $space->name);
-        $description = $request->post(key: 'description') !== null
-            ? (string) $request->post(key: 'description')
-            : $space->description;
+        $name = $request->post(key: 'name') ?? $space->name;
+        $description = $request->post(key: 'description') ?? $space->description;
         $slug = strtolower(string: str_replace(search: ' ', replace: '-', subject: $name));
-
-        $updated = new Space(
+        $space = new Space(
             id: $space->id,
             name: $name,
             slug: $slug,
@@ -93,7 +85,7 @@ readonly class AdminSpaceController
             updatedAt: new DateTimeImmutable(),
         );
 
-        $this->spaces->save(entity: $updated);
+        $this->spaceRepository->save(entity: $space);
 
         return Response::redirect(url: '/admin/spaces');
     }
@@ -101,15 +93,14 @@ readonly class AdminSpaceController
     #[Post('/admin/spaces/{id}/archive', middleware: [AdminMiddleware::class])]
     public function archive(
         string $id,
-        Request $request,
     ): Response {
-        $space = $this->spaces->find(id: (int) $id);
+        $space = $this->spaceRepository->find(id: (int) $id);
 
-        if ($space === null) {
+        if (!$space instanceof Space) {
             return new Response(body: 'Not Found', statusCode: 404);
         }
 
-        $archived = new Space(
+        $space = new Space(
             id: $space->id,
             name: $space->name,
             slug: $space->slug,
@@ -120,7 +111,7 @@ readonly class AdminSpaceController
             updatedAt: new DateTimeImmutable(),
         );
 
-        $this->spaces->save(entity: $archived);
+        $this->spaceRepository->save(entity: $space);
 
         return Response::redirect(url: '/admin/spaces');
     }
