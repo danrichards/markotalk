@@ -6,13 +6,9 @@ namespace App\Message\Repository;
 
 use App\Message\Entity\Message;
 use App\Message\Event\MessageCreatedEvent;
-use Closure;
 use DateTimeImmutable;
-use Marko\Core\Event\EventDispatcherInterface;
-use Marko\Database\Connection\ConnectionInterface;
 use Marko\Database\Entity\Entity;
-use Marko\Database\Entity\EntityHydrator;
-use Marko\Database\Entity\EntityMetadataFactory;
+use Marko\Database\Exceptions\RepositoryException;
 use Marko\Database\Repository\Repository;
 use Marko\Pagination\Cursor;
 use Marko\Pagination\CursorPaginator;
@@ -25,23 +21,10 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
 {
     protected const string ENTITY_CLASS = Message::class;
 
-    public function __construct(
-        ConnectionInterface $connection,
-        EntityMetadataFactory $metadataFactory,
-        EntityHydrator $hydrator,
-        private readonly EventDispatcherInterface $dispatcher,
-        ?Closure $queryBuilderFactory = null,
-    ) {
-        parent::__construct(
-            connection: $connection,
-            metadataFactory: $metadataFactory,
-            hydrator: $hydrator,
-            queryBuilderFactory: $queryBuilderFactory,
-        );
-    }
-
     /**
      * Save a message and dispatch MessageCreatedEvent for new messages.
+     *
+     * @throws RepositoryException
      */
     public function save(
         Entity $entity,
@@ -51,7 +34,7 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         parent::save(entity: $entity);
 
         if ($isNew) {
-            $this->dispatcher->dispatch(event: new MessageCreatedEvent(message: $entity));
+            $this->eventDispatcher?->dispatch(event: new MessageCreatedEvent(message: $entity));
         }
     }
 

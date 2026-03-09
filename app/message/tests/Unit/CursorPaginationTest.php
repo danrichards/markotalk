@@ -108,7 +108,7 @@ function makePaginationRepository(
         connection: $connection,
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
-        dispatcher: makePaginationMockDispatcher(),
+        eventDispatcher: makePaginationMockDispatcher(),
     );
 }
 

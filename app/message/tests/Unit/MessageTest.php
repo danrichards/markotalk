@@ -68,7 +68,7 @@ it('finds messages by space ordered by id ascending', function (): void {
         connection: $connection,
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
-        dispatcher: $dispatcher,
+        eventDispatcher: $dispatcher,
     );
 
     $messages = $repository->findBySpace(spaceId: 1);
@@ -94,7 +94,7 @@ it('finds messages by space since a given message id', function (): void {
         connection: $connection,
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
-        dispatcher: $dispatcher,
+        eventDispatcher: $dispatcher,
     );
 
     $messages = $repository->findBySpaceSince(spaceId: 1, sinceId: 3);
@@ -119,7 +119,7 @@ it('saves a new message and dispatches MessageCreatedEvent', function (): void {
         connection: $connection,
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
-        dispatcher: $dispatcher,
+        eventDispatcher: $dispatcher,
     );
 
     $message = new Message(
@@ -135,11 +135,15 @@ it('saves a new message and dispatches MessageCreatedEvent', function (): void {
 
     $repository->save($message);
 
+    $domainEvents = array_values(array_filter(
+        $dispatchedEvents,
+        fn ($e) => $e instanceof \App\Message\Event\MessageCreatedEvent,
+    ));
+
     expect($queryHistory)->toHaveCount(1)
         ->and($queryHistory[0]['sql'])->toContain('INSERT INTO messages')
-        ->and($dispatchedEvents)->toHaveCount(1)
-        ->and($dispatchedEvents[0])->toBeInstanceOf(\App\Message\Event\MessageCreatedEvent::class)
-        ->and($dispatchedEvents[0]->message)->toBe($message);
+        ->and($domainEvents)->toHaveCount(1)
+        ->and($domainEvents[0]->message)->toBe($message);
 });
 
 it('has module.php with MessageRepositoryInterface binding', function (): void {
