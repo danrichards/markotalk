@@ -23,6 +23,7 @@ use Marko\Routing\Http\Response;
 use Marko\Validation\Contracts\ValidatorInterface;
 use Marko\Validation\Exceptions\ValidationException;
 use Marko\Validation\Validation\ValidationErrors;
+use Marko\View\ViewInterface;
 
 // Helper factories
 
@@ -131,6 +132,8 @@ function makeMessageSpaceRepository(?Space $space = null): SpaceRepositoryInterf
             return $this->space;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function findBy(array $criteria): array
         {
             return $this->space !== null ? [$this->space] : [];
@@ -176,13 +179,7 @@ function makeMessageRepository(array $messages = []): MessageRepositoryInterface
 
         public function find(int $id): ?DatabaseEntity
         {
-            foreach ($this->messages as $message) {
-                if ($message->id === $id) {
-                    return $message;
-                }
-            }
-
-            return null;
+            return array_find($this->messages, fn(Message $message) => $message->id === $id);
         }
 
         public function findOrFail(int $id): DatabaseEntity
@@ -216,6 +213,8 @@ function makeMessageRepository(array $messages = []): MessageRepositoryInterface
         {
             return null;
         }
+
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
 
         public function findBy(array $criteria): array
         {
@@ -398,9 +397,28 @@ function makeMessageUserRepository(?User $user = null): UserRepositoryInterface
             return $this->user;
         }
 
+        public function existsBy(array $criteria): bool { return $this->findOneBy(criteria: $criteria) !== null; }
+
         public function findBy(array $criteria): array
         {
             return $this->user !== null ? [$this->user] : [];
+        }
+    };
+}
+
+function makeMessageView(string $html = '<div class="message"></div>'): ViewInterface
+{
+    return new class ($html) implements ViewInterface {
+        public function __construct(private readonly string $html) {}
+
+        public function render(string $template, array $data = []): Response
+        {
+            return new Response(body: $this->html);
+        }
+
+        public function renderToString(string $template, array $data = []): string
+        {
+            return $this->html;
         }
     };
 }
@@ -413,15 +431,17 @@ function makeMessageController(
     ConfigRepositoryInterface $config,
     ?PublisherInterface $publisher = null,
     ?UserRepositoryInterface $users = null,
+    ?ViewInterface $view = null,
 ): MessageController {
     return new MessageController(
-        messages: $messages,
-        spaces: $spaces,
+        messageRepository: $messages,
+        spaceRepository: $spaces,
         auth: $auth,
         validator: $validator,
         config: $config,
         publisher: $publisher,
         users: $users,
+        view: $view,
     );
 }
 
@@ -540,7 +560,7 @@ it('deletes a message on DELETE /messages/{id} by the message author', function 
     $config = makeMessageConfig();
     $controller = makeMessageController(messages: $messages, spaces: $spaces, auth: $auth, validator: $validator, config: $config);
 
-    $response = $controller->delete(id: 1, request: makeDeleteMessageRequest());
+    $response = $controller->delete(id: 1);
 
     expect($response)->toBeInstanceOf(Response::class)
         ->and($response->statusCode())->toBe(200)
@@ -587,6 +607,7 @@ it('publishes a message event to space:{slug} channel after sending a message', 
     $config = makeMessageConfig();
     $publisher = makePublisher();
     $users = makeMessageUserRepository(user: $user);
+    $view = makeMessageView();
     $controller = makeMessageController(
         messages: $messages,
         spaces: $spaces,
@@ -595,6 +616,7 @@ it('publishes a message event to space:{slug} channel after sending a message', 
         config: $config,
         publisher: $publisher,
         users: $users,
+        view: $view,
     );
 
     $controller->send(slug: 'general', request: makePostMessageRequest());
@@ -613,6 +635,7 @@ it('includes message id, userId, and rendered HTML in the published message payl
     $config = makeMessageConfig();
     $publisher = makePublisher();
     $users = makeMessageUserRepository(user: $user);
+    $view = makeMessageView(html: '<div class="message">Hello world</div>');
     $controller = makeMessageController(
         messages: $messages,
         spaces: $spaces,
@@ -621,6 +644,7 @@ it('includes message id, userId, and rendered HTML in the published message payl
         config: $config,
         publisher: $publisher,
         users: $users,
+        view: $view,
     );
 
     $controller->send(slug: 'general', request: makePostMessageRequest(body: 'Hello world'));
@@ -715,7 +739,7 @@ it('publishes a message_deleted event after deleting a message', function (): vo
         users: $users,
     );
 
-    $controller->delete(id: 1, request: makeDeleteMessageRequest());
+    $controller->delete(id: 1);
 
     expect($publisher->published)->toHaveCount(1)
         ->and($publisher->published[0]->channel)->toBe('space:general');
@@ -744,7 +768,7 @@ it('includes message id in the deleted message payload', function (): void {
         users: $users,
     );
 
-    $controller->delete(id: 1, request: makeDeleteMessageRequest());
+    $controller->delete(id: 1);
 
     $payload = json_decode(json: $publisher->published[0]->payload, associative: true);
     expect($payload)->toHaveKey('id')
@@ -761,6 +785,7 @@ it('renders message HTML without user-specific action buttons', function (): voi
     $config = makeMessageConfig();
     $publisher = makePublisher();
     $users = makeMessageUserRepository(user: $user);
+    $view = makeMessageView(html: '<div class="message"><div class="message-body">Hello world</div></div>');
     $controller = makeMessageController(
         messages: $messages,
         spaces: $spaces,
@@ -769,6 +794,7 @@ it('renders message HTML without user-specific action buttons', function (): voi
         config: $config,
         publisher: $publisher,
         users: $users,
+        view: $view,
     );
 
     $controller->send(slug: 'general', request: makePostMessageRequest(body: 'Hello world'));
