@@ -40,6 +40,13 @@
   // SSE connection
   const eventSource = new EventSource(`/spaces/${spaceSlug}/stream`);
 
+  eventSource.onerror = () => {
+    if (eventSource.readyState === EventSource.CLOSED) {
+      return;
+    }
+    eventSource.close();
+  };
+
   window.addEventListener('beforeunload', () => {
     eventSource.close();
   });
