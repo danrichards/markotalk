@@ -74,6 +74,7 @@ readonly class SpaceController
             $membership = $this->createMembership(userId: $userId, space: $space);
         }
 
+        $pinnedMessages = $this->messageRepository->findPinnedBySpace(spaceId: (int) $space->id);
         $messages = $this->messageRepository->findBySpace(spaceId: (int) $space->id);
 
         if ($messages !== []) {
@@ -125,6 +126,7 @@ readonly class SpaceController
             'spaces' => $allSpaces,
             'membership' => $membership,
             'members' => $members,
+            'pinnedMessages' => $pinnedMessages,
             'messages' => $messages,
             'userMap' => $userMap,
             'unreadCounts' => $unreadCounts,

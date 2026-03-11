@@ -10,6 +10,8 @@
 .message:hover .message-actions { @apply flex; }
 .message-action-edit { @apply text-sm text-gray-300 hover:text-brand cursor-pointer leading-none; }
 .message-action-delete { @apply text-sm text-gray-300 hover:text-red-500 cursor-pointer leading-none; }
+.message-action-pin-form { @apply inline; }
+.message-action-pin { @apply text-sm text-gray-300 hover:text-yellow-500 cursor-pointer leading-none; }
 .message-action-form { @apply inline; }
 .message-edit-textarea { @apply w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-brand resize-y; }
 .message-edit-buttons { @apply flex gap-2 mt-1; }

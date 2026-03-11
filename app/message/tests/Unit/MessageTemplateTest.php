@@ -51,6 +51,20 @@ it('shows edit and delete actions for the message author', function (): void {
         ->toContain('message-action-delete');
 });
 
+it('shows a pin button for admin users', function (): void {
+    $templateFile = dirname(path: __DIR__, levels: 2) . '/resources/views/_message.latte';
+
+    expect(file_exists(filename: $templateFile))->toBeTrue();
+
+    $content = file_get_contents(filename: $templateFile);
+
+    expect($content)
+        ->toContain('message-action-pin')
+        ->toContain('message-action-pin-form')
+        ->toContain('/messages/{$message->id}/pin')
+        ->toContain('UserRole::Admin');
+});
+
 it('has message.css with all message-* classes defined via @apply', function (): void {
     $cssFile = dirname(path: __DIR__, levels: 2) . '/src/css/message.css';
 
@@ -70,6 +84,8 @@ it('has message.css with all message-* classes defined via @apply', function ():
         ->toContain('.message-actions {')
         ->toContain('.message-action-edit {')
         ->toContain('.message-action-delete {')
+        ->toContain('.message-action-pin-form {')
+        ->toContain('.message-action-pin {')
         ->toContain('.message-action-form {')
         ->toContain('@apply');
 });

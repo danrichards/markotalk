@@ -8,10 +8,17 @@
     {/if}
   </div>
   <div class="message-body">{$message->bodyHtml|noescape}</div>
-  {if isset($currentUser) && $currentUser->id === $message->userId}
+  {if isset($currentUser)}
   <div class="message-actions">
+    {if $currentUser->role === App\User\Enum\UserRole::Admin}
+    <form method="post" action="/messages/{$message->id}/pin" class="message-action-pin-form">
+      <button class="message-action-pin" title="{if $message->isPinned}Unpin{else}Pin{/if}">{if $message->isPinned}📌{else}📍{/if}</button>
+    </form>
+    {/if}
+    {if $currentUser->id === $message->userId}
     <button class="message-action-edit" data-message-id="{$message->id}" title="Edit">✏</button>
     <button class="message-action-delete" data-message-id="{$message->id}" data-csrf-token="{$csrfToken}" title="Delete">🗑</button>
+    {/if}
   </div>
   {/if}
 </div>

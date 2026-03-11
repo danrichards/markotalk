@@ -39,6 +39,31 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
     }
 
     /**
+     * Find pinned messages in a space ordered by id ascending.
+     *
+     * @return array<Message>
+     */
+    public function findPinnedBySpace(
+        int $spaceId,
+    ): array {
+        $sql = sprintf(
+            'SELECT * FROM %s WHERE space_id = ? AND is_pinned = true ORDER BY id ASC',
+            $this->metadata->tableName,
+        );
+
+        $rows = $this->connection->query(sql: $sql, bindings: [$spaceId]);
+
+        return array_map(
+            callback: fn (array $row) => $this->hydrator->hydrate(
+                entityClass: static::ENTITY_CLASS,
+                row: $row,
+                metadata: $this->metadata,
+            ),
+            array: $rows,
+        );
+    }
+
+    /**
      * Find messages in a space ordered by id ascending.
      *
      * @return array<Message>

@@ -285,7 +285,7 @@ readonly class MessageController
         }
 
         try {
-            $this->gate?->authorize(ability: 'pin', resource: $message);
+            $this->gate?->authorize('pin', $message);
         } catch (AuthorizationException) {
             return Response::json(
                 data: ['error' => 'Forbidden'],

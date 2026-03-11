@@ -16,6 +16,15 @@ use Marko\Pagination\Exceptions\PaginationException;
 interface MessageRepositoryInterface extends RepositoryInterface
 {
     /**
+     * Find pinned messages in a space ordered by id ascending.
+     *
+     * @return array<Message>
+     */
+    public function findPinnedBySpace(
+        int $spaceId,
+    ): array;
+
+    /**
      * Find messages in a space ordered by id ascending.
      *
      * @return array<Message>

@@ -74,6 +74,13 @@ PHP_CLI_SERVER_WORKERS=4 php -S localhost:8000 -t public
 
 > **Note:** `PHP_CLI_SERVER_WORKERS=4` is required because MarkoTalk uses SSE for real-time messaging. Without multiple workers, the SSE connection blocks all other requests on the single-threaded PHP built-in server.
 
+To promote a user to admin (for pinning messages, moderation, etc.):
+
+```bash
+docker compose exec db psql -U postgres markotalk -c \
+  "UPDATE users SET role = 'admin' WHERE username = 'myusername';"
+```
+
 Visit [http://localhost:8000](http://localhost:8000) to get started.
 
 ## Tech Stack

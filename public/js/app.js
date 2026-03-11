@@ -140,6 +140,13 @@
   const messageForm = document.querySelector('.chat-input-form');
   const messageInput = document.getElementById('message-input');
   if (messageForm && messageInput) {
+    messageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        messageForm.requestSubmit();
+      }
+    });
+
     messageForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const body = messageInput.value.trim();

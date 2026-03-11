@@ -27,6 +27,7 @@ class MessagePolicy
     /** @noinspection PhpUnused */
     public function pin(
         User $user,
+        Message $message,
     ): bool {
         return $user->role === UserRole::Admin;
     }
