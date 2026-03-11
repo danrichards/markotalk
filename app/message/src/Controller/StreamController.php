@@ -8,8 +8,10 @@ use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Middleware\PresenceMiddleware;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Config\ConfigRepositoryInterface;
+use Marko\Config\Exceptions\ConfigNotFoundException;
 use Marko\PubSub\SubscriberInterface;
 use Marko\Routing\Attributes\Get;
+use Marko\Sse\Exceptions\SseException;
 use Marko\Sse\SseStream;
 use Marko\Sse\StreamingResponse;
 
@@ -22,8 +24,7 @@ readonly class StreamController
     ) {}
 
     /**
-     * @throws \Marko\Config\Exceptions\ConfigNotFoundException
-     * @throws \Marko\Sse\Exceptions\SseException
+     * @throws ConfigNotFoundException|SseException
      */
     #[Get('/spaces/{slug}/stream', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function stream(

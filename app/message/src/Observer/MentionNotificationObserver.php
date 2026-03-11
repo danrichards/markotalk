@@ -12,6 +12,8 @@ use App\Space\Repository\SpaceRepositoryInterface;
 use App\User\Entity\User;
 use App\User\Repository\UserRepositoryInterface;
 use Marko\Core\Attributes\Observer;
+use Marko\Notification\Exceptions\ChannelException;
+use Marko\Notification\Exceptions\NotificationException;
 use Marko\Notification\NotificationSender;
 
 #[Observer(event: MentionDetectedEvent::class)]
@@ -21,12 +23,10 @@ readonly class MentionNotificationObserver
         private UserRepositoryInterface $userRepository,
         private SpaceRepositoryInterface $spaceRepository,
         private NotificationSender $sender,
-        private UserRepositoryInterface $authorRepository,
     ) {}
 
     /**
-     * @throws \Marko\Notification\Exceptions\NotificationException
-     * @throws \Marko\Notification\Exceptions\ChannelException
+     * @throws NotificationException|ChannelException
      */
     public function handle(MentionDetectedEvent $event): void
     {
@@ -52,7 +52,7 @@ readonly class MentionNotificationObserver
             return;
         }
 
-        $author = $this->authorRepository->find(id: $message->userId);
+        $author = $this->userRepository->find(id: $message->userId);
         $authorUsername = $author instanceof User ? $author->username : '';
         $notification = new MentionNotification(
             messageId: $message->id ?? 0,

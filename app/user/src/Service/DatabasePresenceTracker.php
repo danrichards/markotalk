@@ -6,6 +6,7 @@ namespace App\User\Service;
 
 use App\User\Entity\User;
 use App\User\Repository\UserRepositoryInterface;
+use DateMalformedStringException;
 use DateTimeImmutable;
 
 readonly class DatabasePresenceTracker implements PresenceTrackerInterface
@@ -30,7 +31,7 @@ readonly class DatabasePresenceTracker implements PresenceTrackerInterface
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function isOnline(User $user): bool
     {
@@ -45,7 +46,7 @@ readonly class DatabasePresenceTracker implements PresenceTrackerInterface
 
     /**
      * @return User[]
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     public function getOnlineUsers(): array
     {

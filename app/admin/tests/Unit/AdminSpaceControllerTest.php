@@ -267,11 +267,7 @@ it('archives a space', function (): void {
         ->and($spaces->savedEntity->isArchived)->toBeTrue();
 });
 
-it(/**
- * @throws \ReflectionException
- */ /**
- * @throws \ReflectionException
- */ 'requires admin role for all actions', function (): void {
+it('requires admin role for all actions', function (): void {
     $reflection = new ReflectionClass(objectOrClass: AdminSpaceController::class);
     $methods = ['index', 'create', 'update', 'archive'];
 

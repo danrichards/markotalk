@@ -14,6 +14,7 @@ use App\User\Repository\UserRepositoryInterface;
 use App\User\Service\PresenceTrackerInterface;
 use DateTimeImmutable;
 use Marko\Authentication\AuthManager;
+use Marko\Authentication\Exceptions\AuthException;
 use App\User\Middleware\PresenceMiddleware;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Routing\Attributes\Get;
@@ -53,7 +54,7 @@ readonly class SpaceController
     }
 
     /**
-     * @throws \Marko\Authentication\Exceptions\AuthException
+     * @throws AuthException
      */
     #[Get('/spaces/{slug}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function show(
@@ -130,7 +131,7 @@ readonly class SpaceController
     }
 
     /**
-     * @throws \Marko\Authentication\Exceptions\AuthException
+     * @throws AuthException
      */
     #[Post('/spaces/{slug}/join', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function join(
@@ -153,7 +154,7 @@ readonly class SpaceController
     }
 
     /**
-     * @throws \Marko\Authentication\Exceptions\AuthException
+     * @throws AuthException
      */
     #[Post('/spaces/{slug}/leave', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function leave(

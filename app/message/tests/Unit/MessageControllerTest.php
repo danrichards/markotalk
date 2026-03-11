@@ -430,7 +430,7 @@ function makeMessageController(
     ValidatorInterface $validator,
     ConfigRepositoryInterface $config,
     ?PublisherInterface $publisher = null,
-    ?UserRepositoryInterface $users = null,
+    ?UserRepositoryInterface $userRepository = null,
     ?ViewInterface $view = null,
 ): MessageController {
     return new MessageController(
@@ -440,7 +440,7 @@ function makeMessageController(
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $userRepository,
         view: $view,
     );
 }
@@ -615,7 +615,7 @@ it('publishes a message event to space:{slug} channel after sending a message', 
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $users,
         view: $view,
     );
 
@@ -643,7 +643,7 @@ it('includes message id, userId, and rendered HTML in the published message payl
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $users,
         view: $view,
     );
 
@@ -677,7 +677,7 @@ it('publishes a message_edited event after editing a message', function (): void
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $users,
     );
 
     $controller->edit(id: 1, request: makeEditMessageRequest(id: 1, body: 'Updated body'));
@@ -706,7 +706,7 @@ it('includes message id and updated bodyHtml in the edited message payload', fun
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $users,
     );
 
     $controller->edit(id: 1, request: makeEditMessageRequest(id: 1, body: 'Updated body'));
@@ -736,7 +736,7 @@ it('publishes a message_deleted event after deleting a message', function (): vo
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $users,
     );
 
     $controller->delete(id: 1);
@@ -765,7 +765,7 @@ it('includes message id in the deleted message payload', function (): void {
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $users,
     );
 
     $controller->delete(id: 1);
@@ -793,7 +793,7 @@ it('renders message HTML without user-specific action buttons', function (): voi
         validator: $validator,
         config: $config,
         publisher: $publisher,
-        users: $users,
+        userRepository: $users,
         view: $view,
     );
 

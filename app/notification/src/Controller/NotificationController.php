@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Notification\Controller;
 
 use Marko\Authentication\AuthManager;
+use Marko\Authentication\Exceptions\AuthException;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Notification\Contracts\NotifiableInterface;
 use Marko\Notification\Database\Repository\NotificationRepositoryInterface;
@@ -22,7 +23,7 @@ readonly class NotificationController
     ) {}
 
     /**
-     * @throws \Marko\Authentication\Exceptions\AuthException
+     * @throws AuthException
      */
     #[Get('/notifications', middleware: [AuthMiddleware::class])]
     public function index(): Response {
@@ -51,7 +52,7 @@ readonly class NotificationController
     }
 
     /**
-     * @throws \Marko\Authentication\Exceptions\AuthException
+     * @throws AuthException
      */
     #[Post('/notifications/read', middleware: [AuthMiddleware::class])]
     public function markAllRead(): Response {

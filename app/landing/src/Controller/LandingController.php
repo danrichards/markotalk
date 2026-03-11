@@ -21,7 +21,8 @@ readonly class LandingController
      * @throws AuthException
      */
     #[Get(path: '/')]
-    public function index(): Response {
+    public function index(): Response
+    {
         if ($this->auth->check()) {
             return Response::redirect(url: '/home');
         }

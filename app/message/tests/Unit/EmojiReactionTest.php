@@ -355,7 +355,7 @@ function makeReactionRepository(
 
 function makeReactionController(
     MessageRepositoryInterface $messages,
-    ReactionRepositoryInterface $reactions,
+    ReactionRepositoryInterface $reactionRepository,
     AuthManager $auth,
 ): MessageController {
     return new MessageController(
@@ -364,7 +364,7 @@ function makeReactionController(
         auth: $auth,
         validator: makeReactionValidator(),
         config: makeReactionConfig(),
-        reactions: $reactions,
+        reactionRepository: $reactionRepository,
     );
 }
 
@@ -425,7 +425,7 @@ it('prevents duplicate reactions (same user, same emoji, same message)', functio
         ['emoji' => '👍', 'count' => 0, 'user_reacted' => false],
     ]);
     $auth = makeReactionAuthManager(user: $user);
-    $controller = makeReactionController(messages: $messages, reactions: $reactions, auth: $auth);
+    $controller = makeReactionController(messages: $messages, reactionRepository: $reactions, auth: $auth);
 
     // When reaction already exists, it should remove (not add a duplicate)
     $controller->react(id: 1, request: makeReactRequest(emoji: '👍'));
@@ -440,7 +440,7 @@ it('removes a reaction from a message', function (): void {
     $messages = makeReactionMessageRepository(messages: [$message]);
     $reactions = makeReactionRepository(existingReaction: true, grouped: []);
     $auth = makeReactionAuthManager(user: $user);
-    $controller = makeReactionController(messages: $messages, reactions: $reactions, auth: $auth);
+    $controller = makeReactionController(messages: $messages, reactionRepository: $reactions, auth: $auth);
 
     $response = $controller->react(id: 1, request: makeReactRequest(emoji: '👍'));
 
@@ -461,7 +461,7 @@ it('adds a reaction to a message', function (): void {
         ['emoji' => '👍', 'count' => 1, 'user_reacted' => true],
     ]);
     $auth = makeReactionAuthManager(user: $user);
-    $controller = makeReactionController(messages: $messages, reactions: $reactions, auth: $auth);
+    $controller = makeReactionController(messages: $messages, reactionRepository: $reactions, auth: $auth);
 
     $response = $controller->react(id: 1, request: makeReactRequest(emoji: '👍'));
 

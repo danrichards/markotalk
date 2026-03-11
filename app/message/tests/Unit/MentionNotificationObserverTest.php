@@ -65,11 +65,12 @@ function makeMentionSpace(int $id = 1, string $slug = 'general'): Space
     );
 }
 
-function makeMentionUserRepository(?User $user = null): UserRepositoryInterface
+function makeMentionUserRepository(?User $user = null, ?User $author = null): UserRepositoryInterface
 {
-    return new readonly class ($user) implements UserRepositoryInterface {
+    return new readonly class ($user, $author) implements UserRepositoryInterface {
         public function __construct(
             private ?User $user,
+            private ?User $author = null,
         ) {}
 
         public function findByUsername(string $username): ?User
@@ -95,7 +96,7 @@ function makeMentionUserRepository(?User $user = null): UserRepositoryInterface
 
         public function find(int $id): ?DatabaseEntity
         {
-            return $this->user;
+            return $this->author ?? $this->user;
         }
 
         public function findOrFail(int $id): DatabaseEntity
@@ -219,18 +220,15 @@ it('sends a MentionNotification when a valid user is mentioned', function (): vo
     $space = makeMentionSpace();
     $message = makeMentionMessage(id: 5, body: 'Hey @johndoe!');
 
-    $users = makeMentionUserRepository(user: $mentioned);
+    $users = makeMentionUserRepository(user: $mentioned, author: $author);
     $spaces = makeMentionSpaceRepository(space: $space);
     $sent = [];
     $sender = makeMentionNotificationSender(sent: $sent);
-
-    $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
         userRepository: $users,
         spaceRepository: $spaces,
         sender: $sender,
-        authorRepository: $authorRepo,
     );
 
     $event = new MentionDetectedEvent(message: $message, username: 'johndoe');
@@ -245,18 +243,16 @@ it('skips notification when mentioned username does not exist', function (): voi
     $space = makeMentionSpace();
     $message = makeMentionMessage(id: 5, body: 'Hey @nonexistent!');
 
-    $users = makeMentionUserRepository();
+    $author = makeMentionUser(username: 'alice');
+    $users = makeMentionUserRepository(author: $author);
     $spaces = makeMentionSpaceRepository(space: $space);
     $sent = [];
     $sender = makeMentionNotificationSender(sent: $sent);
-    $author = makeMentionUser(username: 'alice');
-    $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
         userRepository: $users,
         spaceRepository: $spaces,
         sender: $sender,
-        authorRepository: $authorRepo,
     );
 
     $event = new MentionDetectedEvent(message: $message, username: 'nonexistent');
@@ -275,7 +271,6 @@ it('uses #[Observer(event: MentionDetectedEvent::class)]', function (): void {
 });
 
 it('resolves the mentioned username to a User entity', function (): void {
-    $author = makeMentionUser(username: 'alice');
     $mentioned = makeMentionUser(id: 2, username: 'bobsmith');
     $space = makeMentionSpace(slug: 'dev');
     $message = makeMentionMessage(id: 10, body: 'Hey @bobsmith, check this out!');
@@ -317,12 +312,12 @@ it('resolves the mentioned username to a User entity', function (): void {
 
         public function find(int $id): ?DatabaseEntity
         {
-            return null;
+            return $this->mentioned;
         }
 
         public function findOrFail(int $id): DatabaseEntity
         {
-            throw new RuntimeException(message: 'Not found');
+            return $this->mentioned;
         }
 
         public function findAll(): array
@@ -350,13 +345,11 @@ it('resolves the mentioned username to a User entity', function (): void {
     $spaces = makeMentionSpaceRepository(space: $space);
     $sent = [];
     $sender = makeMentionNotificationSender(sent: $sent);
-    $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
         userRepository: $usersRepo,
         spaceRepository: $spaces,
         sender: $sender,
-        authorRepository: $authorRepo,
     );
 
     $event = new MentionDetectedEvent(message: $message, username: 'bobsmith');
@@ -378,13 +371,11 @@ it('skips notification when user mentions themselves', function (): void {
     $spaces = makeMentionSpaceRepository(space: $space);
     $sent = [];
     $sender = makeMentionNotificationSender(sent: $sent);
-    $authorRepo = makeMentionUserRepository(user: $author);
 
     $observer = new MentionNotificationObserver(
         userRepository: $users,
         spaceRepository: $spaces,
         sender: $sender,
-        authorRepository: $authorRepo,
     );
 
     $event = new MentionDetectedEvent(message: $message, username: 'alice');

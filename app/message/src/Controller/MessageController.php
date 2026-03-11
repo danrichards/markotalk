@@ -15,12 +15,16 @@ use App\User\Entity\User;
 use App\User\Enum\UserRole;
 use App\User\Repository\UserRepositoryInterface;
 use DateTimeImmutable;
+use JsonException;
 use Marko\Authentication\AuthManager;
+use Marko\Authentication\Exceptions\AuthException;
 use App\User\Middleware\PresenceMiddleware;
 use Marko\Authentication\Middleware\AuthMiddleware;
 use Marko\Config\ConfigRepositoryInterface;
+use Marko\Config\Exceptions\ConfigNotFoundException;
 use Marko\Authorization\Contracts\GateInterface;
 use Marko\Authorization\Exceptions\AuthorizationException;
+use Marko\Pagination\Exceptions\PaginationException;
 use Marko\PubSub\Message as PubSubMessage;
 use Marko\PubSub\PublisherInterface;
 use Marko\RateLimiting\Contracts\RateLimiterInterface;
@@ -42,17 +46,17 @@ readonly class MessageController
         private AuthManager $auth,
         private ValidatorInterface $validator,
         private ConfigRepositoryInterface $config,
-        private ?SpaceMembershipRepositoryInterface $memberships = null,
+        private ?SpaceMembershipRepositoryInterface $spaceMembershipRepository = null,
         private ?GateInterface $gate = null,
         private ?RateLimiterInterface $rateLimiter = null,
-        private ?ReactionRepositoryInterface $reactions = null,
+        private ?ReactionRepositoryInterface $reactionRepository = null,
         private ?PublisherInterface $publisher = null,
-        private ?UserRepositoryInterface $users = null,
+        private ?UserRepositoryInterface $userRepository = null,
         private ?ViewInterface $view = null,
     ) {}
 
     /**
-     * @throws \JsonException|\Marko\Config\Exceptions\ConfigNotFoundException|\Marko\Authentication\Exceptions\AuthException
+     * @throws JsonException|ConfigNotFoundException|AuthException
      */
     #[Post('/spaces/{slug}/messages', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function send(
@@ -131,7 +135,7 @@ readonly class MessageController
         $this->messageRepository->save(entity: $message);
 
         if ($this->publisher !== null && $this->view !== null) {
-            $userEntity = $this->users?->find(id: $message->userId);
+            $userEntity = $this->userRepository?->find(id: $message->userId);
             $authorName = $userEntity instanceof User ? ($userEntity->displayName ?: $userEntity->username) : 'Unknown User';
             $html = $this->view->renderToString(
                 template: 'message::_message',
@@ -162,7 +166,7 @@ readonly class MessageController
     }
 
     /**
-     * @throws \JsonException|\Marko\Config\Exceptions\ConfigNotFoundException|\Marko\Authentication\Exceptions\AuthException
+     * @throws JsonException|ConfigNotFoundException|AuthException
      */
     #[Put('/messages/{id}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function edit(
@@ -223,7 +227,7 @@ readonly class MessageController
     }
 
     /**
-     * @throws \JsonException|\Marko\Authentication\Exceptions\AuthException
+     * @throws JsonException|AuthException
      */
     #[Delete('/messages/{id}', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function delete(
@@ -239,7 +243,7 @@ readonly class MessageController
         $messageId = (int) $message->id;
         $spaceId = $message->spaceId;
 
-        $this->memberships?->clearLastReadMessageId(messageId: $messageId);
+        $this->spaceMembershipRepository?->clearLastReadMessageId(messageId: $messageId);
         $this->messageRepository->delete(entity: $message);
 
         if ($this->publisher !== null) {
@@ -262,7 +266,7 @@ readonly class MessageController
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     #[Post('/messages/{id}/pin', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function pin(
@@ -295,8 +299,7 @@ readonly class MessageController
     }
 
     /**
-     * @throws \Marko\Authentication\Exceptions\AuthException
-     * @throws \JsonException
+     * @throws AuthException|JsonException
      */
     #[Post('/messages/{id}/reactions', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function react(
@@ -324,26 +327,25 @@ readonly class MessageController
         $emoji = $request->post(key: 'emoji') ?? '';
         $userId = (int) $user->getAuthIdentifier();
 
-        $existing = $this->reactions?->findOneBy(criteria: [
+        $existing = $this->reactionRepository?->findOneBy(criteria: [
             'message_id' => $id,
             'user_id' => $userId,
             'emoji' => $emoji,
         ]);
 
         if ($existing instanceof Reaction) {
-            $this->reactions?->remove(messageId: $id, userId: $userId, emoji: $emoji);
+            $this->reactionRepository?->remove(messageId: $id, userId: $userId, emoji: $emoji);
         } else {
-            $this->reactions?->add(messageId: $id, userId: $userId, emoji: $emoji);
+            $this->reactionRepository?->add(messageId: $id, userId: $userId, emoji: $emoji);
         }
 
-        $grouped = $this->reactions?->findGrouped(messageId: $id, userId: $userId) ?? [];
+        $grouped = $this->reactionRepository?->findGrouped(messageId: $id, userId: $userId) ?? [];
 
         return Response::json(data: $grouped);
     }
 
     /**
-     * @throws \Marko\Pagination\Exceptions\PaginationException
-     * @throws \JsonException
+     * @throws PaginationException|JsonException
      */
     #[Get('/spaces/{slug}/messages', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
     public function history(
@@ -390,7 +392,7 @@ readonly class MessageController
      * Authorize the current user to modify a message (owner or admin).
      *
      * @return Response|array{message: Message, user: User} Error response or authorized context
-     * @throws \JsonException|\Marko\Authentication\Exceptions\AuthException
+     * @throws JsonException|AuthException
      */
     private function authorizeMessageOwner(int $id): Response|array
     {
