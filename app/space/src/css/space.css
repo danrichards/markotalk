@@ -7,7 +7,7 @@
 .chat-area { @apply flex flex-col h-full; }
 .chat-header { @apply flex items-center h-14 border-b border-gray-200 px-4; }
 .chat-title { @apply text-lg font-semibold text-gray-900; }
-.chat-pinned { @apply border-b border-yellow-200 bg-yellow-50 p-4 space-y-2; }
+.chat-pinned { @apply border-b border-yellow-200 bg-yellow-50 -mx-4 px-4 pb-3 mb-1 space-y-3; }
 .chat-feed { @apply flex-1 overflow-y-auto p-4 space-y-3; }
 .chat-input { @apply border-t border-gray-200 p-4; }
 .chat-input-form { @apply flex gap-2; }
