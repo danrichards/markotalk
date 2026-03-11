@@ -14,14 +14,14 @@ use Marko\Core\Attributes\Plugin;
 readonly class MarkdownPlugin
 {
     public function __construct(
-        private MarkdownParserInterface $parser,
+        private MarkdownParserInterface $markdownParser,
     ) {}
 
     #[Before(sortOrder: 10)]
     public function beforeSave(
         Message $message,
     ): null {
-        $message->bodyHtml = $this->parser->parse(markdown: $message->body);
+        $message->bodyHtml = $this->markdownParser->parse(markdown: $message->body);
 
         return null;
     }

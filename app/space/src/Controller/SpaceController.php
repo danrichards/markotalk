@@ -37,7 +37,8 @@ readonly class SpaceController
     ) {}
 
     #[Get('/home', middleware: [AuthMiddleware::class, PresenceMiddleware::class])]
-    public function index(): Response {
+    public function index(): Response
+    {
         $general = $this->spaceRepository->findBySlug(slug: 'general');
 
         if ($general instanceof Space) {
@@ -84,6 +85,7 @@ readonly class SpaceController
 
         $allSpaces = $this->spaceRepository->findActive();
         $spaceMemberships = $this->spaceMembershipRepository->findAllForSpace(spaceId: (int) $space->id);
+
         $members = [];
         foreach ($spaceMemberships as $m) {
             $user = $this->userRepository->find(id: $m->userId);
@@ -96,6 +98,7 @@ readonly class SpaceController
         foreach ($members as $member) {
             $userMap[$member->id] = $member->displayName ?: $member->username;
         }
+
         foreach ($messages as $message) {
             if (!isset($userMap[$message->userId])) {
                 $user = $this->userRepository->find(id: $message->userId);
@@ -106,6 +109,7 @@ readonly class SpaceController
         }
 
         $userMemberships = $this->spaceMembershipRepository->findAllForUser(userId: $userId);
+
         $unreadCounts = [];
         foreach ($userMemberships as $m) {
             $unreadCounts[$m->spaceId] = $this->spaceMembershipRepository->countUnread(userId: $userId, spaceId: $m->spaceId);
@@ -187,6 +191,7 @@ readonly class SpaceController
             lastReadMessageId: null,
             joinedAt: new DateTimeImmutable(),
         );
+
         $this->spaceMembershipRepository->save(entity: $membership);
 
         return $membership;

@@ -45,7 +45,7 @@ readonly class MessageController
         private SpaceRepositoryInterface $spaceRepository,
         private AuthManager $auth,
         private ValidatorInterface $validator,
-        private ConfigRepositoryInterface $config,
+        private ConfigRepositoryInterface $configRepository,
         private ?SpaceMembershipRepositoryInterface $spaceMembershipRepository = null,
         private ?GateInterface $gate = null,
         private ?RateLimiterInterface $rateLimiter = null,
@@ -63,13 +63,15 @@ readonly class MessageController
         string $slug,
         Request $request,
     ): Response {
-        $maxLength = $this->config->getInt(key: 'markotalk.max_message_length');
+        $maxLength = $this->configRepository->getInt(key: 'markotalk.max_message_length');
 
         try {
             $this->validator->validateOrFail(
                 data: $request->post(),
                 rules: [
-                    'body' => ['required', "max:$maxLength"],
+                    'body' => [
+                        'required', "max:$maxLength",
+                    ],
                 ],
             );
         } catch (ValidationException $e) {
@@ -99,8 +101,9 @@ readonly class MessageController
 
         if ($this->rateLimiter !== null) {
             $userId = (int) $user->getAuthIdentifier();
-            $maxAttempts = $this->config->getInt(key: 'markotalk.rate_limit_messages');
-            $decaySeconds = $this->config->getInt(key: 'markotalk.rate_limit_window');
+            $maxAttempts = $this->configRepository->getInt(key: 'markotalk.rate_limit_messages');
+            $decaySeconds = $this->configRepository->getInt(key: 'markotalk.rate_limit_window');
+
             $result = $this->rateLimiter->attempt(
                 key: "user_{$userId}_messages",
                 maxAttempts: $maxAttempts,
@@ -180,8 +183,7 @@ readonly class MessageController
         }
 
         $message = $result['message'];
-
-        $maxLength = $this->config->getInt(key: 'markotalk.max_message_length');
+        $maxLength = $this->configRepository->getInt(key: 'markotalk.max_message_length');
 
         try {
             $this->validator->validateOrFail(

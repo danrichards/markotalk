@@ -7,7 +7,7 @@ namespace App\Message\Service;
 readonly class BasicMarkdownParser implements MarkdownParserInterface
 {
     public function __construct(
-        private HtmlSanitizerInterface $sanitizer = new HtmlSanitizer(),
+        private HtmlSanitizerInterface $sanitizer,
     ) {}
 
     public function parse(

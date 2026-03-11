@@ -21,13 +21,10 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
         int $userId,
         int $spaceId,
     ): ?SpaceMembership {
-        $result = $this->findOneBy(criteria: ['userId' => $userId, 'spaceId' => $spaceId]);
-
-        if ($result === null) {
-            return null;
-        }
-
-        return $result;
+        return $this->findOneBy(criteria: [
+            'userId' => $userId,
+            'spaceId' => $spaceId,
+        ]);
     }
 
     /**

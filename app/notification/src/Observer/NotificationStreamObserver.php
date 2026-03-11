@@ -23,8 +23,9 @@ readonly class NotificationStreamObserver
     /**
      * @throws InvalidKeyException
      */
-    public function handle(MessageCreatedEvent $event): void
-    {
+    public function handle(
+        MessageCreatedEvent $event,
+    ): void {
         $message = $event->message;
 
         if (!$message instanceof Message) {

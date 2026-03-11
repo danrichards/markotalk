@@ -17,18 +17,21 @@ readonly class MentionNotification implements NotificationInterface
         public string $messagePreview,
     ) {}
 
-    public function channels(NotifiableInterface $notifiable): array
-    {
+    public function channels(
+        NotifiableInterface $notifiable
+    ): array {
         return ['database'];
     }
 
-    public function toMail(NotifiableInterface $notifiable): Message
-    {
+    public function toMail(
+        NotifiableInterface $notifiable,
+    ): Message {
         return Message::create();
     }
 
-    public function toDatabase(NotifiableInterface $notifiable): array
-    {
+    public function toDatabase(
+        NotifiableInterface $notifiable,
+    ): array {
         return [
             'message_id' => $this->messageId,
             'space_slug' => $this->spaceSlug,

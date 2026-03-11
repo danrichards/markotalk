@@ -14,18 +14,21 @@ readonly class WelcomeNotification implements NotificationInterface
         public string $username,
     ) {}
 
-    public function channels(NotifiableInterface $notifiable): array
-    {
+    public function channels(
+        NotifiableInterface $notifiable,
+    ): array {
         return ['database'];
     }
 
-    public function toMail(NotifiableInterface $notifiable): Message
-    {
+    public function toMail(
+        NotifiableInterface $notifiable,
+    ): Message {
         return Message::create();
     }
 
-    public function toDatabase(NotifiableInterface $notifiable): array
-    {
+    public function toDatabase(
+        NotifiableInterface $notifiable,
+    ): array {
         return [
             'message' => 'Welcome to MarkoTalk!',
         ];

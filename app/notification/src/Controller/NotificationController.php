@@ -26,7 +26,8 @@ readonly class NotificationController
      * @throws AuthException
      */
     #[Get('/notifications', middleware: [AuthMiddleware::class])]
-    public function index(): Response {
+    public function index(): Response
+    {
         $user = $this->auth->user();
 
         if (!$user instanceof NotifiableInterface) {
@@ -55,7 +56,8 @@ readonly class NotificationController
      * @throws AuthException
      */
     #[Post('/notifications/read', middleware: [AuthMiddleware::class])]
-    public function markAllRead(): Response {
+    public function markAllRead(): Response
+    {
         $user = $this->auth->user();
 
         if (!$user instanceof NotifiableInterface) {
