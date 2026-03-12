@@ -8,13 +8,18 @@ use App\User\Entity\User;
 use App\User\Repository\UserRepositoryInterface;
 use DateMalformedStringException;
 use DateTimeImmutable;
+use Marko\Config\ConfigRepositoryInterface;
 
 readonly class DatabasePresenceTracker implements PresenceTrackerInterface
 {
+    private int $presenceTimeout;
+
     public function __construct(
         private UserRepositoryInterface $userRepository,
-        private int $presenceTimeout,
-    ) {}
+        ConfigRepositoryInterface $config,
+    ) {
+        $this->presenceTimeout = $config->getInt('markotalk.presence_timeout');
+    }
 
     public function updateLastSeen(User $user): void
     {
