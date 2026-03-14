@@ -29,3 +29,6 @@ Thumbs.db
 
 # Composer
 composer.phar
+
+# HCF
+.claude/ralph-loop.local.md
