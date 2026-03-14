@@ -446,7 +446,7 @@ function makeMessageController(
         spaceRepository: $spaces,
         auth: $auth,
         validator: $validator,
-        config: $config,
+        configRepository: $config,
         publisher: $publisher,
         userRepository: $userRepository,
         view: $view,

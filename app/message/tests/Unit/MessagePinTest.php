@@ -330,7 +330,7 @@ function makePinController(
         spaceRepository: makePinSpaceRepository(),
         auth: $auth ?? makePinAuthManager(user: makePinUser()),
         validator: makePinValidator(),
-        config: makePinConfig(),
+        configRepository: makePinConfig(),
         gate: $gate,
     );
 }

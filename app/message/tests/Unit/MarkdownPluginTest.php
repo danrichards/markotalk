@@ -6,42 +6,53 @@ use App\Message\Entity\Message;
 use App\Message\Plugin\MarkdownPlugin;
 use App\Message\Repository\MessageRepository;
 use App\Message\Service\BasicMarkdownParser;
+use App\Message\Service\HtmlSanitizerInterface;
 use Marko\Core\Attributes\Before;
 use Marko\Core\Attributes\Plugin;
 
+function makePassthroughSanitizer(): HtmlSanitizerInterface
+{
+    return new class implements HtmlSanitizerInterface {
+        public function sanitize(string $html): string
+        {
+            return $html;
+        }
+    };
+}
+
 it('parses **bold** to <strong>bold</strong>', function (): void {
-    $parser = new BasicMarkdownParser();
+    $parser = new BasicMarkdownParser(sanitizer: makePassthroughSanitizer());
 
     expect($parser->parse(markdown: '**bold**'))->toBe('<strong>bold</strong>');
 });
 
 it('parses *italic* to <em>italic</em>', function (): void {
-    $parser = new BasicMarkdownParser();
+    $parser = new BasicMarkdownParser(sanitizer: makePassthroughSanitizer());
 
     expect($parser->parse(markdown: '*italic*'))->toBe('<em>italic</em>');
 });
 
 it('parses inline code with backticks', function (): void {
-    $parser = new BasicMarkdownParser();
+    $parser = new BasicMarkdownParser(sanitizer: makePassthroughSanitizer());
 
     expect($parser->parse(markdown: '`code`'))->toBe('<code>code</code>');
 });
 
 it('parses code blocks with triple backticks', function (): void {
-    $parser = new BasicMarkdownParser();
+    $parser = new BasicMarkdownParser(sanitizer: makePassthroughSanitizer());
 
     expect($parser->parse(markdown: "```\necho 'hello';\n```"))->toBe("<pre><code>\necho 'hello';\n</code></pre>");
 });
 
 it('parses [text](url) to anchor tags', function (): void {
-    $parser = new BasicMarkdownParser();
+    $parser = new BasicMarkdownParser(sanitizer: makePassthroughSanitizer());
 
     expect($parser->parse(markdown: '[click here](https://example.com)'))->toBe('<a href="https://example.com">click here</a>');
 });
 
 it('sets body_html on the message before save via plugin interception', function (): void {
-    $parser = new BasicMarkdownParser();
-    $plugin = new MarkdownPlugin(parser: $parser);
+    $parser = new BasicMarkdownParser(sanitizer: makePassthroughSanitizer());
+    $plugin = new MarkdownPlugin(markdownParser: $parser);
 
     $message = new Message(
         id: null,

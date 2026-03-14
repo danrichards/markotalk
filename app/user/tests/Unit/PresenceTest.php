@@ -8,12 +8,69 @@ use App\User\Middleware\PresenceMiddleware;
 use App\User\Repository\UserRepositoryInterface;
 use App\User\Service\DatabasePresenceTracker;
 use App\User\Service\PresenceTrackerInterface;
+use Marko\Config\ConfigRepositoryInterface;
 use Marko\Database\Entity\Entity;
 use Marko\PubSub\Message;
 use Marko\PubSub\PublisherInterface;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
 use Marko\Testing\Fake\FakeGuard;
+
+function makePresenceTrackerConfig(int $presenceTimeout = 300): ConfigRepositoryInterface
+{
+    $values = ['markotalk.presence_timeout' => $presenceTimeout];
+
+    return new class ($values) implements ConfigRepositoryInterface {
+        public function __construct(
+            private readonly array $values,
+        ) {}
+
+        public function get(string $key, ?string $scope = null): mixed
+        {
+            return $this->values[$key] ?? null;
+        }
+
+        public function has(string $key, ?string $scope = null): bool
+        {
+            return isset($this->values[$key]);
+        }
+
+        public function getString(string $key, ?string $scope = null): string
+        {
+            return (string) ($this->values[$key] ?? '');
+        }
+
+        public function getInt(string $key, ?string $scope = null): int
+        {
+            return (int) ($this->values[$key] ?? 0);
+        }
+
+        public function getBool(string $key, ?string $scope = null): bool
+        {
+            return (bool) ($this->values[$key] ?? false);
+        }
+
+        public function getFloat(string $key, ?string $scope = null): float
+        {
+            return (float) ($this->values[$key] ?? 0.0);
+        }
+
+        public function getArray(string $key, ?string $scope = null): array
+        {
+            return (array) ($this->values[$key] ?? []);
+        }
+
+        public function all(?string $scope = null): array
+        {
+            return $this->values;
+        }
+
+        public function withScope(string $scope): ConfigRepositoryInterface
+        {
+            return $this;
+        }
+    };
+}
 
 function makePresenceUser(?string $lastSeenAt = null): User
 {
@@ -132,7 +189,7 @@ it('considers a user online when last_seen_at is within timeout', function (): v
 
     $tracker = new DatabasePresenceTracker(
         userRepository: $userRepository,
-        presenceTimeout: 300,
+        config: makePresenceTrackerConfig(presenceTimeout: 300),
     );
 
     expect($tracker->isOnline(user: $user))->toBeTrue();
@@ -144,7 +201,7 @@ it('considers a user offline when last_seen_at exceeds timeout', function (): vo
 
     $tracker = new DatabasePresenceTracker(
         userRepository: $userRepository,
-        presenceTimeout: 300,
+        config: makePresenceTrackerConfig(presenceTimeout: 300),
     );
 
     expect($tracker->isOnline(user: $user))->toBeFalse();
@@ -171,7 +228,7 @@ it('returns all online users for a given space', function (): void {
 
     $tracker = new DatabasePresenceTracker(
         userRepository: $userRepository,
-        presenceTimeout: 300,
+        config: makePresenceTrackerConfig(presenceTimeout: 300),
     );
 
     $onlineUsers = $tracker->getOnlineUsers();

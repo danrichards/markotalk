@@ -368,7 +368,7 @@ function makeReactionController(
         spaceRepository: makeReactionSpaceRepository(),
         auth: $auth,
         validator: makeReactionValidator(),
-        config: makeReactionConfig(),
+        configRepository: makeReactionConfig(),
         reactionRepository: $reactionRepository,
     );
 }

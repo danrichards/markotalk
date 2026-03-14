@@ -349,7 +349,7 @@ function makeRateLimitController(
         spaceRepository: $spaces,
         auth: $auth,
         validator: $validator,
-        config: $config,
+        configRepository: $config,
         rateLimiter: $rateLimiter,
     );
 }
