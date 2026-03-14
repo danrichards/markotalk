@@ -86,6 +86,11 @@ function makeReactionMessageRepository(array $messages = []): MessageRepositoryI
             private array $messages,
         ) {}
 
+        public function findPinnedBySpace(int $spaceId): array
+        {
+            return [];
+        }
+
         public function findBySpace(int $spaceId, int $limit = 50): array
         {
             return [];
@@ -103,7 +108,7 @@ function makeReactionMessageRepository(array $messages = []): MessageRepositoryI
 
         public function find(int $id): ?DatabaseEntity
         {
-            return array_find($this->messages, fn(Message $message) => $message->id === $id);
+            return array_find(array: $this->messages, callback: fn (Message $message) => $message->id === $id);
         }
 
         public function findOrFail(int $id): DatabaseEntity

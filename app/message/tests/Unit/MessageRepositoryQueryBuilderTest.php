@@ -12,11 +12,10 @@ use Marko\Database\Entity\EntityHydrator;
 use Marko\Database\Entity\EntityMetadataFactory;
 use Marko\Database\Query\QueryBuilderFactoryInterface;
 use Marko\Database\Query\QueryBuilderInterface;
-use Marko\Pagination\CursorPaginator;
 
-// Helper functions
+// Helper factories
 
-function makePaginationMessageRow(
+function makeQbMessageRow(
     int $id = 1,
     int $spaceId = 1,
     int $userId = 2,
@@ -38,7 +37,7 @@ function makePaginationMessageRow(
     ];
 }
 
-function makePaginationMockConnection(): ConnectionInterface
+function makeQbMockConnection(): ConnectionInterface
 {
     return new class () implements ConnectionInterface {
         public function connect(): void {}
@@ -77,7 +76,7 @@ function makePaginationMockConnection(): ConnectionInterface
     };
 }
 
-function makePaginationMockDispatcher(): EventDispatcherInterface
+function makeQbMockDispatcher(): EventDispatcherInterface
 {
     return new class () implements EventDispatcherInterface {
         public function dispatch(Event $event): void {}
@@ -85,11 +84,11 @@ function makePaginationMockDispatcher(): EventDispatcherInterface
 }
 
 /**
- * Create a spy QueryBuilderInterface for pagination tests.
+ * Create a spy QueryBuilderInterface that records method calls and returns configurable results.
  *
  * @param array<array<string, mixed>> $rows Rows to return from get()
  */
-function makePaginationSpyQueryBuilder(array $rows = []): QueryBuilderInterface
+function makeSpyQueryBuilder(array $rows = []): QueryBuilderInterface
 {
     return new class ($rows) implements QueryBuilderInterface {
         /** @var array<string, array<int, mixed>> */
@@ -231,7 +230,10 @@ function makePaginationSpyQueryBuilder(array $rows = []): QueryBuilderInterface
     };
 }
 
-function makePaginationQueryBuilderFactory(QueryBuilderInterface $builder): QueryBuilderFactoryInterface
+/**
+ * Create a QueryBuilderFactoryInterface that returns the given spy builder.
+ */
+function makeQbFactory(QueryBuilderInterface $builder): QueryBuilderFactoryInterface
 {
     return new readonly class ($builder) implements QueryBuilderFactoryInterface {
         public function __construct(
@@ -245,126 +247,117 @@ function makePaginationQueryBuilderFactory(QueryBuilderInterface $builder): Quer
     };
 }
 
-function makePaginationRepository(
-    array $queryResult = [],
-    ?QueryBuilderInterface &$spyBuilder = null,
+function makeQbRepository(
+    QueryBuilderInterface $queryBuilder,
 ): MessageRepository {
-    $spy = makePaginationSpyQueryBuilder(rows: $queryResult);
-    $spyBuilder = $spy;
-
     return new MessageRepository(
-        connection: makePaginationMockConnection(),
+        connection: makeQbMockConnection(),
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
-        queryBuilderFactory: makePaginationQueryBuilderFactory(builder: $spy),
-        eventDispatcher: makePaginationMockDispatcher(),
+        queryBuilderFactory: makeQbFactory(builder: $queryBuilder),
+        eventDispatcher: makeQbMockDispatcher(),
     );
 }
 
 // Tests
 
-it('returns the most recent messages when no cursor is provided', function (): void {
+it('finds pinned messages by space using query builder instead of raw SQL', function (): void {
     $rows = [
-        makePaginationMessageRow(id: 3, body: 'Third'),
-        makePaginationMessageRow(id: 2, body: 'Second'),
-        makePaginationMessageRow(id: 1, body: 'First'),
+        makeQbMessageRow(id: 1, isPinned: true),
+        makeQbMessageRow(id: 2, isPinned: true),
     ];
+    $spy = makeSpyQueryBuilder(rows: $rows);
+    $repository = makeQbRepository(queryBuilder: $spy);
 
-    $spy = null;
-    $repository = makePaginationRepository(queryResult: $rows, spyBuilder: $spy);
+    $result = $repository->findPinnedBySpace(spaceId: 5);
 
-    $paginator = $repository->findPaginated(spaceId: 1, perPage: 50);
-
-    expect($paginator)->toBeInstanceOf(CursorPaginator::class)
-        ->and($spy->calls['orderBy'])->toContain(['id', 'DESC'])
-        ->and($spy->calls['where'])->toContain(['space_id', '=', 1]);
+    expect($result)->toHaveCount(2)
+        ->and($result[0])->toBeInstanceOf(Message::class)
+        ->and($spy->calls['where'])->toContain(['space_id', '=', 5])
+        ->and($spy->calls['where'])->toContain(['is_pinned', '=', true])
+        ->and($spy->calls['orderBy'])->toContain(['id', 'ASC'])
+        ->and(array_key_exists('get', $spy->calls))->toBeTrue();
 });
 
-it('returns older messages when a cursor is provided', function (): void {
+it('finds paginated messages using query builder with conditional cursor where clause', function (): void {
     $rows = [
-        makePaginationMessageRow(id: 2, body: 'Second'),
-        makePaginationMessageRow(id: 1, body: 'First'),
+        makeQbMessageRow(id: 3),
+        makeQbMessageRow(id: 2),
+        makeQbMessageRow(id: 1),
     ];
+    $spyNoCursor = makeSpyQueryBuilder(rows: $rows);
+    $repositoryNoCursor = makeQbRepository(queryBuilder: $spyNoCursor);
 
-    $spy = null;
-    $repository = makePaginationRepository(queryResult: $rows, spyBuilder: $spy);
+    $paginator = $repositoryNoCursor->findPaginated(spaceId: 7, perPage: 50);
 
-    // Cursor pointing to message id 5 (load messages older than 5)
-    $cursor = base64_encode(string: json_encode(value: ['id' => 5]));
-    $paginator = $repository->findPaginated(spaceId: 1, perPage: 50, cursor: $cursor);
+    expect($paginator->items())->toHaveCount(3)
+        ->and($spyNoCursor->calls['where'])->toContain(['space_id', '=', 7])
+        ->and($spyNoCursor->calls['orderBy'])->toContain(['id', 'DESC'])
+        ->and($spyNoCursor->calls['limit'])->toContain(51);
 
-    expect($paginator)->toBeInstanceOf(CursorPaginator::class)
-        ->and($spy->calls['where'])->toContain(['id', '<', 5]);
+    // With cursor: adds id < cursorId where clause
+    $spyCursor = makeSpyQueryBuilder(rows: $rows);
+    $repositoryCursor = makeQbRepository(queryBuilder: $spyCursor);
+    $cursor = base64_encode(string: json_encode(value: ['id' => 10]));
+
+    $repositoryCursor->findPaginated(spaceId: 7, perPage: 50, cursor: $cursor);
+
+    expect($spyCursor->calls['where'])->toContain(['space_id', '=', 7])
+        ->and($spyCursor->calls['where'])->toContain(['id', '<', 10])
+        ->and($spyCursor->calls['orderBy'])->toContain(['id', 'DESC']);
 });
 
-it('indicates has_more is true when more messages exist', function (): void {
-    // perPage = 2, return 3 rows (perPage+1) to signal more pages
+it('finds messages by space since a given id using query builder', function (): void {
     $rows = [
-        makePaginationMessageRow(id: 3, body: 'Third'),
-        makePaginationMessageRow(id: 2, body: 'Second'),
-        makePaginationMessageRow(id: 1, body: 'First'),
+        makeQbMessageRow(id: 6),
+        makeQbMessageRow(id: 7),
     ];
+    $spy = makeSpyQueryBuilder(rows: $rows);
+    $repository = makeQbRepository(queryBuilder: $spy);
 
-    $repository = makePaginationRepository(queryResult: $rows);
+    $result = $repository->findBySpaceSince(spaceId: 4, sinceId: 5);
 
-    $paginator = $repository->findPaginated(spaceId: 1, perPage: 2);
-
-    expect($paginator->hasMorePages())->toBeTrue();
+    expect($result)->toHaveCount(2)
+        ->and($result[0])->toBeInstanceOf(Message::class)
+        ->and($spy->calls['where'])->toContain(['space_id', '=', 4])
+        ->and($spy->calls['where'])->toContain(['id', '>', 5])
+        ->and($spy->calls['orderBy'])->toContain(['id', 'ASC'])
+        ->and(array_key_exists('get', $spy->calls))->toBeTrue();
 });
 
-it('indicates has_more is false when no more messages exist', function (): void {
-    // perPage = 2, only 2 rows returned — no extra row to signal more pages
+it('finds messages by space with limit using query builder instead of raw SQL', function (): void {
     $rows = [
-        makePaginationMessageRow(id: 2, body: 'Second'),
-        makePaginationMessageRow(id: 1, body: 'First'),
+        makeQbMessageRow(id: 1),
+        makeQbMessageRow(id: 2),
     ];
+    $spy = makeSpyQueryBuilder(rows: $rows);
+    $repository = makeQbRepository(queryBuilder: $spy);
 
-    $repository = makePaginationRepository(queryResult: $rows);
+    $result = $repository->findBySpace(spaceId: 3, limit: 10);
 
-    $paginator = $repository->findPaginated(spaceId: 1, perPage: 2);
-
-    expect($paginator->hasMorePages())->toBeFalse();
+    expect($result)->toHaveCount(2)
+        ->and($result[0])->toBeInstanceOf(Message::class)
+        ->and($spy->calls['where'])->toContain(['space_id', '=', 3])
+        ->and($spy->calls['orderBy'])->toContain(['id', 'ASC'])
+        ->and($spy->calls['limit'])->toContain(10)
+        ->and(array_key_exists('get', $spy->calls))->toBeTrue();
 });
 
-it('returns messages in ascending order within each page', function (): void {
-    // DB returns rows in descending order (newest first), repository must reverse to ascending
+it('finds edited messages since a timestamp using query builder', function (): void {
     $rows = [
-        makePaginationMessageRow(id: 3, body: 'Third'),
-        makePaginationMessageRow(id: 2, body: 'Second'),
-        makePaginationMessageRow(id: 1, body: 'First'),
+        makeQbMessageRow(id: 10, editedAt: '2026-03-14 10:00:00'),
     ];
+    $spy = makeSpyQueryBuilder(rows: $rows);
+    $repository = makeQbRepository(queryBuilder: $spy);
 
-    $repository = makePaginationRepository(queryResult: $rows);
+    $since = new DateTimeImmutable('2026-03-14 09:00:00');
 
-    $paginator = $repository->findPaginated(spaceId: 1, perPage: 50);
-    $items = $paginator->items();
+    $result = $repository->findEditedSince(spaceId: 2, since: $since);
 
-    expect($items)->toHaveCount(3)
-        ->and($items[0])->toBeInstanceOf(Message::class)
-        ->and($items[0]->id)->toBe(1)
-        ->and($items[1]->id)->toBe(2)
-        ->and($items[2]->id)->toBe(3);
-});
-
-it('encodes the next cursor as base64 for the client', function (): void {
-    // perPage = 2, return 3 rows to trigger has_more
-    $rows = [
-        makePaginationMessageRow(id: 3, body: 'Third'),
-        makePaginationMessageRow(id: 2, body: 'Second'),
-        makePaginationMessageRow(id: 1, body: 'First'),
-    ];
-
-    $repository = makePaginationRepository(queryResult: $rows);
-
-    $paginator = $repository->findPaginated(spaceId: 1, perPage: 2);
-    $data = $paginator->toArray();
-
-    // Next cursor must be a base64-encoded JSON string containing the id of the oldest item in page
-    $decoded = json_decode(json: base64_decode(string: $data['links']['next']), associative: true);
-
-    expect($data['links']['next'])->toBeString()
-        ->and(base64_decode(string: $data['links']['next'], strict: true))->not->toBeFalse()
-        ->and($decoded)->toBeArray()
-        ->and($decoded)->toHaveKey('id')
-        ->and($decoded['id'])->toBe(2);
+    expect($result)->toHaveCount(1)
+        ->and($result[0])->toBeInstanceOf(Message::class)
+        ->and($spy->calls['where'])->toContain(['space_id', '=', 2])
+        ->and($spy->calls['where'])->toContain(['edited_at', '>', '2026-03-14 09:00:00'])
+        ->and($spy->calls['orderBy'])->toContain(['id', 'ASC'])
+        ->and(array_key_exists('get', $spy->calls))->toBeTrue();
 });

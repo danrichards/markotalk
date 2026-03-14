@@ -35,21 +35,9 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
     public function findAllForUser(
         int $userId,
     ): array {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE user_id = ?',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(sql: $sql, bindings: [$userId]);
-
-        return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'user_id', operator: '=', value: $userId)
+            ->getEntities();
     }
 
     /**
@@ -60,21 +48,9 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
     public function findAllForSpace(
         int $spaceId,
     ): array {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE space_id = ?',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(sql: $sql, bindings: [$spaceId]);
-
-        return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'space_id', operator: '=', value: $spaceId)
+            ->getEntities();
     }
 
     /**
@@ -86,13 +62,13 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
     ): int {
         $membership = $this->findByUserAndSpace(userId: $userId, spaceId: $spaceId);
 
-        if ($membership === null || $membership->lastReadMessageId === null) {
+        if (!$membership instanceof SpaceMembership || $membership->lastReadMessageId === null) {
             return 0;
         }
 
         $sql = 'SELECT COUNT(*) as count FROM messages WHERE space_id = ? AND id > ?';
 
-        $rows = $this->connection->query(
+        $rows = $this->query()->raw(
             sql: $sql,
             bindings: [$spaceId, $membership->lastReadMessageId],
         );
@@ -108,13 +84,7 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
         int $messageId,
     ): void {
         $membership->lastReadMessageId = $messageId;
-
-        $sql = sprintf(
-            'UPDATE %s SET last_read_message_id = ? WHERE id = ?',
-            $this->metadata->tableName,
-        );
-
-        $this->connection->execute(sql: $sql, bindings: [$messageId, $membership->id]);
+        $this->save(entity: $membership);
     }
 
     /**
@@ -123,11 +93,8 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
     public function clearLastReadMessageId(
         int $messageId,
     ): void {
-        $sql = sprintf(
-            'UPDATE %s SET last_read_message_id = NULL WHERE last_read_message_id = ?',
-            $this->metadata->tableName,
-        );
-
-        $this->connection->execute(sql: $sql, bindings: [$messageId]);
+        $this->query()
+            ->where(column: 'last_read_message_id', operator: '=', value: $messageId)
+            ->update(data: ['last_read_message_id' => null]);
     }
 }

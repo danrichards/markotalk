@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Message\Repository;
 
 use App\Message\Entity\Reaction;
-use Marko\Database\Entity\Entity;
 use Marko\Database\Repository\Repository;
 
 /**
@@ -22,21 +21,9 @@ class ReactionRepository extends Repository implements ReactionRepositoryInterfa
      */
     public function findByMessage(int $messageId): array
     {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE message_id = ?',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(sql: $sql, bindings: [$messageId]);
-
-        return array_map(
-            callback: fn (array $row): Entity => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'message_id', operator: '=', value: $messageId)
+            ->getEntities();
     }
 
     /**
@@ -48,13 +35,10 @@ class ReactionRepository extends Repository implements ReactionRepositoryInterfa
         int $messageId,
         int $userId,
     ): array {
-        $sql = sprintf(
-            'SELECT emoji, COUNT(*) as count, MAX(CASE WHEN user_id = ? THEN 1 ELSE 0 END) as user_reacted
-             FROM %s WHERE message_id = ? GROUP BY emoji',
-            $this->metadata->tableName,
-        );
+        $sql = 'SELECT emoji, COUNT(*) as count, MAX(CASE WHEN user_id = ? THEN 1 ELSE 0 END) as user_reacted
+                 FROM ' . $this->metadata->tableName . ' WHERE message_id = ? GROUP BY emoji';
 
-        $rows = $this->connection->query(sql: $sql, bindings: [$userId, $messageId]);
+        $rows = $this->query()->raw(sql: $sql, bindings: [$userId, $messageId]);
 
         return array_map(
             callback: fn (array $row): array => [
@@ -92,11 +76,10 @@ class ReactionRepository extends Repository implements ReactionRepositoryInterfa
         int $userId,
         string $emoji,
     ): void {
-        $sql = sprintf(
-            'DELETE FROM %s WHERE message_id = ? AND user_id = ? AND emoji = ?',
-            $this->metadata->tableName,
-        );
-
-        $this->connection->execute(sql: $sql, bindings: [$messageId, $userId, $emoji]);
+        $this->query()
+            ->where(column: 'message_id', operator: '=', value: $messageId)
+            ->where(column: 'user_id', operator: '=', value: $userId)
+            ->where(column: 'emoji', operator: '=', value: $emoji)
+            ->delete();
     }
 }

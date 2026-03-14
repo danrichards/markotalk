@@ -9,6 +9,8 @@ use Marko\Database\Connection\ConnectionInterface;
 use Marko\Database\Connection\StatementInterface;
 use Marko\Database\Entity\EntityHydrator;
 use Marko\Database\Entity\EntityMetadataFactory;
+use Marko\Database\Query\QueryBuilderFactoryInterface;
+use Marko\Database\Query\QueryBuilderInterface;
 
 it('creates a SpaceMembership entity with all required fields', function (): void {
     $membership = new SpaceMembership(
@@ -29,9 +31,9 @@ it('creates a SpaceMembership entity with all required fields', function (): voi
 it('has a migration with UNIQUE constraint on user_id and space_id', function (): void {
     $migrationFile = dirname(path: __DIR__, levels: 4) . '/database/migrations/20260225191743_create_space_memberships.php';
 
-    $content = file_get_contents($migrationFile);
+    $content = file_get_contents(filename: $migrationFile);
 
-    expect(file_exists($migrationFile))->toBeTrue()
+    expect(file_exists(filename: $migrationFile))->toBeTrue()
         ->and($content)
         ->toContain('space_memberships')
         ->toContain('user_id')
@@ -145,8 +147,89 @@ it('finds membership by user and space', function (): void {
         ->and($membership->spaceId)->toBe(2);
 });
 
+/**
+ * Creates a QueryBuilderFactoryInterface mock whose builder returns $rows on get().
+ *
+ * @param array<array<string, mixed>> $rows
+ * @param array<mixed>|null $whereArgs
+ */
+function createSpaceMembershipMockFactory(
+    array $rows = [],
+    ?array &$whereArgs = null,
+): QueryBuilderFactoryInterface {
+    $whereArgs ??= [];
+
+    $builder = new class ($rows, $whereArgs) implements QueryBuilderInterface
+    {
+        /**
+         * @param array<array<string, mixed>> $rows
+         * @param array<mixed> $whereArgs
+         */
+        public function __construct(
+            private readonly array $rows,
+            private array &$whereArgs,
+        ) {}
+
+        public function table(string $table): static { return $this; }
+
+        public function select(string ...$columns): static { return $this; }
+
+        public function where(string $column, string $operator, mixed $value): static
+        {
+            $this->whereArgs[] = ['column' => $column, 'operator' => $operator, 'value' => $value];
+
+            return $this;
+        }
+
+        public function whereIn(string $column, array $values): static { return $this; }
+
+        public function whereNull(string $column): static { return $this; }
+
+        public function whereNotNull(string $column): static { return $this; }
+
+        public function orWhere(string $column, string $operator, mixed $value): static { return $this; }
+
+        public function join(string $table, string $first, string $operator, string $second): static { return $this; }
+
+        public function leftJoin(string $table, string $first, string $operator, string $second): static { return $this; }
+
+        public function rightJoin(string $table, string $first, string $operator, string $second): static { return $this; }
+
+        public function orderBy(string $column, string $direction = 'ASC'): static { return $this; }
+
+        public function limit(int $limit): static { return $this; }
+
+        public function offset(int $offset): static { return $this; }
+
+        public function get(): array { return $this->rows; }
+
+        public function first(): ?array { return $this->rows[0] ?? null; }
+
+        public function insert(array $data): int { return 1; }
+
+        public function update(array $data): int { return 1; }
+
+        public function delete(): int { return 0; }
+
+        public function count(): int { return count(value: $this->rows); }
+
+        public function raw(string $sql, array $bindings = []): array { return $this->rows; }
+    };
+
+    return new class ($builder) implements QueryBuilderFactoryInterface
+    {
+        public function __construct(
+            private readonly QueryBuilderInterface $builder,
+        ) {}
+
+        public function create(): QueryBuilderInterface
+        {
+            return $this->builder;
+        }
+    };
+}
+
 it('finds all memberships for a user', function (): void {
-    $queryHistory = [];
     $rows = [
         [
             'id' => 1,
@@ -164,14 +247,15 @@ it('finds all memberships for a user', function (): void {
         ],
     ];
 
-    $connection = createSpaceMembershipMockConnectionWithHistory(queryResult: $rows, queryHistory: $queryHistory);
-    $metadataFactory = new EntityMetadataFactory();
-    $hydrator = new EntityHydrator();
+    $whereArgs = [];
+    $connection = createSpaceMembershipMockConnection(queryResult: []);
+    $factory = createSpaceMembershipMockFactory(rows: $rows, whereArgs: $whereArgs);
 
     $repository = new SpaceMembershipRepository(
         connection: $connection,
-        metadataFactory: $metadataFactory,
-        hydrator: $hydrator,
+        metadataFactory: new EntityMetadataFactory(),
+        hydrator: new EntityHydrator(),
+        queryBuilderFactory: $factory,
     );
 
     $memberships = $repository->findAllForUser(userId: 1);
@@ -180,8 +264,8 @@ it('finds all memberships for a user', function (): void {
         ->and($memberships[0])->toBeInstanceOf(SpaceMembership::class)
         ->and($memberships[0]->userId)->toBe(1)
         ->and($memberships[1]->spaceId)->toBe(3)
-        ->and($queryHistory[0]['sql'])->toContain('user_id = ?')
-        ->and($queryHistory[0]['bindings'])->toContain(1);
+        ->and($whereArgs[0]['column'])->toBe('user_id')
+        ->and($whereArgs[0]['value'])->toBe(1);
 });
 
 it('creates a new membership when a user joins a space', function (): void {
@@ -241,24 +325,34 @@ it('deletes membership when a user leaves a space', function (): void {
 });
 
 it('updates last_read_message_id for a membership', function (): void {
+    $membershipRow = [
+        'id' => 5,
+        'user_id' => 1,
+        'space_id' => 2,
+        'last_read_message_id' => null,
+        'joined_at' => '2026-02-24 00:00:00',
+    ];
+
+    // Connection returns the row so findByUserAndSpace establishes a dirty-tracking snapshot
     $queryHistory = [];
-    $connection = createSpaceMembershipMockConnectionWithHistory(queryResult: [], queryHistory: $queryHistory);
-    $metadataFactory = new EntityMetadataFactory();
-    $hydrator = new EntityHydrator();
+    $connection = createSpaceMembershipMockConnectionWithHistory(
+        queryResult: [$membershipRow],
+        queryHistory: $queryHistory,
+    );
+    $factory = createSpaceMembershipMockFactory(rows: []);
 
     $repository = new SpaceMembershipRepository(
         connection: $connection,
-        metadataFactory: $metadataFactory,
-        hydrator: $hydrator,
+        metadataFactory: new EntityMetadataFactory(),
+        hydrator: new EntityHydrator(),
+        queryBuilderFactory: $factory,
     );
 
-    $membership = new SpaceMembership(
-        id: 5,
-        userId: 1,
-        spaceId: 2,
-        lastReadMessageId: null,
-        joinedAt: new DateTimeImmutable(datetime: '2026-02-24 00:00:00'),
-    );
+    // Fetch a hydrated entity so the hydrator snapshot is established
+    $membership = $repository->findByUserAndSpace(userId: 1, spaceId: 2);
+
+    // Reset history so only the save() UPDATE is captured
+    $queryHistory = [];
 
     $repository->updateLastReadMessageId(membership: $membership, messageId: 42);
 

@@ -256,6 +256,114 @@ it('updates remember token for a user', function (): void {
         ->and($executedSql)->not->toBeEmpty();
 });
 
+it('updates last seen timestamp using save instead of raw SQL', function (): void {
+    $executedSql = [];
+    $connection = new class ($executedSql) implements ConnectionInterface {
+        private bool $firstQuery = true;
+
+        public function __construct(private array &$executedSql) {}
+
+        public function connect(): void {}
+
+        public function disconnect(): void {}
+
+        public function isConnected(): bool { return true; }
+
+        public function query(string $sql, array $bindings = []): array
+        {
+            if ($this->firstQuery) {
+                $this->firstQuery = false;
+                return [makeUserRow()];
+            }
+            return [];
+        }
+
+        public function execute(string $sql, array $bindings = []): int
+        {
+            $this->executedSql[] = $sql;
+            return 1;
+        }
+
+        public function prepare(string $sql): StatementInterface
+        {
+            throw new RuntimeException(message: 'Not implemented');
+        }
+
+        public function lastInsertId(): int { return 1; }
+    };
+
+    $repository = new UserRepository(
+        connection: $connection,
+        metadataFactory: new EntityMetadataFactory(),
+        hydrator: new EntityHydrator(),
+    );
+
+    $user = $repository->find(id: 1);
+
+    expect($user)->toBeInstanceOf(User::class)
+        ->and($user->lastSeenAt)->toBeNull();
+
+    $timestamp = new DateTimeImmutable(datetime: '2026-03-14 12:00:00');
+    $repository->updateLastSeen(user: $user, timestamp: $timestamp);
+
+    expect($user->lastSeenAt)->toBe($timestamp)
+        ->and($executedSql)->not->toBeEmpty();
+});
+
+it('clears last seen timestamp using save instead of raw SQL', function (): void {
+    $executedSql = [];
+    $connection = new class ($executedSql) implements ConnectionInterface {
+        private bool $firstQuery = true;
+
+        public function __construct(private array &$executedSql) {}
+
+        public function connect(): void {}
+
+        public function disconnect(): void {}
+
+        public function isConnected(): bool { return true; }
+
+        public function query(string $sql, array $bindings = []): array
+        {
+            if ($this->firstQuery) {
+                $this->firstQuery = false;
+                return [array_merge(makeUserRow(), ['last_seen_at' => '2026-03-14 12:00:00'])];
+            }
+            return [];
+        }
+
+        public function execute(string $sql, array $bindings = []): int
+        {
+            $this->executedSql[] = $sql;
+            return 1;
+        }
+
+        public function prepare(string $sql): StatementInterface
+        {
+            throw new RuntimeException(message: 'Not implemented');
+        }
+
+        public function lastInsertId(): int { return 1; }
+    };
+
+    $repository = new UserRepository(
+        connection: $connection,
+        metadataFactory: new EntityMetadataFactory(),
+        hydrator: new EntityHydrator(),
+    );
+
+    $user = $repository->find(id: 1);
+
+    expect($user)->toBeInstanceOf(User::class)
+        ->and($user->lastSeenAt)->toBeInstanceOf(DateTimeImmutable::class);
+
+    $repository->clearLastSeen(user: $user);
+
+    expect($user->lastSeenAt)->toBeNull()
+        ->and($executedSql)->not->toBeEmpty()
+        ->and($executedSql[0])->not->toContain('last_seen_at = NULL');
+});
+
 it('has module.php with correct interface-to-implementation bindings', function (): void {
     $modulePath = __DIR__ . '/../../module.php';
 

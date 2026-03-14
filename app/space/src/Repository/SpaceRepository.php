@@ -22,7 +22,7 @@ class SpaceRepository extends Repository implements SpaceRepositoryInterface
     ): ?Space {
         $result = $this->findOneBy(criteria: ['slug' => $slug]);
 
-        if ($result === null) {
+        if (!$result instanceof Space) {
             return null;
         }
 
@@ -36,20 +36,8 @@ class SpaceRepository extends Repository implements SpaceRepositoryInterface
      */
     public function findActive(): array
     {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE is_archived = ?',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(sql: $sql, bindings: [0]);
-
-        return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'is_archived', operator: '=', value: false)
+            ->getEntities();
     }
 }

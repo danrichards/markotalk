@@ -187,6 +187,8 @@ function makeSpaceControllerAuthManager(?AuthenticatableInterface $user = null):
 function makeMessageRepositoryStub(): MessageRepositoryInterface
 {
     return new class implements MessageRepositoryInterface {
+        public function findPinnedBySpace(int $spaceId): array { return []; }
+
         public function findBySpace(int $spaceId, int $limit = 50): array { return []; }
 
         public function findBySpaceSince(int $spaceId, int $sinceId): array { return []; }

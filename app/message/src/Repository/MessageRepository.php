@@ -46,21 +46,11 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
     public function findPinnedBySpace(
         int $spaceId,
     ): array {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE space_id = ? AND is_pinned = true ORDER BY id ASC',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(sql: $sql, bindings: [$spaceId]);
-
-        return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'space_id', operator: '=', value: $spaceId)
+            ->where(column: 'is_pinned', operator: '=', value: true)
+            ->orderBy(column: 'id', direction: 'ASC')
+            ->getEntities();
     }
 
     /**
@@ -72,21 +62,11 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         int $spaceId,
         int $limit = 50,
     ): array {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE space_id = ? ORDER BY id ASC LIMIT ?',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(sql: $sql, bindings: [$spaceId, $limit]);
-
-        return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'space_id', operator: '=', value: $spaceId)
+            ->orderBy(column: 'id', direction: 'ASC')
+            ->limit(limit: $limit)
+            ->getEntities();
     }
 
     /**
@@ -110,36 +90,22 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
             $cursorId = (int) $decoded->parameter(name: 'id');
         }
 
+        $query = $this->query()
+            ->where(column: 'space_id', operator: '=', value: $spaceId)
+            ->orderBy(column: 'id', direction: 'DESC')
+            ->limit(limit: $perPage + 1);
+
         if ($cursorId !== null) {
-            $sql = sprintf(
-                'SELECT * FROM %s WHERE space_id = ? AND id < ? ORDER BY id DESC LIMIT ?',
-                $this->metadata->tableName,
-            );
-            $bindings = [$spaceId, $cursorId, $perPage + 1];
-        } else {
-            $sql = sprintf(
-                'SELECT * FROM %s WHERE space_id = ? ORDER BY id DESC LIMIT ?',
-                $this->metadata->tableName,
-            );
-            $bindings = [$spaceId, $perPage + 1];
+            $query->where(column: 'id', operator: '<', value: $cursorId);
         }
 
-        $rows = $this->connection->query(sql: $sql, bindings: $bindings);
+        $items = $query->getEntities();
 
-        $hasMore = count(value: $rows) > $perPage;
+        $hasMore = count(value: $items) > $perPage;
 
         if ($hasMore) {
-            array_pop(array: $rows);
+            array_pop(array: $items);
         }
-
-        $items = array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
 
         // Reverse to ascending order for display
         $items = array_reverse(array: $items);
@@ -167,21 +133,11 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         int $spaceId,
         int $sinceId,
     ): array {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE space_id = ? AND id > ? ORDER BY id ASC',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(sql: $sql, bindings: [$spaceId, $sinceId]);
-
-        return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'space_id', operator: '=', value: $spaceId)
+            ->where(column: 'id', operator: '>', value: $sinceId)
+            ->orderBy(column: 'id', direction: 'ASC')
+            ->getEntities();
     }
 
     /**
@@ -193,23 +149,10 @@ class MessageRepository extends Repository implements MessageRepositoryInterface
         int $spaceId,
         DateTimeImmutable $since,
     ): array {
-        $sql = sprintf(
-            'SELECT * FROM %s WHERE space_id = ? AND edited_at > ? ORDER BY id ASC',
-            $this->metadata->tableName,
-        );
-
-        $rows = $this->connection->query(
-            sql: $sql,
-            bindings: [$spaceId, $since->format('Y-m-d H:i:s')],
-        );
-
-        return array_map(
-            callback: fn (array $row) => $this->hydrator->hydrate(
-                entityClass: static::ENTITY_CLASS,
-                row: $row,
-                metadata: $this->metadata,
-            ),
-            array: $rows,
-        );
+        return $this->query()
+            ->where(column: 'space_id', operator: '=', value: $spaceId)
+            ->where(column: 'edited_at', operator: '>', value: $since->format('Y-m-d H:i:s'))
+            ->orderBy(column: 'id', direction: 'ASC')
+            ->getEntities();
     }
 }

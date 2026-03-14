@@ -73,10 +73,7 @@ class UserRepository extends Repository implements UserRepositoryInterface
         DateTimeImmutable $timestamp,
     ): void {
         $user->lastSeenAt = $timestamp;
-        $this->connection->execute(
-            'UPDATE users SET last_seen_at = ? WHERE id = ?',
-            [$timestamp->format(format: 'Y-m-d H:i:s'), $user->id],
-        );
+        $this->save(entity: $user);
     }
 
     /**
@@ -86,10 +83,7 @@ class UserRepository extends Repository implements UserRepositoryInterface
         User $user,
     ): void {
         $user->lastSeenAt = null;
-        $this->connection->execute(
-            'UPDATE users SET last_seen_at = NULL WHERE id = ?',
-            [$user->id],
-        );
+        $this->save(entity: $user);
     }
 
     /**

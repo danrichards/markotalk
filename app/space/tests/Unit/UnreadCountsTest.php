@@ -20,6 +20,8 @@ use Marko\Database\Connection\StatementInterface;
 use Marko\Database\Entity\Entity;
 use Marko\Database\Entity\EntityHydrator;
 use Marko\Database\Entity\EntityMetadataFactory;
+use Marko\Database\Query\QueryBuilderFactoryInterface;
+use Marko\Database\Query\QueryBuilderInterface;
 use Marko\Pagination\CursorPaginator;
 use Marko\Routing\Http\Request;
 use Marko\Routing\Http\Response;
@@ -96,9 +98,79 @@ function createUnreadMockConnectionWithHistory(
     };
 }
 
+/**
+ * Creates a simple QueryBuilderFactoryInterface whose builder returns $builderRows on raw() and get().
+ *
+ * @param array<array<string, mixed>> $builderRows
+ */
+function createUnreadMockQueryBuilderFactory(
+    array $builderRows = [],
+): QueryBuilderFactoryInterface {
+    $builder = new class ($builderRows) implements QueryBuilderInterface
+    {
+        /** @param array<array<string, mixed>> $builderRows */
+        public function __construct(
+            private readonly array $builderRows,
+        ) {}
+
+        public function table(string $table): static { return $this; }
+
+        public function select(string ...$columns): static { return $this; }
+
+        public function where(string $column, string $operator, mixed $value): static { return $this; }
+
+        public function whereIn(string $column, array $values): static { return $this; }
+
+        public function whereNull(string $column): static { return $this; }
+
+        public function whereNotNull(string $column): static { return $this; }
+
+        public function orWhere(string $column, string $operator, mixed $value): static { return $this; }
+
+        public function join(string $table, string $first, string $operator, string $second): static { return $this; }
+
+        public function leftJoin(string $table, string $first, string $operator, string $second): static { return $this; }
+
+        public function rightJoin(string $table, string $first, string $operator, string $second): static { return $this; }
+
+        public function orderBy(string $column, string $direction = 'ASC'): static { return $this; }
+
+        public function limit(int $limit): static { return $this; }
+
+        public function offset(int $offset): static { return $this; }
+
+        public function get(): array { return $this->builderRows; }
+
+        public function first(): ?array { return $this->builderRows[0] ?? null; }
+
+        public function insert(array $data): int { return 1; }
+
+        public function update(array $data): int { return 1; }
+
+        public function delete(): int { return 0; }
+
+        public function count(): int { return count(value: $this->builderRows); }
+
+        public function raw(string $sql, array $bindings = []): array { return $this->builderRows; }
+    };
+
+    return new class ($builder) implements QueryBuilderFactoryInterface
+    {
+        public function __construct(
+            private readonly QueryBuilderInterface $builder,
+        ) {}
+
+        public function create(): QueryBuilderInterface
+        {
+            return $this->builder;
+        }
+    };
+}
+
 function createUnreadRepository(
     array $queryResult = [],
     ?array &$queryHistory = null,
+    ?QueryBuilderFactoryInterface $queryBuilderFactory = null,
 ): SpaceMembershipRepository {
     $connection = createUnreadMockConnectionWithHistory(queryResult: $queryResult, queryHistory: $queryHistory);
     $metadataFactory = new EntityMetadataFactory();
@@ -108,6 +180,7 @@ function createUnreadRepository(
         connection: $connection,
         metadataFactory: $metadataFactory,
         hydrator: $hydrator,
+        queryBuilderFactory: $queryBuilderFactory ?? createUnreadMockQueryBuilderFactory(),
     );
 }
 
@@ -122,66 +195,15 @@ it('returns zero when user has read all messages', function (): void {
         'joined_at' => '2026-02-24 00:00:00',
     ];
 
-    $queryHistory = [];
-    $metadataFactory = new EntityMetadataFactory();
-    $hydrator = new EntityHydrator();
-
-    // First call returns membership, second returns zero count
-    $connection = new class ($membershipRow, 0, $queryHistory) implements ConnectionInterface {
-        private int $callCount = 0;
-
-        /**
-         * @param array<string, mixed> $membershipRow
-         * @param array<array{sql: string, bindings: array<mixed>}> $queryHistory
-         */
-        public function __construct(
-            private readonly array $membershipRow,
-            private readonly int $unreadCount,
-            private array &$queryHistory,
-        ) {}
-
-        public function connect(): void {}
-
-        public function disconnect(): void {}
-
-        public function isConnected(): bool { return true; }
-
-        /**
-         * @param array<mixed> $bindings
-         * @return array<array<string, mixed>>
-         */
-        public function query(string $sql, array $bindings = []): array
-        {
-            $this->queryHistory[] = ['sql' => $sql, 'bindings' => $bindings];
-            $this->callCount++;
-
-            if ($this->callCount === 1) {
-                return [$this->membershipRow];
-            }
-
-            return [['count' => $this->unreadCount]];
-        }
-
-        /** @param array<mixed> $bindings */
-        public function execute(string $sql, array $bindings = []): int
-        {
-            $this->queryHistory[] = ['sql' => $sql, 'bindings' => $bindings];
-
-            return 1;
-        }
-
-        public function prepare(string $sql): StatementInterface
-        {
-            throw new RuntimeException(message: 'Not implemented');
-        }
-
-        public function lastInsertId(): int { return 1; }
-    };
+    // Connection returns the membership row (findByUserAndSpace path)
+    // Builder returns 0 count (countUnread raw() path)
+    $factory = createUnreadMockQueryBuilderFactory(builderRows: [['count' => 0]]);
 
     $repository = new SpaceMembershipRepository(
-        connection: $connection,
-        metadataFactory: $metadataFactory,
-        hydrator: $hydrator,
+        connection: createUnreadMockConnectionWithHistory(queryResult: [$membershipRow]),
+        metadataFactory: new EntityMetadataFactory(),
+        hydrator: new EntityHydrator(),
+        queryBuilderFactory: $factory,
     );
 
     $count = $repository->countUnread(userId: 1, spaceId: 2);
@@ -198,68 +220,15 @@ it('calculates unread count for a user in a space', function (): void {
         'joined_at' => '2026-02-24 00:00:00',
     ];
 
-    $queryHistory = [];
-    $connection = createUnreadMockConnectionWithHistory(queryResult: [], queryHistory: $queryHistory);
-    $metadataFactory = new EntityMetadataFactory();
-    $hydrator = new EntityHydrator();
-
-    // First call returns membership row, second returns count
-    $callCount = 0;
-    $connection = new class ($membershipRow, 5, $queryHistory) implements ConnectionInterface {
-        private int $callCount = 0;
-
-        /**
-         * @param array<string, mixed> $membershipRow
-         * @param array<array{sql: string, bindings: array<mixed>}> $queryHistory
-         */
-        public function __construct(
-            private readonly array $membershipRow,
-            private readonly int $unreadCount,
-            private array &$queryHistory,
-        ) {}
-
-        public function connect(): void {}
-
-        public function disconnect(): void {}
-
-        public function isConnected(): bool { return true; }
-
-        /**
-         * @param array<mixed> $bindings
-         * @return array<array<string, mixed>>
-         */
-        public function query(string $sql, array $bindings = []): array
-        {
-            $this->queryHistory[] = ['sql' => $sql, 'bindings' => $bindings];
-            $this->callCount++;
-
-            if ($this->callCount === 1) {
-                return [$this->membershipRow];
-            }
-
-            return [['count' => $this->unreadCount]];
-        }
-
-        /** @param array<mixed> $bindings */
-        public function execute(string $sql, array $bindings = []): int
-        {
-            $this->queryHistory[] = ['sql' => $sql, 'bindings' => $bindings];
-
-            return 1;
-        }
-
-        public function prepare(string $sql): StatementInterface
-        {
-            throw new RuntimeException(message: 'Not implemented');
-        }
-
-        public function lastInsertId(): int { return 1; }
-    };
+    // Connection returns the membership row (findByUserAndSpace path)
+    // Builder returns 5 count (countUnread raw() path)
+    $factory = createUnreadMockQueryBuilderFactory(builderRows: [['count' => 5]]);
 
     $repository = new SpaceMembershipRepository(
-        connection: $connection,
-        metadataFactory: $metadataFactory,
-        hydrator: $hydrator,
+        connection: createUnreadMockConnectionWithHistory(queryResult: [$membershipRow]),
+        metadataFactory: new EntityMetadataFactory(),
+        hydrator: new EntityHydrator(),
+        queryBuilderFactory: $factory,
     );
 
     $count = $repository->countUnread(userId: 1, spaceId: 2);
@@ -300,6 +269,8 @@ function makeUnreadMessageRepositoryStub(array $messages = []): MessageRepositor
     return new class ($messages) implements MessageRepositoryInterface {
         /** @param array<Message> $messages */
         public function __construct(private readonly array $messages) {}
+
+        public function findPinnedBySpace(int $spaceId): array { return []; }
 
         public function findBySpace(int $spaceId, int $limit = 50): array
         {
@@ -579,7 +550,7 @@ it('updates last_read_message_id when viewing a space', function (): void {
 });
 
 it('displays unread count badge next to space name in sidebar', function (): void {
-    $template = file_get_contents('/Users/markshust/Sites/markotalk/app/space/resources/views/space/show.latte');
+    $template = file_get_contents(filename: '/Users/markshust/Sites/markotalk/app/space/resources/views/space/show.latte');
 
     expect($template)
         ->toContain('$unreadCounts[$navSpace->id]')
@@ -587,7 +558,7 @@ it('displays unread count badge next to space name in sidebar', function (): voi
 });
 
 it('hides badge when unread count is zero', function (): void {
-    $template = file_get_contents('/Users/markshust/Sites/markotalk/app/space/resources/views/space/show.latte');
+    $template = file_get_contents(filename: '/Users/markshust/Sites/markotalk/app/space/resources/views/space/show.latte');
 
     expect($template)
         ->toContain('$unreadCounts[$navSpace->id] > 0');

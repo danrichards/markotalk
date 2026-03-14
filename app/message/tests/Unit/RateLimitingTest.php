@@ -131,6 +131,11 @@ function makeRateLimitMessageRepository(): MessageRepositoryInterface
         /** @var array<Message> */
         public array $savedMessages = [];
 
+        public function findPinnedBySpace(int $spaceId): array
+        {
+            return [];
+        }
+
         public function findBySpace(int $spaceId, int $limit = 50): array
         {
             return [];

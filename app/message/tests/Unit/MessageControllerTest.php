@@ -156,6 +156,14 @@ function makeMessageRepository(array $messages = []): MessageRepositoryInterface
             private readonly array $messages,
         ) {}
 
+        public function findPinnedBySpace(int $spaceId): array
+        {
+            return array_values(array: array_filter(
+                array: $this->messages,
+                callback: fn (Message $m) => $m->spaceId === $spaceId && $m->isPinned,
+            ));
+        }
+
         public function findBySpace(int $spaceId, int $limit = 50): array
         {
             return array_values(array: array_filter(
@@ -179,7 +187,7 @@ function makeMessageRepository(array $messages = []): MessageRepositoryInterface
 
         public function find(int $id): ?DatabaseEntity
         {
-            return array_find($this->messages, fn(Message $message) => $message->id === $id);
+            return array_find(array: $this->messages, callback: fn (Message $message) => $message->id === $id);
         }
 
         public function findOrFail(int $id): DatabaseEntity

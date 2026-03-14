@@ -10,6 +10,8 @@ use Marko\Database\Connection\ConnectionInterface;
 use Marko\Database\Connection\StatementInterface;
 use Marko\Database\Entity\EntityHydrator;
 use Marko\Database\Entity\EntityMetadataFactory;
+use Marko\Database\Query\QueryBuilderFactoryInterface;
+use Marko\Database\Query\QueryBuilderInterface;
 
 it('creates a Message entity with all required fields', function (): void {
     $message = new Message(
@@ -36,9 +38,9 @@ it('creates a Message entity with all required fields', function (): void {
 it('has a migration with composite index on space_id and id', function (): void {
     $migrationFile = dirname(__DIR__, 4) . '/database/migrations/20260225191741_create_messages.php';
 
-    expect(file_exists($migrationFile))->toBeTrue();
+    expect(file_exists(filename: $migrationFile))->toBeTrue();
 
-    $content = file_get_contents($migrationFile);
+    $content = file_get_contents(filename: $migrationFile);
 
     expect($content)
         ->toContain('messages')
@@ -60,14 +62,14 @@ it('finds messages by space ordered by id ascending', function (): void {
         createMessageRow(id: 2, spaceId: 1, body: 'Second'),
     ];
 
-    $queryHistory = [];
-    $connection = createMessageMockConnectionWithHistory($messageRows, $queryHistory);
+    $spy = createMessageSpyQueryBuilder(rows: $messageRows);
     $dispatcher = createMockDispatcher();
 
     $repository = new MessageRepository(
-        connection: $connection,
+        connection: createMessageMockConnection(),
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
+        queryBuilderFactory: createMessageQueryBuilderFactory(builder: $spy),
         eventDispatcher: $dispatcher,
     );
 
@@ -76,9 +78,8 @@ it('finds messages by space ordered by id ascending', function (): void {
     expect($messages)->toHaveCount(2)
         ->and($messages[0])->toBeInstanceOf(Message::class)
         ->and($messages[0]->body)->toBe('First')
-        ->and($queryHistory[0]['sql'])->toContain('space_id = ?')
-        ->and($queryHistory[0]['sql'])->toContain('ORDER BY id ASC')
-        ->and($queryHistory[0]['bindings'])->toContain(1);
+        ->and($spy->calls['where'])->toContain(['space_id', '=', 1])
+        ->and($spy->calls['orderBy'])->toContain(['id', 'ASC']);
 });
 
 it('finds messages by space since a given message id', function (): void {
@@ -86,14 +87,14 @@ it('finds messages by space since a given message id', function (): void {
         createMessageRow(id: 5, spaceId: 1, body: 'After message 3'),
     ];
 
-    $queryHistory = [];
-    $connection = createMessageMockConnectionWithHistory($messageRows, $queryHistory);
+    $spy = createMessageSpyQueryBuilder(rows: $messageRows);
     $dispatcher = createMockDispatcher();
 
     $repository = new MessageRepository(
-        connection: $connection,
+        connection: createMessageMockConnection(),
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
+        queryBuilderFactory: createMessageQueryBuilderFactory(builder: $spy),
         eventDispatcher: $dispatcher,
     );
 
@@ -102,11 +103,9 @@ it('finds messages by space since a given message id', function (): void {
     expect($messages)->toHaveCount(1)
         ->and($messages[0])->toBeInstanceOf(Message::class)
         ->and($messages[0]->body)->toBe('After message 3')
-        ->and($queryHistory[0]['sql'])->toContain('space_id = ?')
-        ->and($queryHistory[0]['sql'])->toContain('id > ?')
-        ->and($queryHistory[0]['sql'])->toContain('ORDER BY id ASC')
-        ->and($queryHistory[0]['bindings'])->toContain(1)
-        ->and($queryHistory[0]['bindings'])->toContain(3);
+        ->and($spy->calls['where'])->toContain(['space_id', '=', 1])
+        ->and($spy->calls['where'])->toContain(['id', '>', 3])
+        ->and($spy->calls['orderBy'])->toContain(['id', 'ASC']);
 });
 
 it('saves a new message and dispatches MessageCreatedEvent', function (): void {
@@ -119,6 +118,7 @@ it('saves a new message and dispatches MessageCreatedEvent', function (): void {
         connection: $connection,
         metadataFactory: new EntityMetadataFactory(),
         hydrator: new EntityHydrator(),
+        queryBuilderFactory: createMessageQueryBuilderFactory(builder: createMessageSpyQueryBuilder()),
         eventDispatcher: $dispatcher,
     );
 
@@ -133,11 +133,11 @@ it('saves a new message and dispatches MessageCreatedEvent', function (): void {
         createdAt: new DateTimeImmutable('2026-02-24 00:00:00'),
     );
 
-    $repository->save($message);
+    $repository->save(entity: $message);
 
-    $domainEvents = array_values(array_filter(
-        $dispatchedEvents,
-        fn ($e) => $e instanceof \App\Message\Event\MessageCreatedEvent,
+    $domainEvents = array_values(array: array_filter(
+        array: $dispatchedEvents,
+        callback: fn ($e) => $e instanceof \App\Message\Event\MessageCreatedEvent,
     ));
 
     expect($queryHistory)->toHaveCount(1)
@@ -149,7 +149,7 @@ it('saves a new message and dispatches MessageCreatedEvent', function (): void {
 it('has module.php with MessageRepositoryInterface binding', function (): void {
     $modulePath = dirname(__DIR__, 2) . '/module.php';
 
-    expect(file_exists($modulePath))->toBeTrue();
+    expect(file_exists(filename: $modulePath))->toBeTrue();
 
     $bindings = require $modulePath;
 
@@ -160,6 +160,162 @@ it('has module.php with MessageRepositoryInterface binding', function (): void {
 });
 
 // Helper functions
+
+function createMessageSpyQueryBuilder(array $rows = []): QueryBuilderInterface
+{
+    return new class ($rows) implements QueryBuilderInterface {
+        /** @var array<string, array<int, mixed>> */
+        public array $calls = [];
+
+        public function __construct(
+            private readonly array $rows,
+        ) {}
+
+        public function table(string $table): static
+        {
+            $this->calls['table'][] = $table;
+
+            return $this;
+        }
+
+        public function select(string ...$columns): static
+        {
+            $this->calls['select'][] = $columns;
+
+            return $this;
+        }
+
+        public function where(string $column, string $operator, mixed $value): static
+        {
+            $this->calls['where'][] = [$column, $operator, $value];
+
+            return $this;
+        }
+
+        public function whereIn(string $column, array $values): static
+        {
+            $this->calls['whereIn'][] = [$column, $values];
+
+            return $this;
+        }
+
+        public function whereNull(string $column): static
+        {
+            $this->calls['whereNull'][] = $column;
+
+            return $this;
+        }
+
+        public function whereNotNull(string $column): static
+        {
+            $this->calls['whereNotNull'][] = $column;
+
+            return $this;
+        }
+
+        public function orWhere(string $column, string $operator, mixed $value): static
+        {
+            $this->calls['orWhere'][] = [$column, $operator, $value];
+
+            return $this;
+        }
+
+        public function join(string $table, string $first, string $operator, string $second): static
+        {
+            $this->calls['join'][] = [$table, $first, $operator, $second];
+
+            return $this;
+        }
+
+        public function leftJoin(string $table, string $first, string $operator, string $second): static
+        {
+            $this->calls['leftJoin'][] = [$table, $first, $operator, $second];
+
+            return $this;
+        }
+
+        public function rightJoin(string $table, string $first, string $operator, string $second): static
+        {
+            $this->calls['rightJoin'][] = [$table, $first, $operator, $second];
+
+            return $this;
+        }
+
+        public function orderBy(string $column, string $direction = 'ASC'): static
+        {
+            $this->calls['orderBy'][] = [$column, $direction];
+
+            return $this;
+        }
+
+        public function limit(int $limit): static
+        {
+            $this->calls['limit'][] = $limit;
+
+            return $this;
+        }
+
+        public function offset(int $offset): static
+        {
+            $this->calls['offset'][] = $offset;
+
+            return $this;
+        }
+
+        public function get(): array
+        {
+            $this->calls['get'][] = true;
+
+            return $this->rows;
+        }
+
+        public function first(): ?array
+        {
+            $this->calls['first'][] = true;
+
+            return $this->rows[0] ?? null;
+        }
+
+        public function insert(array $data): int
+        {
+            return 1;
+        }
+
+        public function update(array $data): int
+        {
+            return 1;
+        }
+
+        public function delete(): int
+        {
+            return 1;
+        }
+
+        public function count(): int
+        {
+            return count(value: $this->rows);
+        }
+
+        public function raw(string $sql, array $bindings = []): array
+        {
+            return [];
+        }
+    };
+}
+
+function createMessageQueryBuilderFactory(QueryBuilderInterface $builder): QueryBuilderFactoryInterface
+{
+    return new readonly class ($builder) implements QueryBuilderFactoryInterface {
+        public function __construct(
+            private QueryBuilderInterface $builder,
+        ) {}
+
+        public function create(): QueryBuilderInterface
+        {
+            return $this->builder;
+        }
+    };
+}
 
 function createMessageRow(
     int $id = 1,
@@ -247,7 +403,7 @@ function createMessageMockConnectionWithHistory(
         public function prepare(
             string $sql,
         ): StatementInterface {
-            throw new RuntimeException('Not implemented');
+            throw new RuntimeException(message: 'Not implemented');
         }
 
         public function lastInsertId(): int
