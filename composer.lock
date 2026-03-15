@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f52c46668ce30d7ad2bbcae9f33b27d",
+    "content-hash": "29eff933b99f0fea3d83fc436fbba5ed",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1108,6 +1108,54 @@
                 "MIT"
             ],
             "description": "Simple error handling and display for the Marko framework",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "marko/framework",
+            "version": "dev-develop",
+            "dist": {
+                "type": "path",
+                "url": "../marko/packages/framework",
+                "reference": "1aeac2018cf32154d88eb6c54aa98eaf9c036f9a"
+            },
+            "require": {
+                "marko/cli": "@dev",
+                "marko/config": "@dev",
+                "marko/core": "@dev",
+                "marko/errors": "@dev",
+                "marko/errors-simple": "@dev",
+                "marko/hashing": "@dev",
+                "marko/routing": "@dev",
+                "marko/validation": "@dev",
+                "php": "^8.5"
+            },
+            "suggest": {
+                "marko/authentication": "Authentication abstraction layer",
+                "marko/cache": "Cache abstraction layer",
+                "marko/cache-file": "File-based cache driver",
+                "marko/database": "Database abstraction layer",
+                "marko/database-mysql": "MySQL database driver",
+                "marko/database-pgsql": "PostgreSQL database driver",
+                "marko/errors-advanced": "Advanced error handling with detailed debugging",
+                "marko/filesystem": "Filesystem abstraction layer",
+                "marko/filesystem-local": "Local filesystem driver",
+                "marko/log": "Logging abstraction layer",
+                "marko/log-file": "File-based logging driver",
+                "marko/session": "Session abstraction layer",
+                "marko/session-file": "File-based session driver"
+            },
+            "type": "metapackage",
+            "extra": {
+                "marko": {
+                    "module": true
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Marko Framework - All core packages for typical web applications",
             "transport-options": {
                 "relative": true
             }
@@ -2694,21 +2742,21 @@
         },
         {
             "name": "pestphp/pest",
-            "version": "v4.4.1",
+            "version": "v4.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest.git",
-                "reference": "f96a1b27864b585b0b29b0ee7331176726f7e54a"
+                "reference": "5d42e8fe3ae1d9fdf7c9f73ee88138fd30265701"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest/zipball/f96a1b27864b585b0b29b0ee7331176726f7e54a",
-                "reference": "f96a1b27864b585b0b29b0ee7331176726f7e54a",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/5d42e8fe3ae1d9fdf7c9f73ee88138fd30265701",
+                "reference": "5d42e8fe3ae1d9fdf7c9f73ee88138fd30265701",
                 "shasum": ""
             },
             "require": {
                 "brianium/paratest": "^7.19.0",
-                "nunomaduro/collision": "^8.9.0",
+                "nunomaduro/collision": "^8.9.1",
                 "nunomaduro/termwind": "^2.4.0",
                 "pestphp/pest-plugin": "^4.0.0",
                 "pestphp/pest-plugin-arch": "^4.0.0",
@@ -2728,7 +2776,7 @@
                 "pestphp/pest-dev-tools": "^4.1.0",
                 "pestphp/pest-plugin-browser": "^4.3.0",
                 "pestphp/pest-plugin-type-coverage": "^4.0.3",
-                "psy/psysh": "^0.12.20"
+                "psy/psysh": "^0.12.21"
             },
             "bin": [
                 "bin/pest"
@@ -2794,7 +2842,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
-                "source": "https://github.com/pestphp/pest/tree/v4.4.1"
+                "source": "https://github.com/pestphp/pest/tree/v4.4.2"
             },
             "funding": [
                 {
@@ -2806,7 +2854,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-17T15:27:18+00:00"
+            "time": "2026-03-10T21:09:12+00:00"
         },
         {
             "name": "pestphp/pest-plugin",
@@ -4262,16 +4310,16 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "8.0.3",
+            "version": "8.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "24a711b5c916efc6d6e62aa65aa2ec98fef77f68"
+                "reference": "7b8842c2d8e85d0c3a5831236bf5869af6ab2a11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/24a711b5c916efc6d6e62aa65aa2ec98fef77f68",
-                "reference": "24a711b5c916efc6d6e62aa65aa2ec98fef77f68",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/7b8842c2d8e85d0c3a5831236bf5869af6ab2a11",
+                "reference": "7b8842c2d8e85d0c3a5831236bf5869af6ab2a11",
                 "shasum": ""
             },
             "require": {
@@ -4314,7 +4362,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/environment/issues",
                 "security": "https://github.com/sebastianbergmann/environment/security/policy",
-                "source": "https://github.com/sebastianbergmann/environment/tree/8.0.3"
+                "source": "https://github.com/sebastianbergmann/environment/tree/8.0.4"
             },
             "funding": [
                 {
@@ -4334,7 +4382,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-12T14:11:56+00:00"
+            "time": "2026-03-15T07:05:40+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -5929,24 +5977,6 @@
             "alias_normalized": "0.1.0.0"
         },
         {
-            "package": "marko/cli",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/config",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/core",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
             "package": "marko/database",
             "version": "dev-develop",
             "alias": "0.1.0",
@@ -5983,19 +6013,7 @@
             "alias_normalized": "0.1.0.0"
         },
         {
-            "package": "marko/errors",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/errors-simple",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/hashing",
+            "package": "marko/framework",
             "version": "dev-develop",
             "alias": "0.1.0",
             "alias_normalized": "0.1.0.0"
@@ -6049,12 +6067,6 @@
             "alias_normalized": "0.1.0.0"
         },
         {
-            "package": "marko/routing",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
             "package": "marko/security",
             "version": "dev-develop",
             "alias": "0.1.0",
@@ -6085,12 +6097,6 @@
             "alias_normalized": "0.1.0.0"
         },
         {
-            "package": "marko/validation",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
             "package": "marko/view",
             "version": "dev-develop",
             "alias": "0.1.0",
@@ -6110,18 +6116,13 @@
         "marko/authentication-token": 20,
         "marko/authorization": 20,
         "marko/cache-array": 20,
-        "marko/cli": 20,
-        "marko/config": 20,
-        "marko/core": 20,
         "marko/database": 20,
         "marko/database-pgsql": 20,
         "marko/dev-server": 20,
         "marko/encryption": 20,
         "marko/encryption-openssl": 20,
         "marko/env": 20,
-        "marko/errors": 20,
-        "marko/errors-simple": 20,
-        "marko/hashing": 20,
+        "marko/framework": 20,
         "marko/log": 20,
         "marko/log-file": 20,
         "marko/notification": 20,
@@ -6130,13 +6131,11 @@
         "marko/pubsub": 20,
         "marko/pubsub-pgsql": 20,
         "marko/rate-limiting": 20,
-        "marko/routing": 20,
         "marko/security": 20,
         "marko/session": 20,
         "marko/session-database": 20,
         "marko/sse": 20,
         "marko/testing": 20,
-        "marko/validation": 20,
         "marko/view": 20,
         "marko/view-latte": 20
     },
