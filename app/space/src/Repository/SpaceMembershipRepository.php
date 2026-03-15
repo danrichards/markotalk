@@ -66,14 +66,11 @@ class SpaceMembershipRepository extends Repository implements SpaceMembershipRep
             return 0;
         }
 
-        $sql = 'SELECT COUNT(*) as count FROM messages WHERE space_id = ? AND id > ?';
-
-        $rows = $this->query()->raw(
-            sql: $sql,
-            bindings: [$spaceId, $membership->lastReadMessageId],
-        );
-
-        return (int) ($rows[0]['count'] ?? 0);
+        return $this->queryBuilderFactory->create()
+            ->table(table: 'messages')
+            ->where(column: 'space_id', operator: '=', value: $spaceId)
+            ->where(column: 'id', operator: '>', value: $membership->lastReadMessageId)
+            ->count();
     }
 
     /**

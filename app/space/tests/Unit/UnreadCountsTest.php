@@ -196,8 +196,8 @@ it('returns zero when user has read all messages', function (): void {
     ];
 
     // Connection returns the membership row (findByUserAndSpace path)
-    // Builder returns 0 count (countUnread raw() path)
-    $factory = createUnreadMockQueryBuilderFactory(builderRows: [['count' => 0]]);
+    // Builder count() returns count of rows, so empty array = 0
+    $factory = createUnreadMockQueryBuilderFactory(builderRows: []);
 
     $repository = new SpaceMembershipRepository(
         connection: createUnreadMockConnectionWithHistory(queryResult: [$membershipRow]),
@@ -221,8 +221,8 @@ it('calculates unread count for a user in a space', function (): void {
     ];
 
     // Connection returns the membership row (findByUserAndSpace path)
-    // Builder returns 5 count (countUnread raw() path)
-    $factory = createUnreadMockQueryBuilderFactory(builderRows: [['count' => 5]]);
+    // Builder count() returns count of rows, so 5 rows = count of 5
+    $factory = createUnreadMockQueryBuilderFactory(builderRows: array_fill(start_index: 0, count: 5, value: ['id' => 1]));
 
     $repository = new SpaceMembershipRepository(
         connection: createUnreadMockConnectionWithHistory(queryResult: [$membershipRow]),

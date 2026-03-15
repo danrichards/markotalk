@@ -351,7 +351,7 @@ it('updates last read message id using save instead of raw SQL', function (): vo
         ->and($queryHistory[0]['bindings'])->toBe([99, 5]);
 });
 
-it('counts unread messages using raw query for cross-table access', function (): void {
+it('counts unread messages using query builder for cross-table access', function (): void {
     $membershipRow = [
         'id' => 1,
         'user_id' => 1,
@@ -361,8 +361,8 @@ it('counts unread messages using raw query for cross-table access', function ():
     ];
 
     $callLog = [];
-    // Builder rows returned for the raw() call (the cross-table count)
-    $builderRows = [['count' => 5]];
+    // Builder rows: count() returns count($rows), so 5 rows = count of 5
+    $builderRows = array_fill(start_index: 0, count: 5, value: ['id' => 1]);
 
     // Connection returns the membership on the first query (findByUserAndSpace uses findBy -> connection->query)
     $connectionRows = [$membershipRow];
@@ -375,7 +375,9 @@ it('counts unread messages using raw query for cross-table access', function ():
     $count = $repository->countUnread(userId: 1, spaceId: 2);
 
     expect($count)->toBe(5)
-        ->and(array_filter(array: $callLog, callback: fn (string $e) => str_starts_with(haystack: $e, needle: 'raw:')))->not->toBeEmpty();
+        ->and($callLog)->toContain('table:messages')
+        ->and(array_filter(array: $callLog, callback: fn (string $e) => str_starts_with(haystack: $e, needle: 'where:space_id')))->not->toBeEmpty()
+        ->and(array_filter(array: $callLog, callback: fn (string $e) => str_starts_with(haystack: $e, needle: 'where:id')))->not->toBeEmpty();
 });
 
 it('finds all memberships for a space using query builder', function (): void {
