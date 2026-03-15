@@ -35,8 +35,17 @@ class ReactionRepository extends Repository implements ReactionRepositoryInterfa
         int $messageId,
         int $userId,
     ): array {
-        $sql = 'SELECT emoji, COUNT(*) as count, MAX(CASE WHEN user_id = ? THEN 1 ELSE 0 END) as user_reacted
-                 FROM ' . $this->metadata->tableName . ' WHERE message_id = ? GROUP BY emoji';
+        $table = $this->metadata->tableName;
+
+        $sql = <<<SQL
+            SELECT
+                emoji,
+                COUNT(*) AS count,
+                MAX(CASE WHEN user_id = ? THEN 1 ELSE 0 END) AS user_reacted
+            FROM {$table}
+            WHERE message_id = ?
+            GROUP BY emoji
+            SQL;
 
         $rows = $this->query()->raw(sql: $sql, bindings: [$userId, $messageId]);
 
