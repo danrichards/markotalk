@@ -87,11 +87,26 @@ readonly class SpaceController
         $allSpaces = $this->spaceRepository->findActive();
         $spaceMemberships = $this->spaceMembershipRepository->findAllForSpace(spaceId: (int) $space->id);
 
+        $memberIds = [];
         $members = [];
         foreach ($spaceMemberships as $m) {
             $user = $this->userRepository->find(id: $m->userId);
             if ($user instanceof User) {
                 $members[] = $user;
+                $memberIds[$user->id] = true;
+            }
+        }
+
+        $onlineUsers = $this->presence->getOnlineUsers();
+        $onlineUserIds = array_map(
+            callback: fn (User $user): int => $user->id,
+            array: $onlineUsers,
+        );
+
+        foreach ($onlineUsers as $onlineUser) {
+            if (!isset($memberIds[$onlineUser->id])) {
+                $members[] = $onlineUser;
+                $memberIds[$onlineUser->id] = true;
             }
         }
 
@@ -115,11 +130,6 @@ readonly class SpaceController
         foreach ($userMemberships as $m) {
             $unreadCounts[$m->spaceId] = $this->spaceMembershipRepository->countUnread(userId: $userId, spaceId: $m->spaceId);
         }
-
-        $onlineUserIds = array_map(
-            callback: fn (User $user): int => $user->id,
-            array: $this->presence->getOnlineUsers(),
-        );
 
         return $this->view->render(template: 'space::space/show', data: [
             'space' => $space,

@@ -88,8 +88,12 @@
       }
       case 'presence': {
         const onlineIds = event.onlineIds;
+        const onlineNames = event.onlineNames || {};
+        const memberList = document.getElementById('member-list');
+        const existingIds = new Set();
         document.querySelectorAll('.member-item').forEach(item => {
           const userId = parseInt(item.dataset.userId);
+          existingIds.add(userId);
           const indicator = item.querySelector('.member-indicator');
           if (!indicator) return;
           if (onlineIds.includes(userId)) {
@@ -100,6 +104,17 @@
             indicator.classList.add('is-offline');
           }
         });
+        if (memberList) {
+          onlineIds.forEach(id => {
+            if (!existingIds.has(id) && onlineNames[id]) {
+              const li = document.createElement('li');
+              li.className = 'member-item';
+              li.dataset.userId = id;
+              li.innerHTML = '<span class="member-indicator is-online"></span><span class="member-name">' + onlineNames[id].replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])) + '</span>';
+              memberList.appendChild(li);
+            }
+          });
+        }
         break;
       }
     }

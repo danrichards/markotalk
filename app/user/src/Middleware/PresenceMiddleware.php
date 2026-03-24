@@ -52,8 +52,12 @@ readonly class PresenceMiddleware implements MiddlewareInterface
 
         $onlineUsers = $this->tracker->getOnlineUsers();
         $onlineIds = array_map(callback: fn(User $u): int => $u->id, array: $onlineUsers);
+        $onlineNames = [];
+        foreach ($onlineUsers as $u) {
+            $onlineNames[$u->id] = $u->displayName ?: $u->username;
+        }
 
-        $payload = json_encode(value: ['type' => 'presence', 'onlineIds' => $onlineIds]);
+        $payload = json_encode(value: ['type' => 'presence', 'onlineIds' => $onlineIds, 'onlineNames' => $onlineNames]);
 
         $this->publisher->publish(
             channel: $channel,

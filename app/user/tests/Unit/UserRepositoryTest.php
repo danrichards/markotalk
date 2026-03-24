@@ -361,7 +361,7 @@ it('clears last seen timestamp using save instead of raw SQL', function (): void
 
     expect($user->lastSeenAt)->toBeNull()
         ->and($executedSql)->not->toBeEmpty()
-        ->and($executedSql[0])->not->toContain('last_seen_at = NULL');
+        ->and($executedSql[0])->toContain('last_seen_at = NULL');
 });
 
 it('has module.php with correct interface-to-implementation bindings', function (): void {

@@ -158,12 +158,17 @@ readonly class AuthController
             return;
         }
 
+        $onlineUsers = $this->presence->getOnlineUsers();
         $onlineIds = array_map(
             callback: fn(User $u): int => $u->id,
-            array: $this->presence->getOnlineUsers(),
+            array: $onlineUsers,
         );
+        $onlineNames = [];
+        foreach ($onlineUsers as $u) {
+            $onlineNames[$u->id] = $u->displayName ?: $u->username;
+        }
 
-        $payload = json_encode(value: ['type' => 'presence', 'onlineIds' => $onlineIds]);
+        $payload = json_encode(value: ['type' => 'presence', 'onlineIds' => $onlineIds, 'onlineNames' => $onlineNames]);
 
         foreach ($this->spaceRepository->findActive() as $space) {
             $channel = 'space:' . $space->slug;
