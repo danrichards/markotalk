@@ -101,9 +101,7 @@ it('has src/css/app.css entry point importing all layers', function (): void {
 
     $content = file_get_contents($appCssPath);
 
-    expect($content)->toContain("@import 'tailwindcss/base'")
-        ->and($content)->toContain("@import 'tailwindcss/components'")
-        ->and($content)->toContain("@import 'tailwindcss/utilities'")
+    expect($content)->toContain("@import 'tailwindcss'")
         ->and($content)->toContain("@import './base.css'")
         ->and($content)->toContain("@import './layout.css'")
         ->and($content)->toContain("@import './components.css'");

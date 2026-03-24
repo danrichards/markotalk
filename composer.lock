@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "29eff933b99f0fea3d83fc436fbba5ed",
+    "content-hash": "f2964152018609facb9c794392c8ab60",
     "packages": [
         {
             "name": "amphp/amp",
@@ -338,16 +338,16 @@
         },
         {
             "name": "latte/latte",
-            "version": "v3.1.2",
+            "version": "v3.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/latte.git",
-                "reference": "734ab908c17b28bd75b9331debd1901bec2f23ef"
+                "reference": "d9f96802ef103705f8a389cd66cbf830d470b537"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/latte/zipball/734ab908c17b28bd75b9331debd1901bec2f23ef",
-                "reference": "734ab908c17b28bd75b9331debd1901bec2f23ef",
+                "url": "https://api.github.com/repos/nette/latte/zipball/d9f96802ef103705f8a389cd66cbf830d470b537",
+                "reference": "d9f96802ef103705f8a389cd66cbf830d470b537",
                 "shasum": ""
             },
             "require": {
@@ -423,29 +423,36 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/latte/issues",
-                "source": "https://github.com/nette/latte/tree/v3.1.2"
+                "source": "https://github.com/nette/latte/tree/v3.1.3"
             },
-            "time": "2026-02-24T21:38:20+00:00"
+            "time": "2026-03-22T23:12:17+00:00"
         },
         {
             "name": "marko/amphp",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-amphp.git",
+                "reference": "6cc17ad473aa9ba91898258075dc4d21b846f818"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/amphp",
-                "reference": "098268764d9c12ee6fd28a1aecd10094c8c5381c"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-amphp/zipball/6cc17ad473aa9ba91898258075dc4d21b846f818",
+                "reference": "6cc17ad473aa9ba91898258075dc4d21b846f818",
+                "shasum": ""
             },
             "require": {
                 "amphp/amp": "^3",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5",
                 "revolt/event-loop": "^1"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -457,34 +464,38 @@
                     "Marko\\Amphp\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Amphp\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Revolt event loop lifecycle and config integration for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-amphp/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "marko/authentication",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-authentication.git",
+                "reference": "4f410e47376f122d29de5c7323ea91065df16ebf"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/authentication",
-                "reference": "69c296cfbb5686499c877f266834fadf153f2b25"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-authentication/zipball/4f410e47376f122d29de5c7323ea91065df16ebf",
+                "reference": "4f410e47376f122d29de5c7323ea91065df16ebf",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev"
+                "marko/testing": "self.version"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -496,33 +507,42 @@
                     "Marko\\Authentication\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Authentication and authorization for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-authentication/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "marko/authentication-token",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-authentication-token.git",
+                "reference": "d7c6563190da135f9cc41bf90a203ab798417f73"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/authentication-token",
-                "reference": "9e05769bd56744081af5e4d3d630cc5965187159"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-authentication-token/zipball/d7c6563190da135f9cc41bf90a203ab798417f73",
+                "reference": "d7c6563190da135f9cc41bf90a203ab798417f73",
+                "shasum": ""
             },
             "require": {
-                "marko/authentication": "@dev",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/database": "@dev",
+                "marko/authentication": "self.version",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/database": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -534,38 +554,42 @@
                     "Marko\\AuthenticationToken\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\AuthenticationToken\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Personal access token authentication for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-authentication-token/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/authorization",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-authorization.git",
+                "reference": "7fc7cf145ff0e7089692d71df53dae5d0e7964d7"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/authorization",
-                "reference": "00d262f514e172270ad662db44cf98b1e009458b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-authorization/zipball/7fc7cf145ff0e7089692d71df53dae5d0e7964d7",
+                "reference": "7fc7cf145ff0e7089692d71df53dae5d0e7964d7",
+                "shasum": ""
             },
             "require": {
-                "marko/authentication": "@dev",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/routing": "@dev",
+                "marko/authentication": "self.version",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/routing": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -577,36 +601,40 @@
                     "Marko\\Authorization\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Authorization\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Policy-based authorization with Gates and Policies for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-authorization/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/cache",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-cache.git",
+                "reference": "3861d536e7e3410fdc88ebfc640c403907902de5"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/cache",
-                "reference": "e562d1dae2a9fc1078d1a5c984ec21423abbbb9d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-cache/zipball/3861d536e7e3410fdc88ebfc640c403907902de5",
+                "reference": "3861d536e7e3410fdc88ebfc640c403907902de5",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -618,37 +646,41 @@
                     "Marko\\Cache\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Cache\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Cache interfaces and infrastructure for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-cache/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/cache-array",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-cache-array.git",
+                "reference": "a9cbbcd350bddc402b5d218db1d5536e0b078be9"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/cache-array",
-                "reference": "0e30a6d01ef0004d0640b6559dfd1305da723fa3"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-cache-array/zipball/a9cbbcd350bddc402b5d218db1d5536e0b078be9",
+                "reference": "a9cbbcd350bddc402b5d218db1d5536e0b078be9",
+                "shasum": ""
             },
             "require": {
-                "marko/cache": "@dev",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/cache": "self.version",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -660,26 +692,29 @@
                     "Marko\\Cache\\Memory\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Cache\\Memory\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "In-memory array cache driver for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-cache-array/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/cli",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-cli.git",
+                "reference": "a24da0f52ef8cb9fc24b9393d384180a294643e8"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/cli",
-                "reference": "b667069f07a89ff6a6125f2922040500a1422147"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-cli/zipball/a24da0f52ef8cb9fc24b9393d384180a294643e8",
+                "reference": "a24da0f52ef8cb9fc24b9393d384180a294643e8",
+                "shasum": ""
             },
             "require": {
                 "php": "^8.5"
@@ -687,6 +722,7 @@
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "bin": [
                 "bin/marko"
             ],
@@ -701,34 +737,38 @@
                     "Marko\\Cli\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Cli\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework CLI",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-cli/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/config",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-config.git",
+                "reference": "36eb41f27a762b51b2620dc78b2a70fc1569918d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/config",
-                "reference": "ba4602c47ca2edf747f5140edebcff26d00738d5"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-config/zipball/36eb41f27a762b51b2620dc78b2a70fc1569918d",
+                "reference": "36eb41f27a762b51b2620dc78b2a70fc1569918d",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -740,35 +780,39 @@
                     "Marko\\Config\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Config\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Configuration loading and merging for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-config/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/core",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-core.git",
+                "reference": "30002a04a6ea7b55317a78ed8855e7a195eca832"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/core",
-                "reference": "cbde31698ffaf69ceb87b48214e4846c5754be7d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-core/zipball/30002a04a6ea7b55317a78ed8855e7a195eca832",
+                "reference": "30002a04a6ea7b55317a78ed8855e7a195eca832",
+                "shasum": ""
             },
             "require": {
                 "php": "^8.5",
                 "psr/container": "^2.0"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -780,34 +824,38 @@
                     "Marko\\Core\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Core\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework Core",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-core/tree/develop"
+            },
+            "time": "2026-03-24T18:23:24+00:00"
         },
         {
             "name": "marko/database",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-database.git",
+                "reference": "41e06d7e2ed4e32dc991d0a29e7d390860fcd27c"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/database",
-                "reference": "2d91cfd56be4cd9728aa0f032181be29da00cfc9"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-database/zipball/41e06d7e2ed4e32dc991d0a29e7d390860fcd27c",
+                "reference": "41e06d7e2ed4e32dc991d0a29e7d390860fcd27c",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -819,36 +867,40 @@
                     "Marko\\Database\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Database\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework Database Layer - Entity-driven schema with Data Mapper pattern",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-database/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "marko/database-pgsql",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-database-pgsql.git",
+                "reference": "2585007fc9722747bdf878e01614504a0ef55682"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/database-pgsql",
-                "reference": "4ddd3a77287a6dadab4b7c141adc70a79c6dcf63"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-database-pgsql/zipball/2585007fc9722747bdf878e01614504a0ef55682",
+                "reference": "2585007fc9722747bdf878e01614504a0ef55682",
+                "shasum": ""
             },
             "require": {
                 "ext-pdo": "*",
-                "marko/core": "@dev",
-                "marko/database": "@dev",
+                "marko/core": "self.version",
+                "marko/database": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -860,35 +912,39 @@
                     "Marko\\Database\\PgSql\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Database\\PgSql\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "PostgreSQL driver for Marko Framework Database Layer",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-database-pgsql/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "marko/dev-server",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-dev-server.git",
+                "reference": "1f8821a9b5d8626d94617cd7c69094d9ce49022d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/dev-server",
-                "reference": "020d3167950db3eb329b56e046e1b1d759048a86"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-dev-server/zipball/1f8821a9b5d8626d94617cd7c69094d9ce49022d",
+                "reference": "1f8821a9b5d8626d94617cd7c69094d9ce49022d",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "*",
-                "marko/core": "*",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -900,36 +956,40 @@
                     "Marko\\DevServer\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\DevServer\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework Dev Server",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-dev-server/tree/develop"
+            },
+            "time": "2026-03-24T20:18:13+00:00"
         },
         {
             "name": "marko/encryption",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-encryption.git",
+                "reference": "199b209f92a6e1abab526027d7d410b231a9f767"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/encryption",
-                "reference": "7f1c4cf6f844ba8f1b12acbd49e8d5b3fed4dc8d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-encryption/zipball/199b209f92a6e1abab526027d7d410b231a9f767",
+                "reference": "199b209f92a6e1abab526027d7d410b231a9f767",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -941,38 +1001,42 @@
                     "Marko\\Encryption\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Encryption\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Encryption contracts for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-encryption/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/encryption-openssl",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-encryption-openssl.git",
+                "reference": "f371639b9ad17aab229d8c5b39034a88b1b497c8"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/encryption-openssl",
-                "reference": "af46425585e6568cbfe7a9c4768938d8194614f0"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-encryption-openssl/zipball/f371639b9ad17aab229d8c5b39034a88b1b497c8",
+                "reference": "f371639b9ad17aab229d8c5b39034a88b1b497c8",
+                "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/encryption": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/encryption": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -984,26 +1048,29 @@
                     "Marko\\Encryption\\OpenSsl\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Encryption\\OpenSsl\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "OpenSSL encryption driver for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-encryption-openssl/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/env",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-env.git",
+                "reference": "1b4c3b09ff93a4ca62e78c88eff320442855ad73"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/env",
-                "reference": "ad3f28951784ae7260d57a636c6cbd33cfde61a3"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-env/zipball/1b4c3b09ff93a4ca62e78c88eff320442855ad73",
+                "reference": "1b4c3b09ff93a4ca62e78c88eff320442855ad73",
+                "shasum": ""
             },
             "require": {
                 "php": "^8.5"
@@ -1011,43 +1078,48 @@
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Marko\\Env\\": "src/"
-                },
                 "files": [
                     "src/functions.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "Marko\\Env\\Tests\\": "tests/"
+                    "Marko\\Env\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Environment variable loading for Marko applications",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-env/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/errors",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-errors.git",
+                "reference": "a04596c416d6a8831ef97f171e3d587771e2b9c1"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/errors",
-                "reference": "585d8e61b22111c8b170eaf2d37f480b3f246663"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-errors/zipball/a04596c416d6a8831ef97f171e3d587771e2b9c1",
+                "reference": "a04596c416d6a8831ef97f171e3d587771e2b9c1",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -1059,35 +1131,39 @@
                     "Marko\\Errors\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Errors\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework Error Handling",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-errors/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/errors-simple",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-errors-simple.git",
+                "reference": "3de1da6e53ad62d33c5bf728b36f277f94b26e2d"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/errors-simple",
-                "reference": "e37b487a7f4ebea4e34c4b791f3479de040a515f"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-errors-simple/zipball/3de1da6e53ad62d33c5bf728b36f277f94b26e2d",
+                "reference": "3de1da6e53ad62d33c5bf728b36f277f94b26e2d",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
-                "marko/errors": "@dev",
+                "marko/core": "self.version",
+                "marko/errors": "self.version",
                 "php": ">=8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -1099,36 +1175,39 @@
                     "Marko\\ErrorsSimple\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\ErrorsSimple\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Simple error handling and display for the Marko framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-errors-simple/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/framework",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-framework.git",
+                "reference": "5b5b105dfbe5746d47e9623a712258fbb1ffdb12"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/framework",
-                "reference": "1aeac2018cf32154d88eb6c54aa98eaf9c036f9a"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-framework/zipball/5b5b105dfbe5746d47e9623a712258fbb1ffdb12",
+                "reference": "5b5b105dfbe5746d47e9623a712258fbb1ffdb12",
+                "shasum": ""
             },
             "require": {
-                "marko/cli": "@dev",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/errors": "@dev",
-                "marko/errors-simple": "@dev",
-                "marko/hashing": "@dev",
-                "marko/routing": "@dev",
-                "marko/validation": "@dev",
+                "marko/cli": "self.version",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/errors": "self.version",
+                "marko/errors-simple": "self.version",
+                "marko/hashing": "self.version",
+                "marko/routing": "self.version",
+                "marko/validation": "self.version",
                 "php": "^8.5"
             },
             "suggest": {
@@ -1146,37 +1225,47 @@
                 "marko/session": "Session abstraction layer",
                 "marko/session-file": "File-based session driver"
             },
+            "default-branch": true,
             "type": "metapackage",
             "extra": {
                 "marko": {
                     "module": true
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework - All core packages for typical web applications",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-framework/tree/develop"
+            },
+            "time": "2026-03-24T20:18:13+00:00"
         },
         {
             "name": "marko/hashing",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-hashing.git",
+                "reference": "82c6a35e6820d2c8d1cf194c12225924e84a75e6"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/hashing",
-                "reference": "02a91bd5091ba0cae877f37186a6c92ad0ff7306"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-hashing/zipball/82c6a35e6820d2c8d1cf194c12225924e84a75e6",
+                "reference": "82c6a35e6820d2c8d1cf194c12225924e84a75e6",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1188,36 +1277,40 @@
                     "Marko\\Hashing\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Hashing\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Password hashing and verification for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-hashing/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/log",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-log.git",
+                "reference": "f077e36e7610ad6f84e25cfbb8793600f561078f"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/log",
-                "reference": "1a30dc98c49b5eff48f2a7bb6c9c72a122dfe6ab"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-log/zipball/f077e36e7610ad6f84e25cfbb8793600f561078f",
+                "reference": "f077e36e7610ad6f84e25cfbb8793600f561078f",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1229,36 +1322,40 @@
                     "Marko\\Log\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Log\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "PSR-3 compatible logging interfaces and formatters for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-log/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/log-file",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-log-file.git",
+                "reference": "eb1dc7a5b69cc2389070e5d12386a4196589d81e"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/log-file",
-                "reference": "8696462e0751969c094275cbab66f8d35c5aad37"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-log-file/zipball/eb1dc7a5b69cc2389070e5d12386a4196589d81e",
+                "reference": "eb1dc7a5b69cc2389070e5d12386a4196589d81e",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/log": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/log": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1270,36 +1367,40 @@
                     "Marko\\Log\\File\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Log\\File\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "File-based logging driver for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-log-file/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/mail",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-mail.git",
+                "reference": "c9b4ded95c6d2cec12caa1bbd95ffb08f280c53f"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/mail",
-                "reference": "db7e9d1a23ca91fd0d9dcf8eb2ca1e5387064f9c"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-mail/zipball/c9b4ded95c6d2cec12caa1bbd95ffb08f280c53f",
+                "reference": "c9b4ded95c6d2cec12caa1bbd95ffb08f280c53f",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -1311,30 +1412,33 @@
                     "Marko\\Mail\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Mail\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework Mail - Message building and mailing interfaces",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-mail/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/notification",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-notification.git",
+                "reference": "b159d6798beec2a22563a26e0b625cc7aa4c3fe3"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/notification",
-                "reference": "930e0236eaa1a5021494bca80d18dadb0572473a"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-notification/zipball/b159d6798beec2a22563a26e0b625cc7aa4c3fe3",
+                "reference": "b159d6798beec2a22563a26e0b625cc7aa4c3fe3",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
@@ -1345,6 +1449,7 @@
                 "marko/mail": "Required for mail channel notifications",
                 "marko/queue": "Required for queued notification sending"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1356,36 +1461,40 @@
                     "Marko\\Notification\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Notification\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Notification system interfaces and channels for the Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-notification/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/notification-database",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-notification-database.git",
+                "reference": "7e29a245c7aa403bdc20783b0378e907add384ef"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/notification-database",
-                "reference": "c37b31dff76613512c47d1efe28f1733852f2eba"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-notification-database/zipball/7e29a245c7aa403bdc20783b0378e907add384ef",
+                "reference": "7e29a245c7aa403bdc20783b0378e907add384ef",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
-                "marko/database": "@dev",
-                "marko/notification": "@dev",
+                "marko/core": "self.version",
+                "marko/database": "self.version",
+                "marko/notification": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1397,36 +1506,40 @@
                     "Marko\\Notification\\Database\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Notification\\Database\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Database-backed notification storage for the Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-notification-database/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/pagination",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-pagination.git",
+                "reference": "ff796388d5f5eac3eb41ea05ac995454dde70a54"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/pagination",
-                "reference": "42a7dcd839209c2c725cd8189738352b4fdf58fc"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-pagination/zipball/ff796388d5f5eac3eb41ea05ac995454dde70a54",
+                "reference": "ff796388d5f5eac3eb41ea05ac995454dde70a54",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1438,35 +1551,39 @@
                     "Marko\\Pagination\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Pagination\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Pagination interfaces and implementations for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-pagination/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/pubsub",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-pubsub.git",
+                "reference": "fe6066450f7e501be921c7d81f1918ea5957f4dc"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/pubsub",
-                "reference": "106e6c6de1d8cf0e0b56395444319e2dcbe6be63"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-pubsub/zipball/fe6066450f7e501be921c7d81f1918ea5957f4dc",
+                "reference": "fe6066450f7e501be921c7d81f1918ea5957f4dc",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1478,37 +1595,41 @@
                     "Marko\\PubSub\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\PubSub\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Pub/sub interfaces and value objects for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-pubsub/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "marko/pubsub-pgsql",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-pubsub-pgsql.git",
+                "reference": "28bc459abc9e0f432173bbe83adf409e32a742ab"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/pubsub-pgsql",
-                "reference": "f0c3530dcfb1270aa8b1cf8ec5790029bc0455be"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-pubsub-pgsql/zipball/28bc459abc9e0f432173bbe83adf409e32a742ab",
+                "reference": "28bc459abc9e0f432173bbe83adf409e32a742ab",
+                "shasum": ""
             },
             "require": {
                 "amphp/postgres": "^2",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/pubsub": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/pubsub": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1520,35 +1641,39 @@
                     "Marko\\PubSub\\PgSql\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\PubSub\\PgSql\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "PostgreSQL pub/sub driver for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-pubsub-pgsql/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "marko/queue",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-queue.git",
+                "reference": "5997010a0809b8be6d29ff132c0eb14048010429"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/queue",
-                "reference": "a57583db6195c0548ebd7e87f55571a2e05bdd78"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-queue/zipball/5997010a0809b8be6d29ff132c0eb14048010429",
+                "reference": "5997010a0809b8be6d29ff132c0eb14048010429",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -1560,38 +1685,42 @@
                     "Marko\\Queue\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Queue\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Queue interfaces and infrastructure for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-queue/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/rate-limiting",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-rate-limiting.git",
+                "reference": "6b8144fd5106870a20c6978787840810048d0e66"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/rate-limiting",
-                "reference": "c2680c88873b39e51b98baf56f3bd5e11f00a2a1"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-rate-limiting/zipball/6b8144fd5106870a20c6978787840810048d0e66",
+                "reference": "6b8144fd5106870a20c6978787840810048d0e66",
+                "shasum": ""
             },
             "require": {
-                "marko/cache": "@dev",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/routing": "@dev",
+                "marko/cache": "self.version",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/routing": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1603,34 +1732,38 @@
                     "Marko\\RateLimiting\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\RateLimiting\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Rate limiting for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-rate-limiting/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/routing",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-routing.git",
+                "reference": "49997dfd0d558168ff803ead21e0b40c851c0d1f"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/routing",
-                "reference": "592dad6b4c0699fb5d443f33122ec1dc7fa33426"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-routing/zipball/49997dfd0d558168ff803ead21e0b40c851c0d1f",
+                "reference": "49997dfd0d558168ff803ead21e0b40c851c0d1f",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -1642,38 +1775,42 @@
                     "Marko\\Routing\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Routing\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework Routing",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-routing/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/security",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-security.git",
+                "reference": "aeceb71f27fd79378fe447194d0694239834c912"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/security",
-                "reference": "5b800c1b558394a721f3aa957632a60e76dd145e"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-security/zipball/aeceb71f27fd79378fe447194d0694239834c912",
+                "reference": "aeceb71f27fd79378fe447194d0694239834c912",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/encryption": "@dev",
-                "marko/routing": "@dev",
-                "marko/session": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/encryption": "self.version",
+                "marko/routing": "self.version",
+                "marko/session": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*"
+                "marko/testing": "self.version"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1685,27 +1822,36 @@
                     "Marko\\Security\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Security middleware for Marko Framework -- CSRF protection, CORS handling, and security headers",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-security/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/session",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-session.git",
+                "reference": "3ae773baeac62cef31f61eb98c7e4844edc159b7"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/session",
-                "reference": "381c4bb533676cdbd478aa143cb6a278cdc0873e"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-session/zipball/3ae773baeac62cef31f61eb98c7e4844edc159b7",
+                "reference": "3ae773baeac62cef31f61eb98c7e4844edc159b7",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
                 "php": "^8.5"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1717,35 +1863,39 @@
                     "Marko\\Session\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Session\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Session interfaces and infrastructure for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-session/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/session-database",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-session-database.git",
+                "reference": "8d0e301719167f178b0154dd90bfa41b442c1818"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/session-database",
-                "reference": "8a8c10874f670ccf8e8c4bf7268320177d5ed6b3"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-session-database/zipball/8d0e301719167f178b0154dd90bfa41b442c1818",
+                "reference": "8d0e301719167f178b0154dd90bfa41b442c1818",
+                "shasum": ""
             },
             "require": {
-                "marko/database": "@dev",
-                "marko/session": "@dev",
+                "marko/database": "self.version",
+                "marko/session": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1757,39 +1907,43 @@
                     "Marko\\Session\\Database\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Session\\Database\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Database session driver for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-session-database/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/sse",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-sse.git",
+                "reference": "1cfcfd74a0f5c11b1b08f788f56024d908630003"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/sse",
-                "reference": "503557c9e40e52f17e318fe1cf1064be8ac07b44"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-sse/zipball/1cfcfd74a0f5c11b1b08f788f56024d908630003",
+                "reference": "1cfcfd74a0f5c11b1b08f788f56024d908630003",
+                "shasum": ""
             },
             "require": {
-                "marko/core": "@dev",
-                "marko/routing": "@dev",
+                "marko/core": "self.version",
+                "marko/routing": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "@dev",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
             "suggest": {
                 "marko/pubsub": "For real-time pub/sub-driven SSE streams"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1801,40 +1955,44 @@
                     "Marko\\Sse\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Sse\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Server-Sent Events (SSE) support for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-sse/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/testing",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-testing.git",
+                "reference": "685832646a84e125725845c69ad13d6187df2a49"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/testing",
-                "reference": "4401fe0405117c0799d39f094e2ce731eabdc938"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-testing/zipball/685832646a84e125725845c69ad13d6187df2a49",
+                "reference": "685832646a84e125725845c69ad13d6187df2a49",
+                "shasum": ""
             },
             "require": {
-                "marko/authentication": "@dev",
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/log": "@dev",
-                "marko/mail": "@dev",
-                "marko/queue": "@dev",
-                "marko/session": "@dev",
+                "marko/authentication": "self.version",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/log": "self.version",
+                "marko/mail": "self.version",
+                "marko/queue": "self.version",
+                "marko/session": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1842,37 +2000,41 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Marko\\Testing\\": "src/"
-                },
                 "files": [
                     "src/Pest/Expectations.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "Marko\\Testing\\Tests\\": "tests/"
+                    "Marko\\Testing\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Testing utilities for the Marko framework - fakes, assertions, and Pest integration",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-testing/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "marko/validation",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-validation.git",
+                "reference": "fa60e1dde81e936187ed6bef6228547b4e447717"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/validation",
-                "reference": "fd81101782f401226a01f2ce277a4505f80490bd"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-validation/zipball/fa60e1dde81e936187ed6bef6228547b4e447717",
+                "reference": "fa60e1dde81e936187ed6bef6228547b4e447717",
+                "shasum": ""
             },
             "require": {
                 "php": "^8.5"
             },
+            "default-branch": true,
             "type": "marko-module",
             "extra": {
                 "marko": {
@@ -1884,37 +2046,41 @@
                     "Marko\\Validation\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\Validation\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Validation component for Marko Framework",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-validation/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/view",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-view.git",
+                "reference": "79d26fce353f73f949b290bc8d231e3c407f71df"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/view",
-                "reference": "48c7f39dd0b03d010d475210a75c87c5e28dbd36"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-view/zipball/79d26fce353f73f949b290bc8d231e3c407f71df",
+                "reference": "79d26fce353f73f949b290bc8d231e3c407f71df",
+                "shasum": ""
             },
             "require": {
-                "marko/config": "@dev",
-                "marko/core": "@dev",
-                "marko/routing": "@dev",
+                "marko/config": "self.version",
+                "marko/core": "self.version",
+                "marko/routing": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
-                "marko/testing": "*",
+                "marko/testing": "self.version",
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -1926,35 +2092,39 @@
                     "Marko\\View\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\View\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Marko Framework View - Templating interfaces and contracts",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-view/tree/develop"
+            },
+            "time": "2026-03-23T21:46:17+00:00"
         },
         {
             "name": "marko/view-latte",
             "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marko-php/marko-view-latte.git",
+                "reference": "edfdc55f7863f826148e3d32c2e9da83df4c0d7b"
+            },
             "dist": {
-                "type": "path",
-                "url": "../marko/packages/view-latte",
-                "reference": "1c8c0350f309ba4011063b573536050fb8ef6a55"
+                "type": "zip",
+                "url": "https://api.github.com/repos/marko-php/marko-view-latte/zipball/edfdc55f7863f826148e3d32c2e9da83df4c0d7b",
+                "reference": "edfdc55f7863f826148e3d32c2e9da83df4c0d7b",
+                "shasum": ""
             },
             "require": {
                 "latte/latte": "^3.0",
-                "marko/view": "@dev",
+                "marko/view": "self.version",
                 "php": "^8.5"
             },
             "require-dev": {
                 "pestphp/pest": "^4.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "marko": {
@@ -1966,18 +2136,15 @@
                     "Marko\\View\\Latte\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Marko\\View\\Latte\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "description": "Latte templating driver for Marko Framework View",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/marko-php/marko-view-latte/tree/develop"
+            },
+            "time": "2026-03-24T17:44:23+00:00"
         },
         {
             "name": "psr/container",
@@ -2108,16 +2275,16 @@
     "packages-dev": [
         {
             "name": "brianium/paratest",
-            "version": "v7.19.0",
+            "version": "v7.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "7c6c29af7c4b406b49ce0c6b0a3a81d3684474e6"
+                "reference": "66e4f7910cecf67736bccf2b8bd53a2e3eb98bd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/7c6c29af7c4b406b49ce0c6b0a3a81d3684474e6",
-                "reference": "7c6c29af7c4b406b49ce0c6b0a3a81d3684474e6",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/66e4f7910cecf67736bccf2b8bd53a2e3eb98bd9",
+                "reference": "66e4f7910cecf67736bccf2b8bd53a2e3eb98bd9",
                 "shasum": ""
             },
             "require": {
@@ -2131,9 +2298,9 @@
                 "phpunit/php-code-coverage": "^12.5.3 || ^13.0.1",
                 "phpunit/php-file-iterator": "^6.0.1 || ^7",
                 "phpunit/php-timer": "^8 || ^9",
-                "phpunit/phpunit": "^12.5.9 || ^13",
+                "phpunit/phpunit": "^12.5.14 || ^13.0.5",
                 "sebastian/environment": "^8.0.3 || ^9",
-                "symfony/console": "^7.4.4 || ^8.0.4",
+                "symfony/console": "^7.4.7 || ^8.0.7",
                 "symfony/process": "^7.4.5 || ^8.0.5"
             },
             "require-dev": {
@@ -2141,11 +2308,11 @@
                 "ext-pcntl": "*",
                 "ext-pcov": "*",
                 "ext-posix": "*",
-                "phpstan/phpstan": "^2.1.38",
-                "phpstan/phpstan-deprecation-rules": "^2.0.3",
-                "phpstan/phpstan-phpunit": "^2.0.12",
-                "phpstan/phpstan-strict-rules": "^2.0.8",
-                "symfony/filesystem": "^7.4.0 || ^8.0.1"
+                "phpstan/phpstan": "^2.1.40",
+                "phpstan/phpstan-deprecation-rules": "^2.0.4",
+                "phpstan/phpstan-phpunit": "^2.0.16",
+                "phpstan/phpstan-strict-rules": "^2.0.10",
+                "symfony/filesystem": "^7.4.6 || ^8.0.6"
             },
             "bin": [
                 "bin/paratest",
@@ -2185,7 +2352,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v7.19.0"
+                "source": "https://github.com/paratestphp/paratest/tree/v7.19.2"
             },
             "funding": [
                 {
@@ -2197,7 +2364,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2026-02-06T10:53:26+00:00"
+            "time": "2026-03-09T14:33:17+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -2742,20 +2909,20 @@
         },
         {
             "name": "pestphp/pest",
-            "version": "v4.4.2",
+            "version": "v4.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest.git",
-                "reference": "5d42e8fe3ae1d9fdf7c9f73ee88138fd30265701"
+                "reference": "e6ab897594312728ef2e32d586cb4f6780b1b495"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest/zipball/5d42e8fe3ae1d9fdf7c9f73ee88138fd30265701",
-                "reference": "5d42e8fe3ae1d9fdf7c9f73ee88138fd30265701",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/e6ab897594312728ef2e32d586cb4f6780b1b495",
+                "reference": "e6ab897594312728ef2e32d586cb4f6780b1b495",
                 "shasum": ""
             },
             "require": {
-                "brianium/paratest": "^7.19.0",
+                "brianium/paratest": "^7.19.2",
                 "nunomaduro/collision": "^8.9.1",
                 "nunomaduro/termwind": "^2.4.0",
                 "pestphp/pest-plugin": "^4.0.0",
@@ -2763,12 +2930,12 @@
                 "pestphp/pest-plugin-mutate": "^4.0.1",
                 "pestphp/pest-plugin-profanity": "^4.2.1",
                 "php": "^8.3.0",
-                "phpunit/phpunit": "^12.5.12",
+                "phpunit/phpunit": "^12.5.14",
                 "symfony/process": "^7.4.5|^8.0.5"
             },
             "conflict": {
                 "filp/whoops": "<2.18.3",
-                "phpunit/phpunit": ">12.5.12",
+                "phpunit/phpunit": ">12.5.14",
                 "sebastian/exporter": "<7.0.0",
                 "webmozart/assert": "<1.11.0"
             },
@@ -2842,7 +3009,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
-                "source": "https://github.com/pestphp/pest/tree/v4.4.2"
+                "source": "https://github.com/pestphp/pest/tree/v4.4.3"
             },
             "funding": [
                 {
@@ -2854,7 +3021,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-10T21:09:12+00:00"
+            "time": "2026-03-21T13:14:39+00:00"
         },
         {
             "name": "pestphp/pest-plugin",
@@ -3301,16 +3468,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "6.0.2",
+            "version": "6.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "897b5986ece6b4f9d8413fea345c7d49c757d6bf"
+                "reference": "7bae67520aa9f5ecc506d646810bd40d9da54582"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/897b5986ece6b4f9d8413fea345c7d49c757d6bf",
-                "reference": "897b5986ece6b4f9d8413fea345c7d49c757d6bf",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/7bae67520aa9f5ecc506d646810bd40d9da54582",
+                "reference": "7bae67520aa9f5ecc506d646810bd40d9da54582",
                 "shasum": ""
             },
             "require": {
@@ -3360,9 +3527,9 @@
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
             "support": {
                 "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
-                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/6.0.2"
+                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/6.0.3"
             },
-            "time": "2026-03-01T18:43:49+00:00"
+            "time": "2026-03-18T20:49:53+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -3817,16 +3984,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.5.12",
+            "version": "12.5.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "418e06b3b46b0d54bad749ff4907fc7dfb530199"
+                "reference": "47283cfd98d553edcb1353591f4e255dc1bb61f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/418e06b3b46b0d54bad749ff4907fc7dfb530199",
-                "reference": "418e06b3b46b0d54bad749ff4907fc7dfb530199",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/47283cfd98d553edcb1353591f4e255dc1bb61f0",
+                "reference": "47283cfd98d553edcb1353591f4e255dc1bb61f0",
                 "shasum": ""
             },
             "require": {
@@ -3895,7 +4062,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.12"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.14"
             },
             "funding": [
                 {
@@ -3919,7 +4086,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-16T08:34:36+00:00"
+            "time": "2026-02-18T12:38:40+00:00"
         },
         {
             "name": "psr/log",
@@ -5945,170 +6112,7 @@
             "time": "2026-02-27T10:28:38+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "marko/amphp",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/authentication",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/authentication-token",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/authorization",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/cache-array",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/database",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/database-pgsql",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/dev-server",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/encryption",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/encryption-openssl",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/env",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/framework",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/log",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/log-file",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/notification",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/notification-database",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/pagination",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/pubsub",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/pubsub-pgsql",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/rate-limiting",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/security",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/session",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/session-database",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/sse",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/testing",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/view",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        },
-        {
-            "package": "marko/view-latte",
-            "version": "dev-develop",
-            "alias": "0.1.0",
-            "alias_normalized": "0.1.0.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
         "marko/amphp": 20,

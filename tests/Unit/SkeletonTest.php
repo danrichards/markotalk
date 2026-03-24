@@ -49,32 +49,22 @@ it('has a composer.json with all required marko package dependencies', function 
     }
 });
 
-it('has path repositories for all marko packages referenced', function (): void {
+it('has all required marko packages installed from Packagist', function (): void {
     $composerPath = __DIR__ . '/../../composer.json';
+    $lockPath = __DIR__ . '/../../composer.lock';
     $composer = json_decode(file_get_contents($composerPath), associative: true);
+    $lock = json_decode(file_get_contents($lockPath), associative: true);
 
-    expect($composer['repositories'])->toBeArray();
+    $markoPackages = array_filter(
+        array_keys($composer['require']),
+        fn (string $name) => str_starts_with($name, 'marko/'),
+    );
 
-    $allPackages = [
-        'admin', 'admin-api', 'admin-auth', 'admin-panel', 'api', 'authentication',
-        'authentication-token', 'authorization', 'blog', 'cache', 'cache-array',
-        'cache-file', 'cache-redis', 'cli', 'config', 'core', 'cors', 'database',
-        'database-mysql', 'database-pgsql', 'encryption', 'encryption-openssl', 'env',
-        'errors', 'errors-advanced', 'errors-simple', 'filesystem', 'filesystem-local',
-        'filesystem-s3', 'framework', 'hashing', 'health', 'http', 'http-guzzle', 'log',
-        'log-file', 'mail', 'mail-log', 'mail-smtp', 'media', 'media-gd', 'media-imagick',
-        'notification', 'notification-database', 'pagination', 'queue', 'queue-database',
-        'queue-rabbitmq', 'queue-sync', 'rate-limiting', 'routing', 'scheduler', 'search',
-        'security', 'session', 'session-database', 'session-file', 'sse', 'testing',
-        'translation', 'translation-file', 'validation', 'view', 'view-latte', 'webhook',
-    ];
+    $lockedNames = array_column($lock['packages'], 'name');
 
-    $repositoryUrls = array_column($composer['repositories'], 'url');
-
-    foreach ($allPackages as $package) {
-        $expectedUrl = "../marko/packages/{$package}";
-        expect(in_array($expectedUrl, $repositoryUrls, strict: true))->toBeTrue(
-            "Missing path repository for: {$package}"
+    foreach ($markoPackages as $package) {
+        expect(in_array($package, $lockedNames, strict: true))->toBeTrue(
+            "Missing installed package: {$package}"
         );
     }
 });

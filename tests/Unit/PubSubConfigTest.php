@@ -23,15 +23,10 @@ it('includes marko/amphp in composer.json require', function (): void {
     expect($composer['require'])->toHaveKey('marko/amphp');
 });
 
-it('has path repositories for pubsub, pubsub-pgsql, and amphp packages', function (): void {
-    $composerPath = __DIR__ . '/../../composer.json';
-    $composer = json_decode(json: file_get_contents(filename: $composerPath), associative: true);
-
-    $repositoryUrls = array_column(array: $composer['repositories'], column_key: 'url');
-
-    expect(in_array(needle: '../marko/packages/pubsub', haystack: $repositoryUrls, strict: true))->toBeTrue()
-        ->and(in_array(needle: '../marko/packages/pubsub-pgsql', haystack: $repositoryUrls, strict: true))->toBeTrue()
-        ->and(in_array(needle: '../marko/packages/amphp', haystack: $repositoryUrls, strict: true))->toBeTrue();
+it('has pubsub, pubsub-pgsql, and amphp packages installed', function (): void {
+    expect(is_dir(__DIR__ . '/../../vendor/marko/pubsub'))->toBeTrue()
+        ->and(is_dir(__DIR__ . '/../../vendor/marko/pubsub-pgsql'))->toBeTrue()
+        ->and(is_dir(__DIR__ . '/../../vendor/marko/amphp'))->toBeTrue();
 });
 
 it('has a pubsub config file with driver set to pgsql and prefix', function (): void {

@@ -32,6 +32,7 @@ Dogfooding the [Marko PHP Framework](https://github.com/marko-php/marko) for its
 
 - PHP 8.5+
 - Composer 2.x
+- Node.js (for Tailwind CSS)
 - Docker (for PostgreSQL)
 
 ### Setup
@@ -46,6 +47,7 @@ docker compose up -d
 
 # Install dependencies
 composer install
+npm install
 
 # Configure environment
 cp .env.example .env
@@ -92,7 +94,7 @@ Visit [http://localhost:8000](http://localhost:8000) to get started.
 | Templates | Latte 3.0 |
 | Real-Time | SSE + PostgreSQL LISTEN/NOTIFY |
 | Testing | Pest PHP |
-| Styling | Tailwind CSS |
+| Styling | Tailwind CSS 4 |
 | Client-Side | Vanilla JavaScript |
 
 ## Project Structure
