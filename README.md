@@ -39,7 +39,7 @@ Dogfooding the [Marko PHP Framework](https://github.com/marko-php/marko) for its
 
 ```bash
 # Clone the repository
-git clone https://github.com/devtomic/markotalk.git
+git clone https://github.com/marko-php/markotalk.git
 cd markotalk
 
 # Start PostgreSQL
@@ -71,10 +71,10 @@ Run migrations and start the dev server:
 php marko migrate
 
 # Start the development server
-PHP_CLI_SERVER_WORKERS=4 php -S localhost:8000 -t public
+marko up
 ```
 
-> **Note:** `PHP_CLI_SERVER_WORKERS=4` is required because MarkoTalk uses SSE for real-time messaging. Without multiple workers, the SSE connection blocks all other requests on the single-threaded PHP built-in server.
+> **Note:** `marko up` starts PHP with `PHP_CLI_SERVER_WORKERS=4` by default, which is required because MarkoTalk uses SSE for real-time messaging. Without multiple workers, the SSE connection blocks all other requests on the single-threaded PHP built-in server.
 
 To promote a user to admin (for pinning messages, moderation, etc.):
 
@@ -134,6 +134,16 @@ resources/views/      # Latte templates
 ## Status
 
 MarkoTalk is in **active development** alongside the Marko framework. It serves as both a real application and a reference implementation for Marko's module system.
+
+## Learn More
+
+- [Marko Framework](https://marko.build) — Documentation and guides
+- [Build a Real-time Chat](https://marko.build/docs/tutorials/build-a-chat/) — Tutorial covering the architecture behind MarkoTalk
+- [marko-php/marko](https://github.com/marko-php/marko) — Framework source code
+
+## Credits
+
+Created by [Mark Shust](https://markshust.com)
 
 ## License
 
