@@ -17,7 +17,7 @@ readonly class MarkdownPlugin
         private MarkdownParserInterface $markdownParser,
     ) {}
 
-    #[Before(sortOrder: 10)]
+    #[Before]
     public function beforeSave(
         Message $message,
     ): null {

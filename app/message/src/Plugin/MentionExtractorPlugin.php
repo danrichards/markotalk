@@ -18,7 +18,7 @@ readonly class MentionExtractorPlugin
         private EventDispatcherInterface $dispatcher,
     ) {}
 
-    #[After(sortOrder: 10)]
+    #[After]
     public function afterSave(
         mixed $result,
         Message $message,
