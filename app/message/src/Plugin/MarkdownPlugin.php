@@ -18,7 +18,7 @@ readonly class MarkdownPlugin
     ) {}
 
     #[Before]
-    public function beforeSave(
+    public function save(
         Message $message,
     ): null {
         $message->bodyHtml = $this->markdownParser->parse(markdown: $message->body);

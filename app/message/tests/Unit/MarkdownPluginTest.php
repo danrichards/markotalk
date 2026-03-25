@@ -65,20 +65,20 @@ it('sets body_html on the message before save via plugin interception', function
         createdAt: new DateTimeImmutable('2026-02-24 00:00:00'),
     );
 
-    $result = $plugin->beforeSave(message: $message);
+    $result = $plugin->save(message: $message);
 
     expect($message->bodyHtml)->toBe('<strong>hello</strong>')
         ->and($result)->toBeNull();
 });
 
-it('uses #[Before(sortOrder: 10)] with beforeSave method naming', function (): void {
+it('uses #[Before] with save method matching target method name', function (): void {
     $classReflection = new ReflectionClass(MarkdownPlugin::class);
     $classAttributes = $classReflection->getAttributes(Plugin::class);
-    $methodReflection = $classReflection->getMethod('beforeSave');
+    $methodReflection = $classReflection->getMethod('save');
     $methodAttributes = $methodReflection->getAttributes(Before::class);
 
     expect($classAttributes)->toHaveCount(1)
         ->and($classAttributes[0]->newInstance()->target)->toBe(MessageRepository::class)
         ->and($methodAttributes)->toHaveCount(1)
-        ->and($methodAttributes[0]->newInstance()->sortOrder)->toBe(10);
+        ->and($methodAttributes[0]->newInstance()->sortOrder)->toBe(0);
 });

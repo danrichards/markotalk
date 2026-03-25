@@ -19,7 +19,7 @@ it('extracts single @mention from message body', function (): void {
 
     $message = createMentionTestMessage(body: 'Hello @johndoe how are you?');
 
-    $plugin->afterSave(result: null, message: $message);
+    $plugin->save(result: null, message: $message);
 
     expect($dispatchedEvents)->toHaveCount(1)
         ->and($dispatchedEvents[0])->toBeInstanceOf(MentionDetectedEvent::class)
@@ -34,7 +34,7 @@ it('extracts multiple @mentions from message body', function (): void {
 
     $message = createMentionTestMessage(body: 'Hey @alice and @bob, welcome!');
 
-    $plugin->afterSave(result: null, message: $message);
+    $plugin->save(result: null, message: $message);
 
     expect($dispatchedEvents)->toHaveCount(2)
         ->and($dispatchedEvents[0]->username)->toBe('alice')
@@ -49,7 +49,7 @@ it('ignores duplicate @mentions in the same message', function (): void {
 
     $message = createMentionTestMessage(body: '@alice said hi, then @alice said bye');
 
-    $plugin->afterSave(result: null, message: $message);
+    $plugin->save(result: null, message: $message);
 
     expect($dispatchedEvents)->toHaveCount(1)
         ->and($dispatchedEvents[0]->username)->toBe('alice');
@@ -63,7 +63,7 @@ it('dispatches MentionDetectedEvent for each unique mention', function (): void 
 
     $message = createMentionTestMessage(body: 'Hey @alice, @bob_123, and @charlie!');
 
-    $plugin->afterSave(result: null, message: $message);
+    $plugin->save(result: null, message: $message);
 
     expect($dispatchedEvents)->toHaveCount(3);
 
@@ -79,32 +79,32 @@ it('dispatches MentionDetectedEvent for each unique mention', function (): void 
     }
 });
 
-it('returns the original result from afterSave', function (): void {
+it('returns the original result from save', function (): void {
     $dispatcher = createMentionMockDispatcher();
 
     $plugin = new MentionExtractorPlugin(dispatcher: $dispatcher);
 
     $message = createMentionTestMessage(body: 'Hello @johndoe');
 
-    $result = $plugin->afterSave(result: 'some-result', message: $message);
+    $result = $plugin->save(result: 'some-result', message: $message);
 
     expect($result)->toBe('some-result');
 });
 
-it('uses #[After(sortOrder: 10)] with afterSave method naming', function (): void {
+it('uses #[After] with save method matching target method name', function (): void {
     $reflection = new ReflectionClass(MentionExtractorPlugin::class);
 
     $classAttributes = $reflection->getAttributes(Plugin::class);
     $pluginAttribute = $classAttributes[0]->newInstance();
 
-    $method = $reflection->getMethod('afterSave');
+    $method = $reflection->getMethod('save');
     $afterAttributes = $method->getAttributes(After::class);
     $afterAttribute = $afterAttributes[0]->newInstance();
 
     expect($classAttributes)->toHaveCount(1)
         ->and($pluginAttribute->target)->toBe(MessageRepository::class)
         ->and($afterAttributes)->toHaveCount(1)
-        ->and($afterAttribute->sortOrder)->toBe(10);
+        ->and($afterAttribute->sortOrder)->toBe(0);
 });
 
 // Helper functions

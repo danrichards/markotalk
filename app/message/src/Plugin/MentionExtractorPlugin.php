@@ -19,7 +19,7 @@ readonly class MentionExtractorPlugin
     ) {}
 
     #[After]
-    public function afterSave(
+    public function save(
         mixed $result,
         Message $message,
     ): mixed {

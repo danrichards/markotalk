@@ -433,12 +433,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-amphp.git",
-                "reference": "6cc17ad473aa9ba91898258075dc4d21b846f818"
+                "reference": "5ac691e27baa05ee611607a556393f66fdb94437"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-amphp/zipball/6cc17ad473aa9ba91898258075dc4d21b846f818",
-                "reference": "6cc17ad473aa9ba91898258075dc4d21b846f818",
+                "url": "https://api.github.com/repos/marko-php/marko-amphp/zipball/5ac691e27baa05ee611607a556393f66fdb94437",
+                "reference": "5ac691e27baa05ee611607a556393f66fdb94437",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-amphp/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/authentication",
@@ -480,12 +480,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-authentication.git",
-                "reference": "4f410e47376f122d29de5c7323ea91065df16ebf"
+                "reference": "bbb9be3efc4c48852465bb18f8221b9339547d70"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-authentication/zipball/4f410e47376f122d29de5c7323ea91065df16ebf",
-                "reference": "4f410e47376f122d29de5c7323ea91065df16ebf",
+                "url": "https://api.github.com/repos/marko-php/marko-authentication/zipball/bbb9be3efc4c48852465bb18f8221b9339547d70",
+                "reference": "bbb9be3efc4c48852465bb18f8221b9339547d70",
                 "shasum": ""
             },
             "require": {
@@ -515,7 +515,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-authentication/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/authentication-token",
@@ -523,12 +523,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-authentication-token.git",
-                "reference": "d7c6563190da135f9cc41bf90a203ab798417f73"
+                "reference": "f4e0af0d1eb95d59513be600125ec1514fd12c6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-authentication-token/zipball/d7c6563190da135f9cc41bf90a203ab798417f73",
-                "reference": "d7c6563190da135f9cc41bf90a203ab798417f73",
+                "url": "https://api.github.com/repos/marko-php/marko-authentication-token/zipball/f4e0af0d1eb95d59513be600125ec1514fd12c6e",
+                "reference": "f4e0af0d1eb95d59513be600125ec1514fd12c6e",
                 "shasum": ""
             },
             "require": {
@@ -562,7 +562,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-authentication-token/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/authorization",
@@ -570,12 +570,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-authorization.git",
-                "reference": "7fc7cf145ff0e7089692d71df53dae5d0e7964d7"
+                "reference": "1e1b554d917caafe5608845b7f08a1a630e05f38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-authorization/zipball/7fc7cf145ff0e7089692d71df53dae5d0e7964d7",
-                "reference": "7fc7cf145ff0e7089692d71df53dae5d0e7964d7",
+                "url": "https://api.github.com/repos/marko-php/marko-authorization/zipball/1e1b554d917caafe5608845b7f08a1a630e05f38",
+                "reference": "1e1b554d917caafe5608845b7f08a1a630e05f38",
                 "shasum": ""
             },
             "require": {
@@ -609,7 +609,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-authorization/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/cache",
@@ -617,12 +617,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-cache.git",
-                "reference": "3861d536e7e3410fdc88ebfc640c403907902de5"
+                "reference": "4fada689e9ced855156652aafb9dc3600b947af2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-cache/zipball/3861d536e7e3410fdc88ebfc640c403907902de5",
-                "reference": "3861d536e7e3410fdc88ebfc640c403907902de5",
+                "url": "https://api.github.com/repos/marko-php/marko-cache/zipball/4fada689e9ced855156652aafb9dc3600b947af2",
+                "reference": "4fada689e9ced855156652aafb9dc3600b947af2",
                 "shasum": ""
             },
             "require": {
@@ -654,7 +654,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-cache/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/cache-array",
@@ -662,12 +662,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-cache-array.git",
-                "reference": "a9cbbcd350bddc402b5d218db1d5536e0b078be9"
+                "reference": "7c2148f5d267f14204efae4e1990ba0a11be182d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-cache-array/zipball/a9cbbcd350bddc402b5d218db1d5536e0b078be9",
-                "reference": "a9cbbcd350bddc402b5d218db1d5536e0b078be9",
+                "url": "https://api.github.com/repos/marko-php/marko-cache-array/zipball/7c2148f5d267f14204efae4e1990ba0a11be182d",
+                "reference": "7c2148f5d267f14204efae4e1990ba0a11be182d",
                 "shasum": ""
             },
             "require": {
@@ -700,7 +700,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-cache-array/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/cli",
@@ -708,12 +708,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-cli.git",
-                "reference": "3d41dd0c84db7cd95ef7a1d345e196470a6ebf76"
+                "reference": "e09602422c58980fe4bb1fc31701bd867ae3d97c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-cli/zipball/3d41dd0c84db7cd95ef7a1d345e196470a6ebf76",
-                "reference": "3d41dd0c84db7cd95ef7a1d345e196470a6ebf76",
+                "url": "https://api.github.com/repos/marko-php/marko-cli/zipball/e09602422c58980fe4bb1fc31701bd867ae3d97c",
+                "reference": "e09602422c58980fe4bb1fc31701bd867ae3d97c",
                 "shasum": ""
             },
             "require": {
@@ -745,7 +745,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-cli/tree/develop"
             },
-            "time": "2026-03-25T13:06:50+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/config",
@@ -753,12 +753,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-config.git",
-                "reference": "36eb41f27a762b51b2620dc78b2a70fc1569918d"
+                "reference": "91c5046a2fcbf25422e73b8157b8ec2fa9146626"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-config/zipball/36eb41f27a762b51b2620dc78b2a70fc1569918d",
-                "reference": "36eb41f27a762b51b2620dc78b2a70fc1569918d",
+                "url": "https://api.github.com/repos/marko-php/marko-config/zipball/91c5046a2fcbf25422e73b8157b8ec2fa9146626",
+                "reference": "91c5046a2fcbf25422e73b8157b8ec2fa9146626",
                 "shasum": ""
             },
             "require": {
@@ -788,7 +788,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-config/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/core",
@@ -796,12 +796,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-core.git",
-                "reference": "ce20b474262447b48a67f6effa5550858fefe310"
+                "reference": "cf675ba41ce3d656e5f258a98e3859fa37609a20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-core/zipball/ce20b474262447b48a67f6effa5550858fefe310",
-                "reference": "ce20b474262447b48a67f6effa5550858fefe310",
+                "url": "https://api.github.com/repos/marko-php/marko-core/zipball/cf675ba41ce3d656e5f258a98e3859fa37609a20",
+                "reference": "cf675ba41ce3d656e5f258a98e3859fa37609a20",
                 "shasum": ""
             },
             "require": {
@@ -832,7 +832,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-core/tree/develop"
             },
-            "time": "2026-03-25T13:14:12+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/database",
@@ -840,12 +840,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-database.git",
-                "reference": "41e06d7e2ed4e32dc991d0a29e7d390860fcd27c"
+                "reference": "463154db7b345f490b6439961f0837d0af8af217"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-database/zipball/41e06d7e2ed4e32dc991d0a29e7d390860fcd27c",
-                "reference": "41e06d7e2ed4e32dc991d0a29e7d390860fcd27c",
+                "url": "https://api.github.com/repos/marko-php/marko-database/zipball/463154db7b345f490b6439961f0837d0af8af217",
+                "reference": "463154db7b345f490b6439961f0837d0af8af217",
                 "shasum": ""
             },
             "require": {
@@ -875,7 +875,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-database/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/database-pgsql",
@@ -883,12 +883,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-database-pgsql.git",
-                "reference": "2585007fc9722747bdf878e01614504a0ef55682"
+                "reference": "4e8ca291fbc4848c398bac87dd7103d3fa7cdf1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-database-pgsql/zipball/2585007fc9722747bdf878e01614504a0ef55682",
-                "reference": "2585007fc9722747bdf878e01614504a0ef55682",
+                "url": "https://api.github.com/repos/marko-php/marko-database-pgsql/zipball/4e8ca291fbc4848c398bac87dd7103d3fa7cdf1d",
+                "reference": "4e8ca291fbc4848c398bac87dd7103d3fa7cdf1d",
                 "shasum": ""
             },
             "require": {
@@ -920,7 +920,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-database-pgsql/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/dev-server",
@@ -928,12 +928,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-dev-server.git",
-                "reference": "b88fa2d5f3581d52114d04ef29e561dc6ec1b04d"
+                "reference": "a65dc0716ac841add9c1d0bf1bb88e9608457d85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-dev-server/zipball/b88fa2d5f3581d52114d04ef29e561dc6ec1b04d",
-                "reference": "b88fa2d5f3581d52114d04ef29e561dc6ec1b04d",
+                "url": "https://api.github.com/repos/marko-php/marko-dev-server/zipball/a65dc0716ac841add9c1d0bf1bb88e9608457d85",
+                "reference": "a65dc0716ac841add9c1d0bf1bb88e9608457d85",
                 "shasum": ""
             },
             "require": {
@@ -964,7 +964,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-dev-server/tree/develop"
             },
-            "time": "2026-03-25T16:53:50+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/encryption",
@@ -972,12 +972,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-encryption.git",
-                "reference": "199b209f92a6e1abab526027d7d410b231a9f767"
+                "reference": "3a8bda48d7cbd2611ba1fe35cadc49b82c3242da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-encryption/zipball/199b209f92a6e1abab526027d7d410b231a9f767",
-                "reference": "199b209f92a6e1abab526027d7d410b231a9f767",
+                "url": "https://api.github.com/repos/marko-php/marko-encryption/zipball/3a8bda48d7cbd2611ba1fe35cadc49b82c3242da",
+                "reference": "3a8bda48d7cbd2611ba1fe35cadc49b82c3242da",
                 "shasum": ""
             },
             "require": {
@@ -1009,7 +1009,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-encryption/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/encryption-openssl",
@@ -1017,12 +1017,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-encryption-openssl.git",
-                "reference": "f371639b9ad17aab229d8c5b39034a88b1b497c8"
+                "reference": "4adefaea73891e0054ad2b5dcb1aa298b6197a02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-encryption-openssl/zipball/f371639b9ad17aab229d8c5b39034a88b1b497c8",
-                "reference": "f371639b9ad17aab229d8c5b39034a88b1b497c8",
+                "url": "https://api.github.com/repos/marko-php/marko-encryption-openssl/zipball/4adefaea73891e0054ad2b5dcb1aa298b6197a02",
+                "reference": "4adefaea73891e0054ad2b5dcb1aa298b6197a02",
                 "shasum": ""
             },
             "require": {
@@ -1056,7 +1056,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-encryption-openssl/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/env",
@@ -1064,12 +1064,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-env.git",
-                "reference": "1b4c3b09ff93a4ca62e78c88eff320442855ad73"
+                "reference": "ab374bbdbffdafe1d5d63d88e5bffec61de47f15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-env/zipball/1b4c3b09ff93a4ca62e78c88eff320442855ad73",
-                "reference": "1b4c3b09ff93a4ca62e78c88eff320442855ad73",
+                "url": "https://api.github.com/repos/marko-php/marko-env/zipball/ab374bbdbffdafe1d5d63d88e5bffec61de47f15",
+                "reference": "ab374bbdbffdafe1d5d63d88e5bffec61de47f15",
                 "shasum": ""
             },
             "require": {
@@ -1096,7 +1096,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-env/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/errors",
@@ -1104,12 +1104,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-errors.git",
-                "reference": "a04596c416d6a8831ef97f171e3d587771e2b9c1"
+                "reference": "2090a23632c00256964aef88131f2983507e2507"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-errors/zipball/a04596c416d6a8831ef97f171e3d587771e2b9c1",
-                "reference": "a04596c416d6a8831ef97f171e3d587771e2b9c1",
+                "url": "https://api.github.com/repos/marko-php/marko-errors/zipball/2090a23632c00256964aef88131f2983507e2507",
+                "reference": "2090a23632c00256964aef88131f2983507e2507",
                 "shasum": ""
             },
             "require": {
@@ -1139,7 +1139,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-errors/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/errors-simple",
@@ -1147,12 +1147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-errors-simple.git",
-                "reference": "3de1da6e53ad62d33c5bf728b36f277f94b26e2d"
+                "reference": "2c9bc97f44de974f32b01b9986ec5b086d9161ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-errors-simple/zipball/3de1da6e53ad62d33c5bf728b36f277f94b26e2d",
-                "reference": "3de1da6e53ad62d33c5bf728b36f277f94b26e2d",
+                "url": "https://api.github.com/repos/marko-php/marko-errors-simple/zipball/2c9bc97f44de974f32b01b9986ec5b086d9161ec",
+                "reference": "2c9bc97f44de974f32b01b9986ec5b086d9161ec",
                 "shasum": ""
             },
             "require": {
@@ -1183,7 +1183,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-errors-simple/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/framework",
@@ -1191,12 +1191,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-framework.git",
-                "reference": "9c60a08de6dc828b541b7a1ce872321e8a61a19b"
+                "reference": "267ba878e125d9b8f6fdea3d9378e0ef01d826ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-framework/zipball/9c60a08de6dc828b541b7a1ce872321e8a61a19b",
-                "reference": "9c60a08de6dc828b541b7a1ce872321e8a61a19b",
+                "url": "https://api.github.com/repos/marko-php/marko-framework/zipball/267ba878e125d9b8f6fdea3d9378e0ef01d826ad",
+                "reference": "267ba878e125d9b8f6fdea3d9378e0ef01d826ad",
                 "shasum": ""
             },
             "require": {
@@ -1240,7 +1240,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-framework/tree/develop"
             },
-            "time": "2026-03-25T13:49:56+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/hashing",
@@ -1248,12 +1248,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-hashing.git",
-                "reference": "82c6a35e6820d2c8d1cf194c12225924e84a75e6"
+                "reference": "ab3733518f4a8210810fb288a192e83b2a8842db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-hashing/zipball/82c6a35e6820d2c8d1cf194c12225924e84a75e6",
-                "reference": "82c6a35e6820d2c8d1cf194c12225924e84a75e6",
+                "url": "https://api.github.com/repos/marko-php/marko-hashing/zipball/ab3733518f4a8210810fb288a192e83b2a8842db",
+                "reference": "ab3733518f4a8210810fb288a192e83b2a8842db",
                 "shasum": ""
             },
             "require": {
@@ -1285,7 +1285,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-hashing/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/log",
@@ -1293,12 +1293,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-log.git",
-                "reference": "f077e36e7610ad6f84e25cfbb8793600f561078f"
+                "reference": "68ee75076f8051531a1f2ff1de53a0a6a3c5fb9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-log/zipball/f077e36e7610ad6f84e25cfbb8793600f561078f",
-                "reference": "f077e36e7610ad6f84e25cfbb8793600f561078f",
+                "url": "https://api.github.com/repos/marko-php/marko-log/zipball/68ee75076f8051531a1f2ff1de53a0a6a3c5fb9a",
+                "reference": "68ee75076f8051531a1f2ff1de53a0a6a3c5fb9a",
                 "shasum": ""
             },
             "require": {
@@ -1330,7 +1330,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-log/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/log-file",
@@ -1338,12 +1338,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-log-file.git",
-                "reference": "eb1dc7a5b69cc2389070e5d12386a4196589d81e"
+                "reference": "5719c1da60050e49ff9775150b6d1bccb35d14b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-log-file/zipball/eb1dc7a5b69cc2389070e5d12386a4196589d81e",
-                "reference": "eb1dc7a5b69cc2389070e5d12386a4196589d81e",
+                "url": "https://api.github.com/repos/marko-php/marko-log-file/zipball/5719c1da60050e49ff9775150b6d1bccb35d14b7",
+                "reference": "5719c1da60050e49ff9775150b6d1bccb35d14b7",
                 "shasum": ""
             },
             "require": {
@@ -1375,7 +1375,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-log-file/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/mail",
@@ -1383,12 +1383,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-mail.git",
-                "reference": "c9b4ded95c6d2cec12caa1bbd95ffb08f280c53f"
+                "reference": "70e511b7ca28a1e575fa6b234d371127d2ff275b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-mail/zipball/c9b4ded95c6d2cec12caa1bbd95ffb08f280c53f",
-                "reference": "c9b4ded95c6d2cec12caa1bbd95ffb08f280c53f",
+                "url": "https://api.github.com/repos/marko-php/marko-mail/zipball/70e511b7ca28a1e575fa6b234d371127d2ff275b",
+                "reference": "70e511b7ca28a1e575fa6b234d371127d2ff275b",
                 "shasum": ""
             },
             "require": {
@@ -1420,7 +1420,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-mail/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/notification",
@@ -1428,12 +1428,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-notification.git",
-                "reference": "b159d6798beec2a22563a26e0b625cc7aa4c3fe3"
+                "reference": "7178be76a563085616631c7b7b3ac70bf976abbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-notification/zipball/b159d6798beec2a22563a26e0b625cc7aa4c3fe3",
-                "reference": "b159d6798beec2a22563a26e0b625cc7aa4c3fe3",
+                "url": "https://api.github.com/repos/marko-php/marko-notification/zipball/7178be76a563085616631c7b7b3ac70bf976abbd",
+                "reference": "7178be76a563085616631c7b7b3ac70bf976abbd",
                 "shasum": ""
             },
             "require": {
@@ -1469,7 +1469,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-notification/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/notification-database",
@@ -1477,12 +1477,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-notification-database.git",
-                "reference": "7e29a245c7aa403bdc20783b0378e907add384ef"
+                "reference": "ae39cdfac3f5808ae134752656c7928967bb60c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-notification-database/zipball/7e29a245c7aa403bdc20783b0378e907add384ef",
-                "reference": "7e29a245c7aa403bdc20783b0378e907add384ef",
+                "url": "https://api.github.com/repos/marko-php/marko-notification-database/zipball/ae39cdfac3f5808ae134752656c7928967bb60c1",
+                "reference": "ae39cdfac3f5808ae134752656c7928967bb60c1",
                 "shasum": ""
             },
             "require": {
@@ -1514,7 +1514,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-notification-database/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/pagination",
@@ -1522,12 +1522,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-pagination.git",
-                "reference": "ff796388d5f5eac3eb41ea05ac995454dde70a54"
+                "reference": "289c4c38d97b0cd5b1a5cc9b9c75765ef9b05833"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-pagination/zipball/ff796388d5f5eac3eb41ea05ac995454dde70a54",
-                "reference": "ff796388d5f5eac3eb41ea05ac995454dde70a54",
+                "url": "https://api.github.com/repos/marko-php/marko-pagination/zipball/289c4c38d97b0cd5b1a5cc9b9c75765ef9b05833",
+                "reference": "289c4c38d97b0cd5b1a5cc9b9c75765ef9b05833",
                 "shasum": ""
             },
             "require": {
@@ -1559,7 +1559,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-pagination/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/pubsub",
@@ -1567,12 +1567,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-pubsub.git",
-                "reference": "fe6066450f7e501be921c7d81f1918ea5957f4dc"
+                "reference": "eac484de5509df8bfd396f31fb4730f79b7bf443"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-pubsub/zipball/fe6066450f7e501be921c7d81f1918ea5957f4dc",
-                "reference": "fe6066450f7e501be921c7d81f1918ea5957f4dc",
+                "url": "https://api.github.com/repos/marko-php/marko-pubsub/zipball/eac484de5509df8bfd396f31fb4730f79b7bf443",
+                "reference": "eac484de5509df8bfd396f31fb4730f79b7bf443",
                 "shasum": ""
             },
             "require": {
@@ -1603,7 +1603,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-pubsub/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/pubsub-pgsql",
@@ -1611,12 +1611,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-pubsub-pgsql.git",
-                "reference": "28bc459abc9e0f432173bbe83adf409e32a742ab"
+                "reference": "275627c0f83903bc7f33e5dfaec64f5fa9f7c929"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-pubsub-pgsql/zipball/28bc459abc9e0f432173bbe83adf409e32a742ab",
-                "reference": "28bc459abc9e0f432173bbe83adf409e32a742ab",
+                "url": "https://api.github.com/repos/marko-php/marko-pubsub-pgsql/zipball/275627c0f83903bc7f33e5dfaec64f5fa9f7c929",
+                "reference": "275627c0f83903bc7f33e5dfaec64f5fa9f7c929",
                 "shasum": ""
             },
             "require": {
@@ -1649,7 +1649,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-pubsub-pgsql/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/queue",
@@ -1657,12 +1657,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-queue.git",
-                "reference": "5997010a0809b8be6d29ff132c0eb14048010429"
+                "reference": "7c8fce7654701374f0c14e4eae14b275a54ec1b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-queue/zipball/5997010a0809b8be6d29ff132c0eb14048010429",
-                "reference": "5997010a0809b8be6d29ff132c0eb14048010429",
+                "url": "https://api.github.com/repos/marko-php/marko-queue/zipball/7c8fce7654701374f0c14e4eae14b275a54ec1b0",
+                "reference": "7c8fce7654701374f0c14e4eae14b275a54ec1b0",
                 "shasum": ""
             },
             "require": {
@@ -1693,7 +1693,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-queue/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/rate-limiting",
@@ -1701,12 +1701,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-rate-limiting.git",
-                "reference": "6b8144fd5106870a20c6978787840810048d0e66"
+                "reference": "9ceb33be03bd531e8138bfec1322955a90e9485d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-rate-limiting/zipball/6b8144fd5106870a20c6978787840810048d0e66",
-                "reference": "6b8144fd5106870a20c6978787840810048d0e66",
+                "url": "https://api.github.com/repos/marko-php/marko-rate-limiting/zipball/9ceb33be03bd531e8138bfec1322955a90e9485d",
+                "reference": "9ceb33be03bd531e8138bfec1322955a90e9485d",
                 "shasum": ""
             },
             "require": {
@@ -1740,7 +1740,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-rate-limiting/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/routing",
@@ -1748,12 +1748,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-routing.git",
-                "reference": "a2c8b6f192edfe06e74ca3db0547daec9ed93c32"
+                "reference": "23a92fe7d5c05def8c5e2e347fb23afead855c7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-routing/zipball/a2c8b6f192edfe06e74ca3db0547daec9ed93c32",
-                "reference": "a2c8b6f192edfe06e74ca3db0547daec9ed93c32",
+                "url": "https://api.github.com/repos/marko-php/marko-routing/zipball/23a92fe7d5c05def8c5e2e347fb23afead855c7f",
+                "reference": "23a92fe7d5c05def8c5e2e347fb23afead855c7f",
                 "shasum": ""
             },
             "require": {
@@ -1783,7 +1783,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-routing/tree/develop"
             },
-            "time": "2026-03-25T13:06:50+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/security",
@@ -1791,12 +1791,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-security.git",
-                "reference": "aeceb71f27fd79378fe447194d0694239834c912"
+                "reference": "a2caf103dd7503970e3f8e9aa2896770bd9dc962"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-security/zipball/aeceb71f27fd79378fe447194d0694239834c912",
-                "reference": "aeceb71f27fd79378fe447194d0694239834c912",
+                "url": "https://api.github.com/repos/marko-php/marko-security/zipball/a2caf103dd7503970e3f8e9aa2896770bd9dc962",
+                "reference": "a2caf103dd7503970e3f8e9aa2896770bd9dc962",
                 "shasum": ""
             },
             "require": {
@@ -1830,7 +1830,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-security/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/session",
@@ -1838,12 +1838,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-session.git",
-                "reference": "3ae773baeac62cef31f61eb98c7e4844edc159b7"
+                "reference": "52afe6d6424019e06771a41c9129be77dfeb2160"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-session/zipball/3ae773baeac62cef31f61eb98c7e4844edc159b7",
-                "reference": "3ae773baeac62cef31f61eb98c7e4844edc159b7",
+                "url": "https://api.github.com/repos/marko-php/marko-session/zipball/52afe6d6424019e06771a41c9129be77dfeb2160",
+                "reference": "52afe6d6424019e06771a41c9129be77dfeb2160",
                 "shasum": ""
             },
             "require": {
@@ -1871,7 +1871,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-session/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/session-database",
@@ -1879,12 +1879,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-session-database.git",
-                "reference": "8d0e301719167f178b0154dd90bfa41b442c1818"
+                "reference": "8bf2ddc66e98e7728dae3db9b3cf9ffb43108c28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-session-database/zipball/8d0e301719167f178b0154dd90bfa41b442c1818",
-                "reference": "8d0e301719167f178b0154dd90bfa41b442c1818",
+                "url": "https://api.github.com/repos/marko-php/marko-session-database/zipball/8bf2ddc66e98e7728dae3db9b3cf9ffb43108c28",
+                "reference": "8bf2ddc66e98e7728dae3db9b3cf9ffb43108c28",
                 "shasum": ""
             },
             "require": {
@@ -1915,7 +1915,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-session-database/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/sse",
@@ -1923,12 +1923,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-sse.git",
-                "reference": "1cfcfd74a0f5c11b1b08f788f56024d908630003"
+                "reference": "b79e3340b755fe6cbb6dfeebd9ed321904142436"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-sse/zipball/1cfcfd74a0f5c11b1b08f788f56024d908630003",
-                "reference": "1cfcfd74a0f5c11b1b08f788f56024d908630003",
+                "url": "https://api.github.com/repos/marko-php/marko-sse/zipball/b79e3340b755fe6cbb6dfeebd9ed321904142436",
+                "reference": "b79e3340b755fe6cbb6dfeebd9ed321904142436",
                 "shasum": ""
             },
             "require": {
@@ -1963,7 +1963,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-sse/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/testing",
@@ -1971,12 +1971,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-testing.git",
-                "reference": "685832646a84e125725845c69ad13d6187df2a49"
+                "reference": "58f4b19c22aeb2e7f76045533d102288504b4486"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-testing/zipball/685832646a84e125725845c69ad13d6187df2a49",
-                "reference": "685832646a84e125725845c69ad13d6187df2a49",
+                "url": "https://api.github.com/repos/marko-php/marko-testing/zipball/58f4b19c22aeb2e7f76045533d102288504b4486",
+                "reference": "58f4b19c22aeb2e7f76045533d102288504b4486",
                 "shasum": ""
             },
             "require": {
@@ -2015,7 +2015,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-testing/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/validation",
@@ -2023,12 +2023,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-validation.git",
-                "reference": "fa60e1dde81e936187ed6bef6228547b4e447717"
+                "reference": "4ec412b7afc61beaaa98643b36eefc30f97ceeeb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-validation/zipball/fa60e1dde81e936187ed6bef6228547b4e447717",
-                "reference": "fa60e1dde81e936187ed6bef6228547b4e447717",
+                "url": "https://api.github.com/repos/marko-php/marko-validation/zipball/4ec412b7afc61beaaa98643b36eefc30f97ceeeb",
+                "reference": "4ec412b7afc61beaaa98643b36eefc30f97ceeeb",
                 "shasum": ""
             },
             "require": {
@@ -2054,7 +2054,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-validation/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/view",
@@ -2062,12 +2062,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-view.git",
-                "reference": "79d26fce353f73f949b290bc8d231e3c407f71df"
+                "reference": "7b3dd2744deb503c37c69458663fd6cbd9590694"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-view/zipball/79d26fce353f73f949b290bc8d231e3c407f71df",
-                "reference": "79d26fce353f73f949b290bc8d231e3c407f71df",
+                "url": "https://api.github.com/repos/marko-php/marko-view/zipball/7b3dd2744deb503c37c69458663fd6cbd9590694",
+                "reference": "7b3dd2744deb503c37c69458663fd6cbd9590694",
                 "shasum": ""
             },
             "require": {
@@ -2100,7 +2100,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-view/tree/develop"
             },
-            "time": "2026-03-23T21:46:17+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "marko/view-latte",
@@ -2108,12 +2108,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/marko-php/marko-view-latte.git",
-                "reference": "edfdc55f7863f826148e3d32c2e9da83df4c0d7b"
+                "reference": "e02369e79b1ba56aa450dec5865717e89c4e4af4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/marko-php/marko-view-latte/zipball/edfdc55f7863f826148e3d32c2e9da83df4c0d7b",
-                "reference": "edfdc55f7863f826148e3d32c2e9da83df4c0d7b",
+                "url": "https://api.github.com/repos/marko-php/marko-view-latte/zipball/e02369e79b1ba56aa450dec5865717e89c4e4af4",
+                "reference": "e02369e79b1ba56aa450dec5865717e89c4e4af4",
                 "shasum": ""
             },
             "require": {
@@ -2144,7 +2144,7 @@
             "support": {
                 "source": "https://github.com/marko-php/marko-view-latte/tree/develop"
             },
-            "time": "2026-03-24T17:44:23+00:00"
+            "time": "2026-03-25T17:53:35+00:00"
         },
         {
             "name": "psr/container",
@@ -6148,6 +6148,6 @@
     "platform": {
         "php": "^8.5"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
