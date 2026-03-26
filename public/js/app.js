@@ -8,6 +8,7 @@
   if (!spaceSlug) return;
 
   const currentUserId = parseInt(chatFeed.dataset.currentUserId) || null;
+  const currentUserRole = chatFeed.dataset.currentUserRole || null;
 
   let nextCursor = null;
   let isLoadingOlder = false;
@@ -62,11 +63,21 @@
           const msgId = msgEl.dataset.messageId;
           if (msgId && !messageExists(msgId)) {
             appendMessage(event.html);
-            if (currentUserId && event.userId === currentUserId) {
+            const newMsgEl = chatFeed.querySelector(`[data-message-id="${msgId}"]`);
+            if (newMsgEl && !newMsgEl.querySelector('.message-actions')) {
               const csrfToken = document.querySelector('[name="_token"]')?.value ?? '';
-              const newMsgEl = chatFeed.querySelector(`[data-message-id="${msgId}"]`);
-              if (newMsgEl && !newMsgEl.querySelector('.message-actions')) {
-                newMsgEl.insertAdjacentHTML('beforeend', `<div class="message-actions"><button class="message-action-edit" data-message-id="${msgId}" title="Edit">&#9999;</button><button class="message-action-delete" data-message-id="${msgId}" data-csrf-token="${csrfToken}" title="Delete">&#128465;</button></div>`);
+              const isAdmin = currentUserRole === 'admin';
+              const isOwner = currentUserId && event.userId === currentUserId;
+              if (isAdmin || isOwner) {
+                let actions = '';
+                if (isAdmin) {
+                  actions += `<form method="post" action="/messages/${msgId}/pin" class="message-action-pin-form"><button class="message-action-pin" title="Pin">&#128205;</button></form>`;
+                }
+                if (isOwner) {
+                  actions += `<button class="message-action-edit" data-message-id="${msgId}" title="Edit">&#9999;</button>`;
+                  actions += `<button class="message-action-delete" data-message-id="${msgId}" data-csrf-token="${csrfToken}" title="Delete">&#128465;</button>`;
+                }
+                newMsgEl.insertAdjacentHTML('beforeend', `<div class="message-actions">${actions}</div>`);
               }
             }
           }
