@@ -68,10 +68,15 @@ Run migrations and start the dev server:
 
 ```bash
 # Run database migrations
-php marko migrate
+php ./vendor/bin/marko db:migrate
 
 # Start the development server
-marko up
+php ./vendor/bin/marko up
+
+# Add an `ENCRYPTION_KEY` to your `.env`
+echo "ENCRYPTION_KEY=$(php -r 'echo base64_encode(random_bytes(32));')" >> .env
+
+php ./vendor/bin/marko db:seed
 ```
 
 > **Note:** `marko up` starts PHP with `PHP_CLI_SERVER_WORKERS=4` by default, which is required because MarkoTalk uses SSE for real-time messaging. Without multiple workers, the SSE connection blocks all other requests on the single-threaded PHP built-in server.
